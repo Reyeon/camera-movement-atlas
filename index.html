@@ -12,16 +12,16 @@
   <meta property="og:url" content="https://reyeon.github.io/camera-movement-atlas/">
   <meta property="og:title" content="카메라 무브먼트 아틀라스">
   <meta property="og:description" content="나비 캐릭터로 샷, 카메라 무빙, 캐릭터 동작을 실습하고 영상 프롬프트를 복사하세요.">
-  <meta property="og:image" content="https://reyeon.github.io/camera-movement-atlas/share-butterfly.jpg">
+  <meta property="og:image" content="https://reyeon.github.io/camera-movement-atlas/share-butterfly.jpg?v=face">
   <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="민트색 스튜디오에 선 둥근 안경과 분홍 한복 차림의 나비 캐릭터">
+  <meta property="og:image:alt" content="푸른 눈과 둥근 안경, 분홍 한복 차림의 나비 캐릭터">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="카메라 무브먼트 아틀라스">
   <meta name="twitter:description" content="나비 캐릭터와 함께 샷, 카메라 무빙, 캐릭터 동작을 실습하세요.">
-  <meta name="twitter:image" content="https://reyeon.github.io/camera-movement-atlas/share-butterfly.jpg">
-  <meta name="twitter:image:alt" content="민트색 스튜디오에 선 둥근 안경과 분홍 한복 차림의 나비 캐릭터">
+  <meta name="twitter:image" content="https://reyeon.github.io/camera-movement-atlas/share-butterfly.jpg?v=face">
+  <meta name="twitter:image:alt" content="푸른 눈과 둥근 안경, 분홍 한복 차림의 나비 캐릭터">
   <link rel="icon" href="data:,">
   <style>
 :root {
@@ -1120,6 +1120,7 @@ const targets = [
   { id: 'chest', name: '가슴', en: 'Chest', point: [0, 1.47, -.22], bone: 'body', ko: '가슴을 프레이밍의 기준점으로 잡는다.', prompt: 'Frame around the chest.' },
   { id: 'head', name: '머리와 어깨', en: 'Head and shoulders', point: [0, 2.23, -.13], bone: 'body', ko: '머리와 어깨를 프레임에 담는다.', prompt: 'Frame the head and shoulders.' },
   { id: 'face', name: '얼굴', en: 'Face', point: [0, -.038, -.352], bone: 'head', ko: '얼굴 중심을 프레이밍의 기준점으로 잡는다.', prompt: 'Use the center of the face as the framing reference.' },
+  { id: 'eyes', name: '눈', en: 'Eyes', point: [.157, -.046, -.363], bone: 'head', ko: '눈을 가까이 담고 눈동자 표면과 그 안의 반사광에 초점을 맞춘다.', prompt: 'Frame the eyes closely and focus on the irises and their catchlights.' },
   { id: 'ornament', name: '머리 장식', en: 'Hair Ornament', point: [-.028, .456, -.320], bone: 'head', ko: '머리 장식을 가까이 담고 표면과 색에 초점을 맞춘다.', prompt: 'Frame the hair ornament tightly to capture its color and surface detail.' },
   { id: 'glasses', name: '안경테', en: 'Glasses Frame', point: [.246, .079, -.342], bone: 'head', ko: '안경테 가까이에서 테의 곡선과 반사광을 담는다.', prompt: 'Frame the glasses rim close up to capture its curve and highlights.' },
   { id: 'hand', name: '손', en: 'Hand', bone: 'hand', ko: '손을 화면 중앙에 두고 손의 움직임을 가까이 담는다.', prompt: 'Frame the hand near the center to capture its movement up close.' },
@@ -1542,6 +1543,129 @@ function stroke(mesh, points, width, color, samples = 22, closed = false) {
   tube(mesh, path, radii, color, 10);
 }
 
+function faceSection(y) {
+  const lowerFace = smooth((-y - .052) / .208);
+  const height = Math.min(1, Math.abs((y + .018) / .367));
+  const radius = (1 - height ** mix(2 / .90, 2.64, lowerFace)) ** .45;
+  const cheek = Math.exp(-(((y + .166) / .111) ** 2));
+  return {
+    width: .370 * radius * (1 + .052 * cheek),
+    depth: .342 * radius,
+    middle: -.016 + .010 * smooth((-y - .219) / .162),
+  };
+}
+
+function noseRelief(x, y) {
+  const ridge = Math.exp(-((x / .029) ** 2 + ((y + .124) / .049) ** 2));
+  const tip = Math.exp(-((x / .037) ** 2 + ((y + .151) / .025) ** 2));
+  return .010 * ridge + .017 * tip;
+}
+
+function faceFront(x, y) {
+  const { width, depth, middle } = faceSection(y);
+  const section = Math.abs(x) / Math.max(.001, width);
+  return middle - depth * Math.max(0, 1 - section ** (2 / .90)) ** .45 - noseRelief(x, y);
+}
+
+function sculptFace(mesh) {
+  const rows = 52, columns = 84, blush = rgb('f9a89e');
+  const rounded = value => Math.sign(value) * Math.abs(value) ** .90;
+  const surface = Array.from({ length: rows + 1 }, (_, row) => {
+    const latitude = PI * (row / rows - .5);
+    const y = -.018 + .367 * Math.sin(latitude);
+    const { width, depth, middle } = faceSection(y);
+    return Array.from({ length: columns }, (_, i) => {
+      const theta = TAU * i / columns;
+      const x = width * rounded(Math.cos(theta));
+      const front = rounded(Math.sin(theta));
+      const z = middle + depth * front - Math.max(0, -front) * noseRelief(x, y);
+      return [x, y, z];
+    });
+  });
+  const shaded = surface.map((ring, row) => ring.map((point, i) => {
+    const [x, y, z] = point;
+    const around = sub3(ring[(i + 1) % columns], ring[(i + columns - 1) % columns]);
+    const vertical = sub3(surface[Math.min(rows, row + 1)][i], surface[Math.max(0, row - 1)][i]);
+    const normal = row === 0 || row === rows ? [0, row === 0 ? -1 : 1, 0] : normalized(cross3(vertical, around));
+    const cheek = Math.exp(-(((Math.abs(x) - .228) / .100) ** 2 + ((y + .158) / .067) ** 2));
+    const tone = mix3(skin, blush, .43 * cheek * smooth((-z - .15) / .16));
+    return { point, normal, tone };
+  }));
+  const triangle = (a, b, c) => mesh.tri(a.point, b.point, c.point, [a.tone, b.tone, c.tone], VINYL, 1, [a.normal, b.normal, c.normal]);
+  for (let row = 0; row < rows; row++) {
+    for (let i = 0; i < columns; i++) {
+      const next = (i + 1) % columns;
+      const [a, b, c, d] = [shaded[row][i], shaded[row + 1][i], shaded[row + 1][next], shaded[row][next]];
+      if (row > 0) triangle(a, b, d);
+      if (row < rows - 1) triangle(d, b, c);
+    }
+  }
+}
+
+function eyeSurface(side, u, v, raised = 0) {
+  const x = side * (.160 + .109 * u);
+  const y = -.049 + side * .006 + .008 * u + .092 * v * (1 - .10 * u * u);
+  const dome = .024 * Math.max(0, 1 - u * u - v * v) ** 1.4;
+  return [x, y, faceFront(x, y) - .0038 - dome - raised];
+}
+
+function eyeDisc(mesh, surface, shade, material = VINYL, rings = 16, sides = 56) {
+  const points = Array.from({ length: rings + 1 }, (_, ring) => Array.from({ length: sides }, (_, i) => {
+    const angle = TAU * i / sides, radius = ring / rings;
+    const u = radius * Math.cos(angle), v = radius * Math.sin(angle);
+    const dx = sub3(surface(u + .001, v), surface(u - .001, v));
+    const dy = sub3(surface(u, v + .001), surface(u, v - .001));
+    const normal = normalized(cross3(dy, dx));
+    return { point: surface(u, v), tone: shade(u, v, radius), normal: normal[2] < 0 ? normal : mult3(normal, -1) };
+  }));
+  const triangle = (a, b, c) => mesh.tri(a.point, b.point, c.point, [a.tone, b.tone, c.tone], material, 1, [a.normal, b.normal, c.normal]);
+  for (let ring = 1; ring <= rings; ring++) {
+    for (let i = 0; i < sides; i++) {
+      const j = (i + 1) % sides;
+      const [a, b, c, d] = [points[ring - 1][i], points[ring][i], points[ring][j], points[ring - 1][j]];
+      triangle(a, b, c);
+      if (ring > 1) triangle(a, c, d);
+    }
+  }
+}
+
+function faceLine(mesh, points, width, color, samples = 24) {
+  const line = sampleCurve(points, samples).map(([x, y]) => [x, y, faceFront(x, y) - .0014]);
+  const radii = line.map((_, i) => width * (.25 + .75 * Math.sin(PI * i / samples) ** .44));
+  tube(mesh, line, radii, color, 8);
+}
+
+function faceFeatures(mesh) {
+  const white = rgb('fff8ef'), shadow = rgb('e4c9c5'), lash = rgb('3e2834');
+  const deepBlue = rgb('225479'), seaGlass = rgb('71c4c3'), reflection = rgb('b5e4d8'), pupil = rgb('193a55');
+  for (const side of [-1, 1]) {
+    eyeDisc(mesh, (u, v) => eyeSurface(side, u, v), (_, v) => mix3(white, shadow, .49 * smooth((v - .26) / .64)));
+    const iris = (u, v, raise = 0) => eyeSurface(side, -.030 + u * .666, -.040 + v * .847, .0016 + raise);
+    eyeDisc(mesh, iris, (u, v, radius) => {
+      const water = mix3(seaGlass, deepBlue, smooth((v + .76) / 1.57));
+      const shine = Math.exp(-(((v + .69) / .200) ** 2 + (u / .79) ** 2));
+      const color = mix3(water, reflection, .66 * shine);
+      const shape = Math.hypot(u / .60, (v - .175) / .70);
+      const tintedPupil = mix3(color, pupil, .94 * (1 - smooth((shape - .80) / .28)));
+      return mix3(tintedPupil, deepBlue, .70 * smooth((radius - .87) / .13));
+    });
+    const catchlight = (u, v, radius, color) => eyeDisc(mesh,
+      (x, y) => iris(u + x * radius, v + y * radius * .91, .0020), () => color, FLAT, 3, 22);
+    catchlight(-side * .26, .47, .157, white);
+    catchlight(side * .38, .20, .068, rgb('e8f6f2'));
+
+    const lid = Array.from({ length: 35 }, (_, i) => {
+      const angle = PI * i / 34;
+      return eyeSurface(side, Math.cos(angle), Math.sin(angle), .0017);
+    });
+    tube(mesh, lid, lid.map((_, i) => .0018 + .0054 * Math.sin(PI * i / 34) ** .70), lash, 9);
+    const brow = [[.082, .114], [.113, .137], [.151, .146], [.188, .143], [.225, .125]]
+      .map(([x, y]) => [side * x, y + side * .004]);
+    faceLine(mesh, brow, .0064, hairColor);
+  }
+  faceLine(mesh, [[-.036, -.232], [-.019, -.237], [0, -.236], [.016, -.238], [.035, -.228]], .0036, rgb('aa655a'));
+}
+
 function hairCap(mesh) {
   const segments = 72, rings = 27;
   const geometry = Array.from({ length: rings + 1 }, (_, row) => Array.from({ length: segments }, (_, i) => {
@@ -1795,7 +1919,7 @@ function buildFigure() {
   skirtLayer(skirt, 1.218, .058, .263, .833, silkPink, rgb('ffb7c5'));
   skirtLayer(skirt, 1.246, .289, .287, .762, rgb('ec5c80'), rgb('fa8daa'));
 
-  ellipsoid(head, [0, -.018, -.016], [.370, .367, .342], skin, { round: .90, steps: 70, rings: 42, material: VINYL });
+  sculptFace(head);
   for (const side of [-1, 1]) {
     sculpt(head, [side * .351, -.034 + side * .026, .001], [.079, .111, .069], skin, .92, rotationZ(side * .19));
     sculpt(head, [side * .384, -.030 + side * .026, -.053], [.035, .069, .017], rgb('f7c5aa'), 1, rotationZ(side * .19));
@@ -1807,6 +1931,7 @@ function buildFigure() {
     stroke(head, [[-.02, .161, -.330], [sign * .027, .122, -.346], [sign * .044, .075, -.353],
       [sign * .038, .052, -.346]], .006, hairColor, 16);
   }
+  faceFeatures(head);
   glasses(head);
   flowerPin(head);
 
