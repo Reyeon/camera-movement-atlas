@@ -3,434 +3,324 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="dark">
-  <meta name="theme-color" content="#0b1013">
-  <meta name="description" content="영화 속 카메라 기법을 실제로 움직여 보세요. 3D 장면과 카메라 경로를 함께 재생하는 인터랙티브 촬영 가이드입니다.">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#f5f1fc">
+  <meta name="description" content="샷 크기와 카메라 무빙, 캐릭터 동작을 조합해 3D 장면으로 확인하고 영상 프롬프트를 복사하세요.">
   <title>카메라 무브먼트 아틀라스</title>
+  <link rel="icon" href="data:,">
   <style>
 :root {
-  color-scheme: dark;
-  --background: #0b1013;
-  --panel: #11191e;
-  --panel-hover: #172227;
-  --line: #28363e;
-  --muted: #9bafb7;
-  --text: #edf3f3;
-  --accent: #9eeadd;
-  --accent-dark: #163530;
-  --orange: #ffb18a;
-  --sans: "Inter", "Pretendard", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
+  color-scheme: light;
+  --ink: #28243b;
+  --muted: #5e5973;
+  --plum: #5638a2;
+  --violet: #6743b5;
+  --line: #dcd5ec;
+  --line-soft: #e9e3f2;
+  --surface: #ffffffd9;
+  --shadow: 0 13px 35px #67508f15, 0 2px 5px #4e347c0b;
+  --sans: "Inter", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
   --mono: "IBM Plex Mono", Consolas, monospace;
   font-family: var(--sans);
-  background: var(--background);
-  color: var(--text);
+  color: var(--ink);
+  background: #f7f4fc;
+  scroll-padding-top: 16px;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
 [hidden] { display: none !important; }
-html { scroll-padding-top: 18px; }
-body { margin: 0; min-width: 280px; }
+body { margin: 0; min-width: 280px; position: relative; isolation: isolate; }
+body::before, body::after { content: ""; position: absolute; z-index: -1; inset: 0 0 auto; pointer-events: none; }
 body::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  top: 63px;
-  inset-inline: 0;
-  height: 380px;
-  background: radial-gradient(ellipse at 66% -50%, #15282d 0%, transparent 74%);
-  pointer-events: none;
+  height: min(100%, 1460px);
+  background:
+    radial-gradient(ellipse 59% 43% at 85% 6%, #d8edfc 12%, #dceffd77 57%, transparent 100%),
+    radial-gradient(ellipse 61% 34% at 39% 8%, #e5d8fc 0%, #e5d6fb88 48%, transparent 100%),
+    radial-gradient(ellipse 51% 45% at 5% 29%, #ffe4e9 3%, #ffe9ed7d 49%, transparent 95%),
+    radial-gradient(ellipse 61% 37% at 82% 63%, #def4e9 0%, #e2f3ee55 59%, transparent 100%),
+    radial-gradient(ellipse 60% 40% at 10% 76%, #e9e5fd 10%, transparent 100%),
+    linear-gradient(180deg, #faf4fb, #f7f4fc 97%);
 }
+body::after {
+  height: 660px;
+  opacity: .93;
+  background:
+    radial-gradient(ellipse 28% 45% at 20% 12%, #fff6dbb0, transparent 100%),
+    radial-gradient(ellipse 30% 40% at 74% 14%, #d8f8e9a6, transparent 100%),
+    radial-gradient(ellipse 25% 38% at 56% 9%, #fbd9f0b8, transparent 100%);
+  background-size: 111% 110%;
+  animation: aurora 23s ease-in-out alternate infinite;
+}
+@keyframes aurora { from { background-position: 0 0; } to { background-position: 100% 60%; } }
+
 h1, h2, h3, p, dl, dd { margin: 0; }
 a { color: inherit; }
-button, input, select { font: inherit; }
+button, input, select, textarea { font: inherit; color: inherit; }
 button, select { cursor: pointer; }
-button { color: inherit; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
-::selection { color: #0c2520; background: var(--accent); }
-svg { display: block; width: 20px; height: 20px; }
-.wrap { width: min(1380px, calc(100% - 96px)); margin-inline: auto; }
+button svg { pointer-events: none; }
+svg { display: block; width: 19px; height: 19px; }
+:focus-visible { outline: 2px solid var(--violet); outline-offset: 3px; }
+::selection { background: #e2d4ff; color: #3b266f; }
+.wrap { width: min(1360px, calc(100% - 92px)); margin-inline: auto; }
 .visually-hidden, .skip:not(:focus) {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-  border: 0;
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap; border: 0;
 }
-.skip:focus {
-  position: absolute;
-  z-index: 5;
-  top: 10px;
-  left: 12px;
-  padding: 12px 16px;
-  color: #102623;
-  background: var(--accent);
-}
+.skip:focus { position: absolute; z-index: 6; top: 10px; left: 12px; padding: 11px 16px; background: white; border-radius: 8px; }
 
-.topbar { border-bottom: 1px solid #202d33; }
-.topbar-inner { min-height: 63px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  justify-self: start;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: .075em;
-  white-space: nowrap;
-}
-.brand-mark { display: grid; place-items: center; width: 33px; height: 33px; color: var(--accent); border: 1px solid #35635e; border-radius: 8px; background: #142925; }
-.brand-mark svg { width: 21px; height: 21px; }
-.brand-divider { color: var(--accent); }
-.topbar nav { display: flex; gap: 27px; color: #b9c7cb; }
-.topbar nav a { text-decoration: none; font-size: 13px; font-weight: 650; white-space: nowrap; padding: 10px 2px; }
-.topbar nav a:hover { color: var(--accent); }
-.keys-button {
-  justify-self: end;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 7px 10px;
-  color: #b9c7cb;
-  background: #131c21;
-  border: 1px solid var(--line);
-  border-radius: 7px;
-  font-size: 12px;
-  white-space: nowrap;
-}
-.keys-button:hover { color: var(--text); background: var(--panel-hover); }
+.topbar { border-bottom: 1px solid #ffffffdc; background: #ffffff9c; backdrop-filter: blur(13px); }
+.topbar-inner { min-height: 62px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
+.brand { display: inline-flex; align-items: center; gap: 10px; justify-self: start; text-decoration: none; font-size: 14px; font-weight: 850; letter-spacing: .09em; white-space: nowrap; }
+.brand-mark { display: grid; place-items: center; width: 34px; height: 34px; color: #513290; border: 1px solid #cfbceb; border-radius: 12px; background: linear-gradient(145deg, #f2e2fd, #dfe5ff 68%, #e5f6f1); box-shadow: 0 2px 5px #7146a419; }
+.brand-mark svg { width: 22px; height: 22px; }
+.brand-accent { color: #6542ad; }
+.topbar nav { display: flex; gap: 29px; color: #514960; }
+.topbar nav a { text-decoration: none; padding: 10px 2px; font-size: 13px; font-weight: 700; white-space: nowrap; }
+.topbar nav a:hover { color: var(--plum); text-decoration: underline; text-underline-offset: 5px; }
+.keys-button { justify-self: end; display: inline-flex !important; gap: 6px; padding: 6px 10px; min-height: 32px; font-size: 12px; font-weight: 730; }
 .keys-button svg { width: 16px; height: 16px; }
 
-.intro { display: flex; justify-content: space-between; gap: 22px; align-items: end; padding: 38px 0 27px; }
-.intro-kicker { color: var(--accent); display: flex; align-items: center; gap: 9px; font-size: 12px; font-weight: 750; letter-spacing: .035em; margin-bottom: 10px; }
-.intro-kicker span { width: 17px; height: 1px; background: currentColor; }
-.intro h1 { font-size: clamp(34px, 4.15vw, 68px); font-weight: 830; line-height: 1.1; letter-spacing: -.072em; overflow-wrap: normal; word-break: keep-all; }
-.intro h1 em { font-style: normal; color: var(--accent); }
-.intro-copy { color: #afc0c6; font-size: 14px; line-height: 1.8; padding-bottom: 3px; word-break: keep-all; }
+.intro { padding: 33px 0 27px; }
+.intro h1 { color: #28243b; font-size: clamp(35px, 4.3vw, 66px); line-height: 1.07; letter-spacing: -.075em; font-weight: 850; word-break: keep-all; }
+.intro em { font-style: normal; color: #6340a7; background: linear-gradient(97deg, #7542a3, #5240a5 64%, #345d9e); background-clip: text; -webkit-text-fill-color: transparent; }
+.intro p { margin-top: 11px; color: #4f4b67; font-size: 14px; line-height: 1.65; word-break: keep-all; }
 
-.monitor-grid { display: grid; grid-template-columns: minmax(0, 1.9fr) minmax(295px, 1fr); gap: 14px; align-items: stretch; }
-.panel { min-width: 0; border-radius: 12px; border: 1px solid var(--line); overflow: hidden; background: var(--panel); }
-.panel-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 48px;
-  padding: 8px 12px 8px 15px;
-  gap: 8px;
-  border-bottom: 1px solid var(--line);
-}
-.panel-head h2 { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 750; white-space: nowrap; }
-.panel-head h2 svg { width: 17px; height: 17px; color: var(--accent); }
-.panel-actions { display: flex; align-items: center; gap: 10px; }
-.simulation-label { color: var(--muted); font-size: 11px; white-space: nowrap; }
-.viewport { position: relative; aspect-ratio: 2.16; background: #70545c; overflow: hidden; }
-#scene, #map { display: block; width: 100%; height: 100%; }
-#scene { position: absolute; inset: 0; }
-.viewport::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(0deg, #050b1460, transparent 20%);
-  pointer-events: none;
-}
+.studio-grid { display: grid; grid-template-columns: minmax(0, 1.92fr) minmax(300px, 1fr); gap: 15px; align-items: stretch; }
+.analysis-grid { display: grid; grid-template-columns: minmax(0, .84fr) minmax(0, 1.45fr); gap: 15px; margin-top: 15px; }
+.panel { min-width: 0; background: var(--surface); border: 1px solid #fff; border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; }
+.panel-head { display: flex; align-items: center; justify-content: space-between; min-height: 49px; gap: 8px; padding: 8px 13px 8px 16px; border-bottom: 1px solid var(--line-soft); }
+.panel-head h2 { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 820; white-space: nowrap; }
+.panel-head h2 svg { width: 18px; height: 18px; color: var(--violet); }
+.panel-actions { display: flex; align-items: center; gap: 9px; }
+.shot-panel { display: flex; flex-direction: column; }
+.scene-tag { display: inline-flex; align-items: center; gap: 6px; color: #545169; font-size: 11px; font-weight: 730; white-space: nowrap; }
+.scene-tag i { width: 6px; height: 6px; border-radius: 50%; background: #45946c; box-shadow: 0 0 0 3px #e5f6e9; }
+.viewport { position: relative; flex: 1 0 auto; aspect-ratio: 1.91; isolation: isolate; background: linear-gradient(#b4d9ee, #d3e2c2 52%, #bee39e); overflow: hidden; }
+#scene, #map { display: block; width: 100%; height: 100%; position: absolute; inset: 0; }
+.viewport::after { content: ""; z-index: 0; position: absolute; inset: 0; box-shadow: inset 0 -28px 44px -27px #2d3a3a66; pointer-events: none; }
 .corner-marks { position: absolute; z-index: 1; inset: 12px; pointer-events: none; }
-.corner-marks i { position: absolute; width: 13px; height: 13px; border-color: #fff9e5ad; border-style: solid; border-width: 0; }
-.corner-marks i:nth-child(1) { top: 0; left: 0; border-top-width: 1px; border-left-width: 1px; }
-.corner-marks i:nth-child(2) { top: 0; right: 0; border-top-width: 1px; border-right-width: 1px; }
-.corner-marks i:nth-child(3) { bottom: 0; left: 0; border-bottom-width: 1px; border-left-width: 1px; }
-.corner-marks i:nth-child(4) { bottom: 0; right: 0; border-bottom-width: 1px; border-right-width: 1px; }
-.scene-tag, .scene-lens {
-  position: absolute;
-  z-index: 1;
-  bottom: 17px;
-  padding: 6px 8px;
-  background: #101319db;
-  border: 1px solid #ffffff22;
-  border-radius: 5px;
-  color: #f5ece7;
-  white-space: nowrap;
-  font-size: 11px;
-  pointer-events: none;
-}
-.scene-tag { left: 20px; display: flex; align-items: center; gap: 6px; }
-.scene-tag i { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); }
-.scene-lens { right: 20px; font-family: var(--mono); }
+.corner-marks i { position: absolute; width: 15px; height: 15px; border: 0 solid #fff9; }
+.corner-marks i:nth-child(1) { top: 0; left: 0; border-width: 1px 0 0 1px; }
+.corner-marks i:nth-child(2) { top: 0; right: 0; border-width: 1px 1px 0 0; }
+.corner-marks i:nth-child(3) { bottom: 0; left: 0; border-width: 0 0 1px 1px; }
+.corner-marks i:nth-child(4) { bottom: 0; right: 0; border-width: 0 1px 1px 0; }
+.scene-overlay { position: absolute; z-index: 1; bottom: 16px; inset-inline: 17px; display: flex; justify-content: space-between; pointer-events: none; }
+.scene-overlay span { border: 1px solid #fff9; background: #fffdf0e8; border-radius: 6px; padding: 5px 8px; color: #403f46; box-shadow: 0 2px 6px #162c2530; font-size: 11px; font-weight: 800; }
+#scene-lens { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 .guide { position: absolute; z-index: 1; inset: 0; pointer-events: none; }
-.guide span { position: absolute; background: #fff9e58c; box-shadow: 0 0 2px #1c1214; }
+.guide span { position: absolute; background: #fff9; box-shadow: 0 0 2px #3a4145; }
 .guide span:nth-child(-n+2) { top: 0; bottom: 0; width: 1px; left: 33.333%; }
 .guide span:nth-child(2) { left: 66.666%; }
 .guide span:nth-child(n+3) { left: 0; right: 0; height: 1px; top: 33.333%; }
 .guide span:nth-child(4) { top: 66.666%; }
 
-.map-panel { display: flex; flex-direction: column; }
-.map-stage { position: relative; flex: 1; min-height: 150px; background: #10191e; }
-#map { position: absolute; inset: 0; }
-.segments { display: flex; padding: 2px; gap: 2px; border: 1px solid #2a3942; border-radius: 7px; background: #0c151a; }
-.segments button { min-width: 39px; border: 0; border-radius: 4px; background: transparent; padding: 4px 7px; color: #9dafb8; font-size: 11px; white-space: nowrap; }
-.segments button[aria-pressed="true"] { color: var(--accent); background: #1a3636; }
-.segments button:hover { color: var(--accent); }
-.map-legend {
-  display: flex;
-  gap: 12px;
-  position: absolute;
-  bottom: 11px;
-  left: 11px;
-  align-items: center;
-  pointer-events: none;
-  padding: 5px 6px;
-  border-radius: 4px;
-  background: #10191edf;
-  color: #bbcad0;
-  font-size: 10px;
-}
-.map-legend span { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
-.map-legend i { display: inline-block; flex: none; }
-.legend-camera { width: 7px; height: 7px; border: 1px solid var(--accent); background: var(--accent); border-radius: 2px; }
-.legend-subject { width: 7px; height: 7px; border-radius: 50%; background: var(--orange); }
-.legend-path { width: 13px; border-top: 1px dashed var(--accent); }
-.telemetry { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line); background: #141e23; }
-.telemetry > div { padding: 8px 12px; }
-.telemetry > div + div { border-left: 1px solid var(--line); }
-.telemetry dt { color: var(--muted); font-size: 10px; margin-bottom: 3px; white-space: nowrap; }
-.telemetry dd { color: #dce9e8; font: 600 15px/1.15 var(--mono); white-space: nowrap; }
-.telemetry small { color: #a8c3c5; font-size: 10px; }
-
-.transport { display: flex; gap: 9px; align-items: center; padding: 10px; margin-top: 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
-.tool-button, .speed-control {
-  display: inline-grid;
-  place-items: center;
-  flex: none;
-  background: #151f25;
-  border: 1px solid #2d3d46;
-  border-radius: 7px;
-  color: #bacbd0;
-}
-.tool-button:hover, .speed-control:hover { color: var(--text); border-color: #63817e; }
-.tool-button.square { width: 36px; height: 35px; padding: 0; }
-.panel-head .tool-button.square { width: 31px; height: 29px; }
-.tool-button svg { width: 16px; height: 16px; }
-.tool-button[aria-pressed="true"] { color: var(--accent); background: #1a3636; border-color: #477970; }
-.play-button {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  flex: none;
-  gap: 7px;
-  min-width: 89px;
-  height: 35px;
-  padding: 0 11px;
-  border: 1px solid #aeece2;
-  border-radius: 7px;
-  background: var(--accent);
-  color: #0c2824;
-  font-size: 12px;
-  font-weight: 850;
-}
-.play-button:hover { background: #bef6ed; }
+.tool-button, .speed-control { display: inline-grid; place-items: center; flex: none; border: 1px solid var(--line); background: #fcfaff; color: #51446b; border-radius: 8px; }
+.tool-button:hover, .speed-control:hover { border-color: #a998cd; background: #f3edf9; }
+.tool-button.square { width: 36px; height: 36px; padding: 0; }
+.tool-button.square svg { width: 17px; height: 17px; }
+.panel-head .tool-button.square { width: 33px; height: 31px; }
+.tool-button[aria-pressed="true"] { color: var(--plum); border-color: #b49ce2; background: #ede4fc; }
+.transport { display: flex; gap: 8px; align-items: center; padding: 10px 12px; border-top: 1px solid #fff; }
+.play-button { display: inline-flex; justify-content: center; align-items: center; gap: 6px; min-width: 88px; height: 36px; padding: 0 10px; border: 1px solid #7551b8; border-radius: 8px; background: linear-gradient(115deg, #7649bf, #5c44ad); color: #fff; white-space: nowrap; font-size: 12px; font-weight: 800; box-shadow: 0 3px 6px #633fa331; }
+.play-button:hover, .copy-button.primary:hover { background: #503284; }
 .play-button svg { width: 15px; height: 15px; }
 .seek-group { display: flex; gap: 10px; align-items: center; flex: 1; min-width: 0; padding-inline: 3px; }
-#seek { --progress: 0%; width: 100%; min-width: 0; height: 22px; margin: 0; appearance: none; cursor: pointer; background: transparent; }
-#seek::-webkit-slider-runnable-track { height: 4px; border-radius: 10px; background: linear-gradient(to right, var(--accent) var(--progress), #3b4c54 var(--progress)); }
-#seek::-webkit-slider-thumb { appearance: none; width: 13px; height: 13px; margin-top: -4.5px; border: 0; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 2px #132c2c; }
-#seek::-moz-range-track { height: 4px; border-radius: 10px; background: #3b4c54; }
-#seek::-moz-range-progress { height: 4px; background: var(--accent); }
-#seek::-moz-range-thumb { width: 13px; height: 13px; border: 0; border-radius: 50%; background: var(--accent); }
-#time { color: var(--muted); flex: none; min-width: 86px; text-align: right; white-space: nowrap; font: 11px/1 var(--mono); }
-#time b { color: #e6eeee; font-weight: 650; }
-.speed-control { position: relative; min-width: 61px; height: 35px; }
-.speed-control select { appearance: none; width: 100%; height: 100%; padding: 0 22px 0 9px; border: 0; border-radius: 7px; background: transparent; color: inherit; font: 12px/1 var(--mono); }
-.speed-control svg { width: 13px; height: 13px; pointer-events: none; position: absolute; right: 6px; top: 10px; }
+#seek { --progress: 0%; width: 100%; min-width: 0; height: 25px; margin: 0; appearance: none; cursor: pointer; background: transparent; }
+#seek::-webkit-slider-runnable-track { height: 4px; border-radius: 8px; background: linear-gradient(to right, #9867d3 var(--progress), #e5dbf0 var(--progress)); }
+#seek::-webkit-slider-thumb { appearance: none; width: 13px; height: 13px; margin-top: -4.5px; border: 0; border-radius: 50%; background: #7850bd; box-shadow: 0 0 0 2px #f2e8fa; }
+#seek::-moz-range-track { height: 4px; border-radius: 8px; background: #e5dbf0; }
+#seek::-moz-range-progress { background: #9867d3; height: 4px; }
+#seek::-moz-range-thumb { width: 13px; height: 13px; border: 0; border-radius: 50%; background: #7850bd; }
+#time { min-width: 81px; flex: none; text-align: right; color: var(--muted); white-space: nowrap; font: 11px/1 var(--mono); font-variant-numeric: tabular-nums; }
+#time b { color: var(--ink); }
+.speed-control { position: relative; min-width: 59px; height: 36px; }
+.speed-control select { appearance: none; width: 100%; height: 100%; padding: 0 21px 0 8px; border: 0; border-radius: 8px; background: transparent; font: 12px/1 var(--mono); }
+.speed-control svg { position: absolute; right: 6px; top: 10px; width: 14px; height: 14px; pointer-events: none; }
 
-.shot-note {
-  display: grid;
-  grid-template-columns: minmax(155px, .7fr) repeat(2, minmax(0, 1fr));
-  gap: 25px;
-  padding: 17px 19px;
-  margin-top: 10px;
-  border: 1px solid var(--line);
-  border-left: 2px solid #76c9ba;
-  border-radius: 10px;
-  background: #10181c;
-}
-.note-title { align-self: center; }
-#shot-category { color: var(--accent); font-size: 11px; font-weight: 760; margin-bottom: 4px; }
-#move-name { width: fit-content; font-size: 22px; font-weight: 830; letter-spacing: -.045em; word-break: keep-all; }
-.move-english { color: var(--muted); margin-top: 3px; font: 11px/1.4 var(--mono); }
-.note-text { align-self: center; border-left: 1px solid #2a3a42; padding-left: 20px; }
-.note-text h3 { color: #dce8e8; font-size: 12px; font-weight: 800; margin-bottom: 5px; }
-.note-text p { color: #aebfc5; font-size: 13px; line-height: 1.6; word-break: keep-all; overflow-wrap: anywhere; }
-.text-button { display: inline-flex; gap: 4px; align-items: center; margin-top: 6px; padding: 0; border: 0; background: transparent; color: var(--accent); font-size: 11px; font-weight: 700; }
-.text-button:hover { text-decoration: underline; text-underline-offset: 3px; }
-.text-button svg { width: 13px; height: 13px; }
-.prompt-jump { margin-top: 8px; text-decoration: none; }
+.setup { display: flex; flex-direction: column; }
+.setup-body { flex: 1; padding: 13px 17px 12px; display: flex; flex-direction: column; min-width: 0; }
+.setup-block { padding: 11px 0 14px; margin: 0; min-width: 0; border: 0; border-bottom: 1px solid var(--line-soft); }
+.shot-block { padding-top: 0; }
+.setup-block legend, .setup-label { display: flex; align-items: center; gap: 7px; padding: 0; margin-bottom: 8px; font-size: 13px; font-weight: 820; }
+.setup-label { width: fit-content; }
+.setup-icon { width: 27px; height: 27px; display: grid; place-items: center; border-radius: 8px; }
+.setup-icon svg { width: 15px; height: 15px; }
+.shot-color { color: #6945a9; background: #efe5fc; }
+.move-color { color: #38618d; background: #e3effb; }
+.action-color { color: #8a4e65; background: #f8e8ee; }
+.shot-controls { display: grid; grid-template-columns: minmax(0, 1.14fr) minmax(0, 1fr); gap: 8px; }
+.field { min-width: 0; display: grid; gap: 4px; color: var(--muted); font-size: 11px; font-weight: 700; }
+.select-shell { position: relative; min-width: 0; display: block; }
+.select-shell select { display: block; width: 100%; min-width: 0; height: 38px; appearance: none; border: 1px solid var(--line); border-radius: 8px; padding: 0 27px 0 9px; color: var(--ink); background: #fdfbff; font-size: 13px; font-weight: 730; text-overflow: ellipsis; }
+.select-shell select:hover { border-color: #b3a0d1; }
+.select-shell i { position: absolute; right: 7px; top: 50%; transform: translateY(-50%); pointer-events: none; color: #695b80; }
+.select-shell svg { width: 15px; height: 15px; }
+.field-detail { margin-top: 7px; color: #5b536c; font-size: 12px; line-height: 1.52; word-break: keep-all; overflow-wrap: anywhere; }
+.subtle-button { display: inline-flex; align-items: center; gap: 4px; padding: 5px 0; border: 0; background: transparent; color: #62469b; font-size: 12px; font-weight: 790; text-decoration: none; white-space: nowrap; }
+.subtle-button:hover { color: #3f2870; text-decoration: underline; text-underline-offset: 4px; }
+.subtle-button svg { width: 15px; height: 15px; }
+.related-button { margin-top: 2px; font-size: 11px; }
+.field select:disabled { cursor: default; opacity: .62; }
+.setup-footer { display: flex; align-items: end; flex: 1; min-height: 30px; padding-top: 7px; }
 
-.prompt-panel { margin-top: 10px; padding: 13px 15px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
-.prompt-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
-.prompt-header h2 { display: flex; align-items: center; gap: 8px; font-size: 14px; }
-.prompt-header h2 svg { width: 17px; height: 17px; color: var(--accent); }
-.prompt-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.prompt-languages button { min-height: 27px; padding-inline: 8px; }
-.copy-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 34px; min-width: 117px; padding: 5px 9px; border: 1px solid #4e8078; border-radius: 7px; background: #1a3636; color: var(--accent); font-size: 12px; font-weight: 760; }
-.copy-button:hover { background: #254745; border-color: var(--accent); }
-.copy-button svg, .card-copy svg { width: 16px; height: 16px; }
-.prompt-text { margin-top: 10px; padding: 11px 12px; border: 1px solid #2b414a; border-radius: 7px; background: #0d1519; color: #d4e3e6; font-size: 13px; line-height: 1.75; word-break: keep-all; overflow-wrap: anywhere; }
-.prompt-text::selection { background: var(--accent); color: #0c2520; }
-.copy-feedback { position: fixed; z-index: 3; right: max(14px, calc((100vw - 1380px) / 2)); bottom: 17px; max-width: calc(100vw - 28px); padding: 9px 13px; border: 1px solid #52867b; border-radius: 7px; background: #162e2c; color: var(--accent); box-shadow: 0 4px 16px #0007; font-size: 12px; font-weight: 700; pointer-events: none; }
+.map-panel { display: flex; flex-direction: column; }
+.map-stage { position: relative; flex: 1; min-height: 170px; background: #f5f3fd; }
+.segments { display: flex; align-items: center; gap: 2px; padding: 2px; border: 1px solid var(--line); border-radius: 7px; background: #f3effa; }
+.segments button { min-height: 24px; min-width: 39px; border: 0; border-radius: 5px; background: transparent; color: #5d566d; font-size: 11px; padding: 3px 7px; font-weight: 730; white-space: nowrap; }
+.segments button[aria-pressed="true"] { color: #4b3085; background: #fff; box-shadow: 0 1px 3px #6d4ca425; }
+.segments button:hover { color: var(--plum); }
+.map-legend { position: absolute; bottom: 9px; left: 10px; display: flex; align-items: center; gap: 10px; border-radius: 5px; padding: 5px 7px; color: #5c506e; background: #f9f7fdec; font-size: 10px; pointer-events: none; }
+.map-legend span { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+.map-legend i { display: inline-block; flex: none; }
+.legend-camera { width: 7px; height: 7px; background: #7247bd; border-radius: 2px; }
+.legend-subject { width: 7px; height: 7px; background: #cb6382; border-radius: 50%; }
+.legend-path { width: 13px; border-top: 1px dashed #765abc; }
+.telemetry { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line-soft); }
+.telemetry > div { padding: 8px 11px 10px; }
+.telemetry > div + div { border-left: 1px solid var(--line-soft); }
+.telemetry dt { color: var(--muted); font-size: 11px; font-weight: 660; margin-bottom: 3px; white-space: nowrap; }
+.telemetry dd { font: 700 15px/1.2 var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.telemetry small { color: #675c7c; font-size: 10px; }
+
+.prompt-list { padding: 1px 15px 6px; }
+.prompt-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; min-height: 65px; padding: 9px 0; }
+.prompt-row + .prompt-row { border-top: 1px solid var(--line-soft); }
+.prompt-content h3 { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; margin-bottom: 4px; }
+.prompt-content h3 i { width: 6px; height: 6px; border-radius: 50%; }
+.dot-shot { background: #9465cc; }
+.dot-move { background: #5a89c3; }
+.dot-action { background: #c36586; }
+.prompt-content p { color: #49445b; font-size: 12px; line-height: 1.62; word-break: keep-all; overflow-wrap: anywhere; }
+.copy-button { display: inline-flex; justify-content: center; align-items: center; gap: 5px; min-height: 32px; min-width: 63px; padding: 4px 8px; border: 1px solid #d8cbe9; border-radius: 7px; background: #faf7ff; color: #5b3b91; font-size: 11px; font-weight: 800; white-space: nowrap; }
+.copy-button:hover, .copy-button[data-copied], .card-copy[data-copied] { background: #eee4fa; border-color: #bfa9dc; }
+.copy-button svg, .card-copy svg { width: 14px; height: 14px; }
+.copy-button.primary { background: linear-gradient(115deg, #7649bf, #5e42aa); color: #fff; border-color: #7852b3; box-shadow: 0 2px 5px #6640a52d; }
+.copy-feedback { position: fixed; z-index: 4; right: max(13px, calc((100vw - 1360px) / 2)); bottom: 17px; max-width: calc(100vw - 26px); padding: 9px 13px; border: 1px solid #cfbae6; border-radius: 9px; background: #fffbff; color: #513480; box-shadow: var(--shadow); font-size: 12px; font-weight: 790; pointer-events: none; }
 .copy-source { position: fixed; top: 0; left: 0; width: 1px; height: 1px; padding: 0; border: 0; opacity: 0; font-size: 16px; pointer-events: none; }
-#copy-dialog-help { color: var(--muted); margin: 2px 0 10px; font-size: 13px; line-height: 1.6; }
-#copy-fallback { width: 100%; padding: 9px; resize: vertical; background: #0d1519; border: 1px solid #45626a; border-radius: 6px; color: var(--text); font: 16px/1.6 var(--sans); }
 
-.library { padding: 35px 0 43px; }
-.library-head { display: flex; align-items: center; justify-content: space-between; gap: 13px; }
-.library-title { display: flex; align-items: baseline; gap: 10px; }
-.library-title h2 { font-size: clamp(23px, 2.3vw, 34px); letter-spacing: -.045em; font-weight: 830; }
+.library { padding: 31px 0 37px; }
+.library-head, .library-title, .library-bar { display: flex; align-items: center; gap: 11px; }
+.library-head, .library-bar { justify-content: space-between; }
+.library-title h2 { font-size: clamp(23px, 2.4vw, 33px); letter-spacing: -.05em; font-weight: 850; white-space: nowrap; }
 #total-count { color: var(--muted); font: 11px/1 var(--mono); white-space: nowrap; }
-.search { display: flex; gap: 8px; align-items: center; min-width: min(245px, 48%); border: 1px solid var(--line); border-radius: 8px; padding: 0 10px; background: #121c22; color: #a4bac3; }
-.search:focus-within { border-color: var(--accent); }
+.search { display: flex; align-items: center; gap: 7px; width: min(29%, 261px); border: 1px solid #dacfec; border-radius: 8px; padding: 0 10px; background: #fffcff; color: #6b5b87; }
+.search:focus-within { border-color: var(--violet); }
 .search svg { width: 16px; height: 16px; flex: none; }
-.search input { width: 100%; min-width: 0; border: 0; padding: 9px 0; background: transparent; color: var(--text); font-size: 12px; outline: 0; }
-.search input::placeholder { color: #9cafb7; opacity: 1; }
-.filters { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 12px; }
-.filters button {
-  min-height: 32px;
-  padding: 4px 11px;
-  border: 1px solid #2c3b43;
-  border-radius: 6px;
-  background: #121a1f;
-  color: #aebfc5;
-  font-size: 12px;
-  white-space: nowrap;
-}
-.filters button:hover { color: var(--text); border-color: #5d7d79; }
-.filters button[aria-pressed="true"] { color: var(--accent); border-color: #457970; background: #172e2c; font-weight: 780; }
-.library-prompt { display: flex; align-items: center; justify-content: space-between; gap: 8px 14px; flex-wrap: wrap; margin: 0 0 9px; color: var(--muted); font-size: 11px; }
-.library-prompt label { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
-.library-prompt select { padding: 4px 6px; border: 1px solid var(--line); border-radius: 5px; background: #131f24; color: var(--text); }
+.search input { width: 100%; min-width: 0; border: 0; padding: 8px 0; background: transparent; font-size: 12px; outline: 0; }
+.search input::placeholder { color: #6b607e; opacity: 1; }
+.library-bar { margin: 13px 0 10px; }
+.tabs { display: flex; gap: 4px; padding: 3px; border: 1px solid #dfd6ef; border-radius: 9px; background: #fcf8ff8a; }
+.tabs button { min-height: 31px; border: 1px solid transparent; border-radius: 6px; padding: 3px 10px; background: transparent; color: #615570; font-size: 12px; font-weight: 780; white-space: nowrap; }
+.tabs button[aria-pressed="true"] { border-color: #d6c2ec; background: #eee6fa; color: #553488; }
+.tabs button:hover { color: #442471; }
+.library-language { display: flex; align-items: center; gap: 6px; white-space: nowrap; color: var(--muted); font-size: 11px; }
+.library-language select { height: 31px; font-size: 11px; padding-right: 23px; }
+.filters { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 10px; }
+.filters button { min-height: 28px; padding: 3px 9px; border: 1px solid var(--line); border-radius: 6px; color: #625571; background: #fffaffb8; font-size: 11px; white-space: nowrap; }
+.filters button:hover, .filters button[aria-pressed="true"] { color: #4c2d82; border-color: #bca4de; background: #eee4fa; }
 .card-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
-.move-item {
-  position: relative;
-  min-width: 0;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 43px;
-  align-items: stretch;
-  border: 1px solid #293940;
-  border-radius: 8px;
-  background: #121b20;
-}
-.move-item:hover { background: #1a292d; border-color: #577a76; }
-.move-item:has(.card[aria-pressed="true"]) { border-color: #72c9b9; background: #152e2d; }
-.card {
-  display: grid;
-  grid-template-columns: 37px minmax(0, 1fr) 15px;
-  gap: 9px;
-  align-items: center;
-  min-height: 63px;
-  padding: 8px 11px;
-  border: 0;
-  border-radius: 7px 0 0 7px;
-  background: transparent;
-  text-align: left;
-}
-.card:focus-visible, .card-copy:focus-visible { position: relative; z-index: 1; outline-offset: -3px; }
-.card-copy { display: grid; place-items: center; align-self: center; justify-self: center; width: 34px; height: 35px; padding: 0; border: 1px solid #34464e; border-radius: 6px; background: #172228; color: #a9c4c7; }
-.card-copy:hover, .card-copy[data-copied] { border-color: #5b968b; background: #21413b; color: var(--accent); }
-.card-icon { display: grid; place-items: center; width: 37px; height: 37px; border: 1px solid #32454b; border-radius: 7px; background: #1c2a30; color: #b4cfcd; }
-.card[aria-pressed="true"] .card-icon { border-color: #4d7c74; background: #22433f; color: var(--accent); }
-.card-names { min-width: 0; }
-.card strong { display: block; font-size: 13px; font-weight: 800; letter-spacing: -.022em; overflow-wrap: anywhere; }
-.card small { display: block; margin-top: 3px; color: #9eb3bc; font: 10px/1.2 var(--mono); overflow-wrap: anywhere; }
-.card-go { color: #869ca6; justify-self: end; }
-.card-go svg { width: 14px; height: 14px; }
-.card:hover .card-go, .card[aria-pressed="true"] .card-go { color: var(--accent); }
-.empty { border: 1px dashed var(--line); padding: 23px; border-radius: 8px; color: var(--muted); font-size: 14px; }
+.move-item { min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr) 42px; border: 1px solid #ded4ec; border-radius: 9px; background: #fffaffad; }
+.move-item:hover { background: #fff; border-color: #c1a8df; }
+.move-item:has(.card[aria-pressed="true"]) { border-color: #a884d4; background: #f3eafb; }
+.card { display: grid; grid-template-columns: 33px minmax(0, 1fr) 12px; gap: 8px; align-items: center; min-height: 59px; padding: 7px 8px; border: 0; border-radius: 8px 0 0 8px; background: transparent; text-align: left; }
+.card:focus-visible, .card-copy:focus-visible { outline-offset: -3px; }
+.card-icon { width: 33px; height: 33px; display: grid; place-items: center; border-radius: 8px; background: #eee7f9; color: #6b4b9d; }
+.card-icon svg { width: 17px; height: 17px; }
+.card strong { display: block; color: #34294a; font-size: 13px; font-weight: 790; letter-spacing: -.02em; overflow-wrap: anywhere; }
+.card small { color: #675d77; display: block; margin-top: 3px; font: 10px/1.22 var(--mono); overflow-wrap: anywhere; }
+.card-go { color: #8b72ad; }
+.card-go svg { width: 13px; height: 13px; }
+.card-copy { display: grid; place-items: center; align-self: center; justify-self: center; width: 33px; height: 35px; padding: 0; border: 1px solid #e1d7ed; border-radius: 7px; color: #69518b; background: #fcf8ff; }
+.card-copy:hover { border-color: #ba9ed9; background: #f0e4fa; }
+.empty { border: 1px dashed var(--line); border-radius: 8px; padding: 17px; color: var(--muted); font-size: 13px; }
+.empty button { margin-top: 4px; }
 
-.footer { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 16px 0 24px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; line-height: 1.65; }
+.footer { display: flex; justify-content: space-between; gap: 12px; border-top: 1px solid #dfd7eb; padding: 14px 0 23px; color: var(--muted); font-size: 11px; line-height: 1.65; }
 .footer summary { cursor: pointer; white-space: nowrap; }
-.footer ul { padding-left: 18px; }
+.footer ul { padding-left: 19px; }
 .footer a { text-underline-offset: 3px; }
-dialog { width: min(390px, calc(100% - 30px)); color: var(--text); background: var(--panel); border: 1px solid #4b686c; border-radius: 12px; padding: 16px 18px 18px; }
-dialog::backdrop { background: #03070ad9; }
+dialog { width: min(430px, calc(100% - 30px)); color: var(--ink); background: #fefaff; border: 1px solid #c1a9df; border-radius: 13px; padding: 16px 18px 18px; box-shadow: var(--shadow); }
+dialog::backdrop { background: #38264f65; backdrop-filter: blur(2px); }
 .dialog-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding-bottom: 10px; }
-.dialog-head h2 { font-size: 19px; }
+.dialog-head h2 { font-size: 18px; }
+#copy-dialog-help { margin-bottom: 9px; font-size: 13px; line-height: 1.6; color: var(--muted); }
+#copy-fallback { width: 100%; padding: 8px; resize: vertical; background: #fff; border: 1px solid var(--line); border-radius: 6px; color: var(--ink); font: 16px/1.55 var(--sans); }
 .key-list > div { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-top: 1px solid var(--line); font-size: 13px; }
-kbd { display: inline-block; min-width: 22px; padding: 3px 5px; text-align: center; border: 1px solid #39565b; border-radius: 4px; color: var(--accent); background: #18262d; font: 12px var(--mono); }
+kbd { display: inline-block; min-width: 22px; padding: 3px 5px; text-align: center; border: 1px solid #d4c5e8; border-radius: 4px; color: #57368d; background: #f4ebfb; font: 12px var(--mono); }
 
-@media (max-width: 1120px) {
-  .wrap { width: calc(100% - 60px); }
-  .intro h1 { font-size: clamp(34px, 4.65vw, 58px); }
-  .card { grid-template-columns: 32px minmax(0, 1fr) 11px; gap: 7px; padding-inline: 8px; }
-  .card-icon { width: 32px; height: 32px; }
+@media (max-width: 1110px) {
+  .wrap { width: calc(100% - 58px); }
+  .viewport { aspect-ratio: 1.73; }
+  .studio-grid { grid-template-columns: minmax(0, 1.7fr) minmax(285px, 1fr); }
+  .setup-body { padding-inline: 12px; }
+  .card { grid-template-columns: 27px minmax(0, 1fr); gap: 7px; }
+  .card-icon { width: 27px; height: 29px; }
+  .card-go { display: none; }
 }
 @media (max-width: 850px) {
-  .wrap { width: calc(100% - 40px); }
-  .intro { align-items: start; flex-direction: column; gap: 10px; padding-top: 27px; padding-bottom: 20px; }
-  .intro h1 { font-size: clamp(34px, 5.55vw, 50px); }
-  .intro-copy { padding: 0; }
-  .wide-only { display: none; }
-  .monitor-grid { gap: 10px; grid-template-columns: minmax(0, 1.55fr) minmax(245px, 1fr); }
-  .viewport { aspect-ratio: 1.65; }
-  .shot-note { gap: 13px; padding-inline: 13px; grid-template-columns: minmax(115px, .67fr) repeat(2, minmax(0, 1fr)); }
-  .note-text { padding-left: 11px; }
-  .telemetry > div { padding-inline: 8px; }
+  .wrap { width: calc(100% - 36px); }
+  .studio-grid { gap: 10px; grid-template-columns: minmax(0, 1.38fr) minmax(260px, 1fr); }
+  .analysis-grid { gap: 10px; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); margin-top: 10px; }
+  .transport { gap: 6px; padding-inline: 8px; }
+  .play-button { min-width: 71px; gap: 3px; padding-inline: 5px; }
+  .telemetry > div { padding-inline: 7px; }
+  .panel-head { padding-inline: 10px; }
   .card-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
-@media (max-width: 620px) {
+@media (max-width: 700px) {
   .wrap { width: calc(100% - 28px); }
-  .topbar-inner { min-height: 56px; grid-template-columns: 1fr auto auto; gap: 10px; }
+  .topbar-inner { min-height: 53px; gap: 12px; grid-template-columns: 1fr auto auto; }
   .brand { font-size: 12px; gap: 7px; }
   .brand-mark { width: 30px; height: 30px; }
-  .topbar nav a:first-child { display: none; }
   .topbar nav { gap: 10px; }
   .topbar nav a { font-size: 12px; }
-  .key-label { display: none; }
-  .intro { padding-top: 22px; }
-  .intro-kicker { margin-bottom: 7px; }
-  .intro h1 { font-size: clamp(27px, 7.25vw, 43px); }
-  .intro-copy { font-size: 13px; }
-  .monitor-grid { grid-template-columns: minmax(0, 1fr); }
-  .viewport { aspect-ratio: 1.78; }
-  .map-stage { flex: auto; height: clamp(150px, 43vw, 226px); }
-  .panel-head { min-height: 43px; padding: 6px 9px 6px 10px; }
-  .transport { display: grid; grid-template-columns: auto auto 1fr auto auto; gap: 6px; padding: 8px; }
-  .seek-group { grid-column: 1 / -1; grid-row: 2; padding: 1px 4px 0; }
-  #loop { grid-column: 4; }
-  .speed-control { grid-column: 5; }
-  .shot-note { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; padding: 12px; }
-  .note-title { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; }
-  #shot-category, .move-english { margin: 0; }
-  #move-name { font-size: 18px; }
-  .note-text { align-self: start; }
-  .note-text p { font-size: 12px; }
-  .prompt-jump { margin-top: 0; }
-  .prompt-panel { padding-inline: 11px; }
-  .prompt-text { font-size: 12px; }
-  .library { padding-top: 25px; }
-  .library-title { gap: 5px; }
-  .library-title h2 { font-size: 20px; }
-  .search { width: 48%; min-width: 0; }
+  .topbar nav a:first-child, .key-label { display: none; }
+  .intro { padding: 23px 0 17px; }
+  .intro h1 { font-size: clamp(27px, 7vw, 43px); }
+  .intro p { font-size: 12px; margin-top: 8px; }
+  .studio-grid, .analysis-grid { grid-template-columns: minmax(0, 1fr); }
+  .viewport { aspect-ratio: 1.60; }
+  .panel { border-radius: 14px; }
+  .panel-head { min-height: 43px; padding: 6px 9px 6px 11px; }
+  .setup-body { padding: 11px 13px 9px; }
+  .map-panel { grid-row: 2; }
+  .map-stage { height: 188px; flex: none; }
+  .prompt-list { padding-inline: 11px; }
+  .prompt-content p, .field-detail { font-size: 12px; }
+  .search { width: 46%; }
+  .library { padding-top: 24px; }
   .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
-  .move-item { grid-template-columns: minmax(0, 1fr) 37px; }
-  .card { min-height: 59px; padding-inline: 6px; gap: 6px; grid-template-columns: 26px minmax(0, 1fr); }
-  .card-icon { width: 26px; height: 30px; }
-  .card-icon svg { width: 17px; height: 17px; }
-  .card-go { display: none; }
-  .card-copy { width: 31px; height: 34px; }
+  .card { grid-template-columns: 25px minmax(0, 1fr); gap: 5px; padding-inline: 6px; }
+  .card-icon { width: 25px; height: 28px; }
   .card strong { font-size: 12px; }
   .card small { font-size: 9px; }
+  .move-item { grid-template-columns: minmax(0, 1fr) 36px; }
+  .card-copy { width: 30px; height: 34px; }
 }
-@media (max-width: 410px) {
+@media (max-width: 405px) {
   .topbar nav a[href="#prompt"] { display: none; }
-}
-@media (max-width: 370px) {
-  .move-item { grid-template-columns: minmax(0, 1fr) 35px; }
+  .prompt-header h2 { font-size: 12px; gap: 3px; }
+  .prompt-header .panel-actions { gap: 4px; }
+  .prompt-header .segments button { min-width: 0; padding-inline: 5px; }
+  .copy-button.primary { min-width: 0; padding-inline: 6px; }
+  .tabs button { font-size: 11px; padding-inline: 6px; }
+  .library-bar { flex-wrap: wrap; gap: 7px; }
+  .seek-group { gap: 4px; }
+  #time { min-width: 69px; font-size: 10px; }
   .card { grid-template-columns: minmax(0, 1fr); }
   .card-icon { display: none; }
 }
+@media (max-width: 495px) {
+  .transport { display: grid; grid-template-columns: auto auto 1fr auto auto; }
+  .seek-group { grid-column: 1 / -1; grid-row: 2; }
+  #loop { grid-column: 4; }
+  .speed-control { grid-column: 5; }
+}
+@media (max-width: 330px) {
+  .prompt-header { flex-wrap: wrap; }
+}
 @media (prefers-reduced-motion: reduce) {
+  body::after { animation: none; }
   *, *::before, *::after { scroll-behavior: auto !important; }
 }
 </style>
@@ -441,14 +331,14 @@ kbd { display: inline-block; min-width: 22px; padding: 3px 5px; text-align: cent
     <div class="wrap topbar-inner">
       <a class="brand" href="#top" aria-label="카메라 아틀라스 홈">
         <span class="brand-mark" data-icon="brand" aria-hidden="true"></span>
-        <span>CAMERA<span class="brand-divider"> / </span>ATLAS</span>
+        <span>MOTION<span class="brand-accent"> ATLAS</span></span>
       </a>
       <nav aria-label="페이지 메뉴">
         <a href="#studio">실습실</a>
         <a href="#prompt">프롬프트</a>
         <a href="#library">기법 목록</a>
       </nav>
-      <button class="keys-button" id="open-keys" type="button" aria-label="단축키">
+      <button class="tool-button keys-button" id="open-keys" type="button" aria-label="단축키">
         <span data-icon="keyboard" aria-hidden="true"></span><span class="key-label">단축키</span>
       </button>
     </div>
@@ -456,187 +346,211 @@ kbd { display: inline-block; min-width: 22px; padding: 3px 5px; text-align: cent
 
   <main class="wrap" id="top">
     <section class="intro" aria-labelledby="page-title">
-      <div>
-        <p class="intro-kicker"><span></span> 인터랙티브 촬영 가이드</p>
-        <h1 id="page-title">카메라 무브먼트 <em>아틀라스</em></h1>
-      </div>
-      <p class="intro-copy">같은 장면, 다른 카메라. 기법을 선택해 <br class="wide-only">프레임과 카메라의 움직임을 함께 보세요.</p>
+      <h1 id="page-title">카메라 무브먼트 <em>아틀라스</em></h1>
+      <p>샷, 카메라 무빙, 캐릭터 무빙을 조합해 한 장면으로 확인하세요.</p>
     </section>
 
     <section id="studio" class="studio" aria-label="카메라 기법 실습실">
-      <div class="monitor-grid">
+      <div class="studio-grid">
         <section class="panel shot-panel" aria-labelledby="shot-heading">
           <header class="panel-head">
             <h2 id="shot-heading"><span data-icon="viewfinder" aria-hidden="true"></span> 장면 미리보기</h2>
             <div class="panel-actions">
-              <span class="simulation-label">3D 시뮬레이션</span>
+              <span class="scene-tag"><i></i> 3D 꽃밭</span>
               <button class="tool-button square" id="grid-toggle" type="button" aria-label="구도 격자" aria-pressed="false" title="구도 격자 (G)">
                 <span data-icon="grid" aria-hidden="true"></span>
               </button>
             </div>
           </header>
           <div class="viewport" id="viewport">
-            <canvas id="scene" role="img" aria-label="가상 촬영 카메라로 본 3D 협곡 기지"></canvas>
+            <canvas id="scene" role="img" aria-label="촬영 카메라로 바라본 3D 꽃밭과 움직이는 고양이 캐릭터"></canvas>
             <div class="guide" id="guide" aria-hidden="true" hidden><span></span><span></span><span></span><span></span></div>
             <div class="corner-marks" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-            <div class="scene-tag" aria-hidden="true"><i></i> 협곡 기지</div>
-            <div class="scene-lens" id="scene-lens" aria-hidden="true">31 mm</div>
-          </div>
-        </section>
-
-        <section class="panel map-panel" aria-labelledby="map-heading">
-          <header class="panel-head">
-            <h2 id="map-heading"><span data-icon="path" aria-hidden="true"></span> 카메라 경로</h2>
-            <div class="segments" role="group" aria-label="경로를 보는 방향">
-              <button type="button" data-view="top" aria-pressed="true">평면</button>
-              <button type="button" data-view="side" aria-pressed="false">측면</button>
-            </div>
-          </header>
-          <div class="map-stage">
-            <canvas id="map" role="img" aria-label="카메라와 피사체의 위치, 이동 경로 및 시야각을 표시하는 도면"></canvas>
-            <div class="map-legend" aria-label="도면 범례">
-              <span><i class="legend-camera"></i>카메라</span>
-              <span><i class="legend-subject"></i>피사체</span>
-              <span><i class="legend-path"></i>이동 경로</span>
+            <div class="scene-overlay" aria-hidden="true">
+              <span id="scene-shot">풀 숏</span>
+              <span id="scene-lens">33 mm</span>
             </div>
           </div>
-          <dl class="telemetry">
-            <div><dt>누적 이동</dt><dd id="distance">0.00 <small>m</small></dd></div>
-            <div><dt>높이</dt><dd id="height">1.72 <small>m</small></dd></div>
-            <div><dt id="metric-label">수평 화각</dt><dd id="angle">60.3<small>°</small></dd></div>
-          </dl>
-        </section>
-      </div>
-
-      <div class="transport" role="group" aria-label="재생 제어">
-        <button class="play-button" id="play" type="button" aria-label="재생" title="재생 또는 일시정지 (스페이스)">
-          <span data-icon="play" aria-hidden="true"></span><span id="play-label">재생</span>
-        </button>
-        <button class="tool-button square" id="restart" type="button" aria-label="처음으로" title="처음으로 (R)">
-          <span data-icon="rewind" aria-hidden="true"></span>
-        </button>
-        <div class="seek-group">
-          <label class="visually-hidden" for="seek">재생 위치</label>
-          <input type="range" min="0" max="1000" value="0" id="seek">
-          <output id="time" for="seek"><b>0.0</b> / 5.5초</output>
-        </div>
-        <button class="tool-button square" id="loop" type="button" aria-pressed="false" aria-label="반복 재생" title="반복 재생 (L)">
-          <span data-icon="loop" aria-hidden="true"></span>
-        </button>
-        <label class="speed-control">
-          <span class="visually-hidden">재생 속도</span>
-          <select id="speed" aria-label="재생 속도" title="재생 속도">
-            <option value="0.25">0.25×</option>
-            <option value="0.5">0.5×</option>
-            <option value="1" selected>1×</option>
-            <option value="1.5">1.5×</option>
-            <option value="2">2×</option>
-          </select>
-          <span data-icon="chevron" aria-hidden="true"></span>
-        </label>
-      </div>
-
-      <section class="shot-note" aria-label="선택한 기법 해설">
-        <div class="note-title">
-          <p id="shot-category">직선 이동</p>
-          <h2 id="move-name" tabindex="-1">돌리 인</h2>
-          <p id="move-english" class="move-english">Dolly In</p>
-          <a class="text-button prompt-jump" href="#prompt" id="prompt-jump">프롬프트 보기 <span data-icon="arrow-down" aria-hidden="true"></span></a>
-        </div>
-        <div class="note-text">
-          <h3>카메라 동작</h3>
-          <p id="mechanics">렌즈를 고정하고 카메라 본체를 피사체 쪽으로 밀어 넣습니다.</p>
-        </div>
-        <div class="note-text">
-          <h3>화면에서 볼 점</h3>
-          <p id="observe">피사체가 커지는 동안 전경과 배경의 상대적인 크기와 위치가 달라집니다.</p>
-          <button id="related" class="text-button" type="button">줌 인 보기 <span data-icon="arrow-up-right" aria-hidden="true"></span></button>
-        </div>
-      </section>
-      <section class="prompt-panel" id="prompt" aria-labelledby="prompt-heading">
-        <header class="prompt-header">
-          <h2 id="prompt-heading"><span data-icon="prompt" aria-hidden="true"></span> AI 영상 프롬프트</h2>
-          <div class="prompt-actions">
-            <div class="segments prompt-languages" role="group" aria-label="복사할 프롬프트 언어">
-              <button type="button" data-lang="ko" aria-pressed="true">한국어</button>
-              <button type="button" data-lang="en" aria-pressed="false">English</button>
-            </div>
-            <button class="copy-button" id="copy-prompt" type="button">
-              <span data-icon="copy" aria-hidden="true"></span><span id="copy-label">프롬프트 복사</span>
+          <div class="transport" role="group" aria-label="재생 제어">
+            <button class="play-button" id="play" type="button" aria-label="재생" title="재생 또는 일시정지 (스페이스)">
+              <span data-icon="play" aria-hidden="true"></span><span id="play-label">재생</span>
             </button>
+            <button class="tool-button square" id="restart" type="button" aria-label="처음으로" title="처음으로 (R)">
+              <span data-icon="rewind" aria-hidden="true"></span>
+            </button>
+            <div class="seek-group">
+              <label class="visually-hidden" for="seek">재생 위치</label>
+              <input type="range" min="0" max="1000" value="0" id="seek">
+              <output id="time" for="seek"><b>0.0</b> / 5.5초</output>
+            </div>
+            <button class="tool-button square" id="loop" type="button" aria-pressed="false" aria-label="반복 재생" title="반복 재생 (L)">
+              <span data-icon="loop" aria-hidden="true"></span>
+            </button>
+            <label class="speed-control">
+              <span class="visually-hidden">재생 속도</span>
+              <select id="speed" aria-label="재생 속도" title="재생 속도">
+                <option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option>
+                <option value="1.5">1.5×</option><option value="2">2×</option>
+              </select>
+              <span data-icon="chevron" aria-hidden="true"></span>
+            </label>
           </div>
-        </header>
-        <p class="prompt-text" id="prompt-text"></p>
-      </section>
+        </section>
+
+        <section class="panel setup" aria-labelledby="setup-heading">
+          <header class="panel-head">
+            <h2 id="setup-heading"><span data-icon="sliders" aria-hidden="true"></span> 장면 설정</h2>
+            <button id="reset-setup" class="subtle-button" type="button">
+              <span data-icon="replay" aria-hidden="true"></span> 초기화
+            </button>
+          </header>
+          <div class="setup-body">
+            <fieldset class="setup-block shot-block">
+              <legend><span class="setup-icon shot-color" data-icon="viewfinder" aria-hidden="true"></span> 샷 · 프레이밍</legend>
+              <div class="shot-controls">
+                <label class="field">
+                  <span>시작 샷 크기</span>
+                  <span class="select-shell"><select id="shot-select" aria-describedby="shot-detail"></select><i data-icon="chevron" aria-hidden="true"></i></span>
+                </label>
+                <label class="field">
+                  <span>잡는 부위</span>
+                  <span class="select-shell"><select id="target-select" aria-describedby="shot-detail"></select><i data-icon="chevron" aria-hidden="true"></i></span>
+                </label>
+              </div>
+              <p class="field-detail" id="shot-detail"></p>
+            </fieldset>
+            <div class="setup-block">
+              <label class="setup-label" for="move-select"><span class="setup-icon move-color" data-icon="path" aria-hidden="true"></span> 카메라 무빙</label>
+              <span class="select-shell"><select id="move-select" aria-describedby="move-detail"></select><i data-icon="chevron" aria-hidden="true"></i></span>
+              <p class="field-detail" id="move-detail"></p>
+              <button class="subtle-button related-button" id="related" type="button" hidden></button>
+            </div>
+            <div class="setup-block">
+              <label class="setup-label" for="action-select"><span class="setup-icon action-color" data-icon="character" aria-hidden="true"></span> 캐릭터 무빙</label>
+              <span class="select-shell"><select id="action-select" aria-describedby="action-detail"></select><i data-icon="chevron" aria-hidden="true"></i></span>
+              <p class="field-detail" id="action-detail"></p>
+            </div>
+            <div class="setup-footer">
+              <a class="subtle-button prompt-link" href="#prompt">프롬프트 보기 <span data-icon="arrow-down" aria-hidden="true"></span></a>
+            </div>
+          </div>
+        </section>
+      </div>
       <p id="selection-status" class="visually-hidden" aria-live="polite"></p>
     </section>
 
+    <div class="analysis-grid">
+      <section class="panel map-panel" aria-labelledby="map-heading">
+        <header class="panel-head">
+          <h2 id="map-heading"><span data-icon="path" aria-hidden="true"></span> 움직임 경로</h2>
+          <div class="segments" role="group" aria-label="경로를 보는 방향">
+            <button type="button" data-view="top" aria-pressed="true">평면</button>
+            <button type="button" data-view="side" aria-pressed="false">측면</button>
+          </div>
+        </header>
+        <div class="map-stage">
+          <canvas id="map" role="img" aria-label="움직이는 카메라와 캐릭터의 위치 및 카메라 화각"></canvas>
+          <div class="map-legend" aria-label="도면 범례">
+            <span><i class="legend-camera"></i>카메라</span>
+            <span><i class="legend-subject"></i>캐릭터</span>
+            <span><i class="legend-path"></i>이동 경로</span>
+          </div>
+        </div>
+        <dl class="telemetry">
+          <div><dt>카메라 이동</dt><dd id="distance">0.00 <small>m</small></dd></div>
+          <div><dt id="metric-label">수평 화각</dt><dd id="angle">57.2<small>°</small></dd></div>
+          <div><dt title="캐릭터가 화면 세로 길이에서 차지하는 비율">세로 점유율</dt><dd id="coverage">—</dd></div>
+        </dl>
+      </section>
+
+      <section class="panel prompt-panel" id="prompt" aria-labelledby="prompt-heading">
+        <header class="panel-head prompt-header">
+          <h2 id="prompt-heading"><span data-icon="prompt" aria-hidden="true"></span> 영상 프롬프트</h2>
+          <div class="panel-actions">
+            <div class="segments" role="group" aria-label="프롬프트 언어">
+              <button type="button" data-lang="ko" aria-pressed="true">한국어</button>
+              <button type="button" data-lang="en" aria-pressed="false">English</button>
+            </div>
+            <button class="copy-button primary" id="copy-all" type="button" aria-label="전체 프롬프트 복사">
+              <span data-icon="copy" aria-hidden="true"></span><span data-copy-label>전체 복사</span>
+            </button>
+          </div>
+        </header>
+        <div class="prompt-list">
+          <article class="prompt-row">
+            <div class="prompt-content"><h3><i class="dot-shot"></i>샷 · 프레이밍</h3><p id="prompt-shot"></p></div>
+            <button class="copy-button" type="button" data-copy="shot" aria-label="샷 프롬프트 복사"><span data-icon="copy" aria-hidden="true"></span><span data-copy-label>복사</span></button>
+          </article>
+          <article class="prompt-row">
+            <div class="prompt-content"><h3><i class="dot-move"></i>카메라 무빙</h3><p id="prompt-move"></p></div>
+            <button class="copy-button" type="button" data-copy="move" aria-label="카메라 무빙 프롬프트 복사"><span data-icon="copy" aria-hidden="true"></span><span data-copy-label>복사</span></button>
+          </article>
+          <article class="prompt-row">
+            <div class="prompt-content"><h3><i class="dot-action"></i>캐릭터 무빙</h3><p id="prompt-action"></p></div>
+            <button class="copy-button" type="button" data-copy="action" aria-label="캐릭터 무빙 프롬프트 복사"><span data-icon="copy" aria-hidden="true"></span><span data-copy-label>복사</span></button>
+          </article>
+        </div>
+      </section>
+    </div>
+
     <section class="library" id="library" aria-labelledby="library-heading">
       <header class="library-head">
-        <div class="library-title">
-          <h2 id="library-heading">카메라 기법</h2>
-          <span id="total-count"></span>
-        </div>
+        <div class="library-title"><h2 id="library-heading">기법 목록</h2><span id="total-count"></span></div>
         <label class="search">
-          <span data-icon="search" aria-hidden="true"></span>
-          <span class="visually-hidden">기법 검색</span>
-          <input type="search" id="search" placeholder="기법 검색 · 돌리, zoom…" autocomplete="off">
+          <span data-icon="search" aria-hidden="true"></span><span class="visually-hidden">기법 검색</span>
+          <input type="search" id="search" placeholder="기법 검색 · 줌, 걷기…" autocomplete="off">
         </label>
       </header>
-      <div class="filters" id="filters" role="group" aria-label="기법 분류"></div>
-      <div class="library-prompt">
-        <p>카드의 복사 아이콘을 누르면 프롬프트가 복사됩니다.</p>
-        <label>복사 언어
-          <select id="library-language">
-            <option value="ko" selected>한국어</option>
-            <option value="en">English</option>
-          </select>
+      <div class="library-bar">
+        <div class="tabs" role="group" aria-label="기법 종류">
+          <button type="button" data-library="shot" aria-pressed="false">샷 · 프레이밍</button>
+          <button type="button" data-library="move" aria-pressed="true">카메라 무빙</button>
+          <button type="button" data-library="action" aria-pressed="false">캐릭터 무빙</button>
+        </div>
+        <label class="library-language">복사 언어
+          <span class="select-shell"><select id="library-language"><option value="ko" selected>한국어</option><option value="en">English</option></select><i data-icon="chevron" aria-hidden="true"></i></span>
         </label>
       </div>
+      <div class="filters" id="filters" role="group" aria-label="카메라 무빙 분류"></div>
       <div class="card-grid" id="cards"></div>
       <div class="empty" id="empty" hidden>
-        <p>일치하는 기법이 없습니다.</p>
-        <button class="text-button" id="clear-filters" type="button">전체 기법 보기</button>
+        <p>일치하는 기법이 없습니다.</p><button class="subtle-button" id="clear-filters" type="button">전체 기법 보기</button>
       </div>
       <p class="visually-hidden" id="result-status" aria-live="polite"></p>
     </section>
-    <noscript><p>3D 장면과 재생 컨트롤을 사용하려면 브라우저에서 JavaScript를 켜 주세요.</p></noscript>
 
+    <noscript><p>3D 장면과 재생 컨트롤을 사용하려면 브라우저에서 JavaScript를 켜 주세요.</p></noscript>
     <footer class="footer">
-      <p>3D 장면과 수치는 움직임을 비교하기 위한 촬영 예시입니다.</p>
+      <p>세로 점유율은 화면 높이에서 캐릭터가 차지하는 비율의 근사치입니다.</p>
       <details>
         <summary>참고 자료</summary>
         <ul>
-          <li><a href="https://www.adobe.com/uk/creativecloud/video/production/cinematography/camera-shots-and-angles.html" target="_blank" rel="noopener noreferrer">Adobe · 카메라 숏과 앵글</a></li>
-          <li><a href="https://www.nikonusa.com/learn-and-explore/c/tips-and-techniques/how-to-film-using-autofocus-rack-focus-and-manual-focus-techniques-for-video" target="_blank" rel="noopener noreferrer">Nikon · 랙 포커스</a></li>
-          <li><a href="https://www.dji.com/media-center/insights/elevate-cinematic-shots-with-gimbal-camera" target="_blank" rel="noopener noreferrer">DJI · 짐벌 촬영 기법</a></li>
-          <li><a href="https://app-store.dji.com/au/content/drone-videography-guide?set_region=AU" target="_blank" rel="noopener noreferrer">DJI · 드론 촬영 기법</a></li>
-          <li><a href="https://tiffen.com/pages/history-of-steadicam" target="_blank" rel="noopener noreferrer">Tiffen · 스테디캠</a></li>
+          <li><a href="https://www.adobe.com/uk/creativecloud/video/production/cinematography/camera-shots-and-angles.html" target="_blank" rel="noopener noreferrer">Adobe · 카메라 샷과 앵글</a></li>
+          <li><a href="https://www.nikonusa.com/learn-and-explore/photography-glossary" target="_blank" rel="noopener noreferrer">Nikon · 매크로 렌즈</a></li>
           <li><a href="https://help.runwayml.com/hc/en-us/articles/46749315925395-Camera-Terms-Prompts-Examples" target="_blank" rel="noopener noreferrer">Runway · 카메라 기법 프롬프트</a></li>
-          <li><a href="https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/video/video-gen-prompt-guide" target="_blank" rel="noopener noreferrer">Google Cloud · 영상 프롬프트 가이드</a></li>
+          <li><a href="https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/video/video-gen-prompt-guide" target="_blank" rel="noopener noreferrer">Google Cloud · 영상 프롬프트</a></li>
         </ul>
       </details>
     </footer>
   </main>
+
   <div id="copy-feedback" class="copy-feedback" hidden></div>
   <p id="copy-status" class="visually-hidden" role="status" aria-atomic="true"></p>
-
   <dialog id="copy-dialog" aria-labelledby="copy-dialog-title" aria-describedby="copy-dialog-help">
     <div class="dialog-head">
       <h2 id="copy-dialog-title">프롬프트 직접 복사</h2>
       <form method="dialog">
-        <button class="tool-button square" type="submit" aria-label="닫기" title="닫기"><span data-icon="close" aria-hidden="true"></span></button>
+        <button class="tool-button square" type="submit" aria-label="닫기"><span data-icon="close" aria-hidden="true"></span></button>
       </form>
     </div>
     <p id="copy-dialog-help">선택된 문장을 복사하세요. 터치 화면에서는 문장을 길게 눌러 복사할 수 있습니다.</p>
-    <textarea id="copy-fallback" readonly rows="5" aria-label="복사할 프롬프트"></textarea>
+    <textarea id="copy-fallback" readonly rows="7" aria-label="복사할 프롬프트"></textarea>
   </dialog>
-
   <dialog id="keys" aria-labelledby="keys-title">
     <div class="dialog-head">
       <h2 id="keys-title">키보드 단축키</h2>
       <form method="dialog">
-        <button class="tool-button square" type="submit" aria-label="닫기" title="닫기"><span data-icon="close" aria-hidden="true"></span></button>
+        <button class="tool-button square" type="submit" aria-label="닫기"><span data-icon="close" aria-hidden="true"></span></button>
       </form>
     </div>
     <dl class="key-list">
@@ -774,27 +688,27 @@ function move(id, category, name, english, icon, duration, mechanics, observe, f
 const moves = [
   move('lock', 'fixed', '고정 숏', 'Locked-off Shot', 'lock', 5.5,
     '삼각대 헤드와 렌즈를 고정하고 피사체만 프레임 안에서 움직이게 합니다.',
-    '로버가 이동해도 지평선과 배경 기지의 위치는 그대로입니다.',
+    '캐릭터가 이동해도 지평선과 배경의 위치는 그대로입니다.',
     t => look([0, 1.86, -10.3], [0, 1, 0], 29, { subject: [mix(-4.7, 4.9, ease(t)), 0, 0], heading: -PI / 2 }),
     { keywords: '스태틱 정지 정적 static tripod 삼각대' }),
   move('pan-left', 'turn', '팬 왼쪽', 'Pan Left', 'pan', 4.6,
     '카메라를 제자리에 두고 수평으로 왼쪽을 향해 돌립니다.',
-    '기지와 로버가 함께 오른쪽으로 흐르며 왼쪽 협곡이 프레임에 들어옵니다.',
+    '장면이 오른쪽으로 흐르며 꽃밭 왼쪽이 프레임에 들어옵니다.',
     t => orient(basePosition, rad(mix(27, -26, ease(t))), rad(-4)),
     { related: 'truck-left', keywords: '패닝 수평 회전' }),
   move('pan-right', 'turn', '팬 오른쪽', 'Pan Right', 'pan', 4.6,
     '카메라를 제자리에 두고 수평으로 오른쪽을 향해 돌립니다.',
-    '로버를 지나 오른쪽의 안테나와 절벽이 차례로 드러납니다.',
+    '캐릭터를 지나 오른쪽 꽃과 언덕이 차례로 드러납니다.',
     t => orient(basePosition, rad(mix(-26, 27, ease(t))), rad(-4)),
     { related: 'truck-right', keywords: '패닝 수평 회전' }),
   move('tilt-up', 'turn', '틸트 업', 'Tilt Up', 'tilt', 4.8,
     '고정된 위치에서 렌즈가 향하는 방향을 위로 돌립니다.',
-    '땅에서 로버, 기지의 상부 구조와 하늘로 시선이 올라갑니다.',
+    '땅에서 캐릭터와 구름을 향해 시선이 올라갑니다.',
     t => orient(basePosition, rad(5), rad(mix(-24, 21, ease(t))), 30),
     { view: 'side', related: 'pedestal-up', keywords: '상향 수직 회전' }),
   move('tilt-down', 'turn', '틸트 다운', 'Tilt Down', 'tilt', 4.8,
     '고정된 위치에서 렌즈가 향하는 방향을 아래로 돌립니다.',
-    '하늘과 능선에서 출발해 로버와 발밑의 지면으로 시선이 내려갑니다.',
+    '하늘에서 캐릭터와 발밑의 지면으로 시선이 내려갑니다.',
     t => orient(basePosition, rad(5), rad(mix(21, -23, ease(t))), 30),
     { view: 'side', related: 'pedestal-down', keywords: '하향 수직 회전' }),
   move('roll', 'turn', '롤', 'Camera Roll', 'roll', 5.5,
@@ -812,64 +726,64 @@ const moves = [
     t => whip(t, true), { view: 'side', related: 'tilt-up', keywords: '스위시 틸트 swish tilt 전환' }),
   move('pan-tilt', 'turn', '팬 + 틸트', 'Pan & Tilt', 'diagonal', 5.6,
     '제자리에서 좌우 회전과 상하 회전을 동시에 적용합니다.',
-    '화면 아래의 로버에서 오른쪽 위의 안테나로 시선이 대각선으로 이동합니다.',
+    '화면 아래의 꽃밭에서 오른쪽 위의 하늘로 시선이 이동합니다.',
     t => orient(basePosition, rad(mix(-13, 28, ease(t))), rad(mix(-15, 18, ease(t))), 32),
     { keywords: '복합 패닝 대각선' }),
 
   move('dolly-in', 'linear', '돌리 인', 'Dolly In / Push-in', 'dolly', 5.5,
     '초점거리를 고정하고 카메라 본체를 피사체 쪽으로 밀어 넣습니다.',
-    '로버가 커지는 동안 가까운 물체와 먼 배경의 크기 비율과 위치가 달라집니다.',
+    '캐릭터가 커지는 동안 가까운 꽃과 먼 언덕의 크기 비율과 위치가 달라집니다.',
     t => dolly(t), { related: 'zoom-in', keywords: '푸시 인 접근 전진 트랙 dolly forward' }),
   move('dolly-out', 'linear', '돌리 아웃', 'Dolly Out / Pull-out', 'dolly', 5.5,
     '초점거리를 고정하고 카메라 본체를 피사체에서 뒤로 뺍니다.',
-    '로버에서 멀어지며 주변 지형과 전경이 프레임에 들어옵니다.',
+    '캐릭터에서 멀어지며 주변 지형과 전경이 프레임에 들어옵니다.',
     t => dolly(t, true), { related: 'zoom-out', keywords: '풀 아웃 후진 후퇴 트랙' }),
   move('truck-left', 'linear', '트럭 왼쪽', 'Truck Left', 'truck', 5.3,
     '렌즈가 향하는 방향과 높이를 유지하며 카메라를 왼쪽으로 평행 이동합니다.',
-    '가까운 표지 기둥이 먼 기지보다 빠르게 화면을 가로지릅니다.',
+    '가까운 꽃이 먼 언덕보다 빠르게 화면을 가로지릅니다.',
     t => orient([mix(2.3, -2.3, ease(t)), 1.62, -7.6], 0, rad(-4), 28),
     { related: 'pan-left', keywords: '트러킹 측면 수평 좌측 slide crab' }),
   move('truck-right', 'linear', '트럭 오른쪽', 'Truck Right', 'truck', 5.3,
     '렌즈가 향하는 방향과 높이를 유지하며 카메라를 오른쪽으로 평행 이동합니다.',
-    '전경의 기둥과 배경의 기지가 서로 다른 속도로 흐르며 깊이가 보입니다.',
+    '전경의 꽃과 배경의 언덕이 서로 다른 속도로 흐르며 깊이가 보입니다.',
     t => orient([mix(-2.3, 2.3, ease(t)), 1.62, -7.6], 0, rad(-4), 28),
     { related: 'pan-right', keywords: '트러킹 측면 수평 우측 slide crab' }),
   move('pedestal-up', 'linear', '페데스털 업', 'Pedestal Up', 'lift', 5.3,
     '렌즈를 같은 방향으로 둔 채 카메라 전체를 수직으로 올립니다.',
-    '지평선이 거의 같은 위치에 머물고 로버의 윗면이 점차 보입니다.',
+    '지평선이 거의 같은 위치에 머물고 캐릭터의 위쪽 면이 보입니다.',
     t => orient([0, mix(.76, 3.65, ease(t)), -7.2], 0, rad(-7.5), 27),
     { view: 'side', related: 'tilt-up', keywords: '페데스탈 페데스털 피데스탈 높이 상승 vertical' }),
   move('pedestal-down', 'linear', '페데스털 다운', 'Pedestal Down', 'lift', 5.3,
     '렌즈를 같은 방향으로 둔 채 카메라 전체를 수직으로 내립니다.',
-    '로버의 윗면이 가려지고 바퀴와 지면이 두드러지는 시점으로 바뀝니다.',
+    '캐릭터의 발과 지면이 두드러지는 낮은 시점으로 바뀝니다.',
     t => orient([0, mix(3.65, .76, ease(t)), -7.2], 0, rad(-7.5), 27),
     { view: 'side', related: 'tilt-down', keywords: '페데스탈 페데스털 피데스탈 높이 하강 vertical' }),
   move('slider', 'linear', '슬라이더 리빌', 'Slider Reveal', 'reveal', 5.0,
     '짧은 레일을 따라 옆으로 미끄러지며 전경 뒤에 있던 피사체를 드러냅니다.',
-    '가까운 기둥이 프레임 옆으로 빠져나가며 로버가 나타납니다.',
+    '가까운 꽃이 프레임 옆으로 빠져나가며 뒤쪽이 드러납니다.',
     t => look([mix(-2.92, -.25, ease(t)), 1.48, -8.6], subjectPoint, 36),
     { related: 'truck-right', keywords: '슬라이드 가림막 reveal 전경' }),
 
   move('arc', 'curve', '아크', 'Arc Shot', 'arc', 6.2,
     '피사체를 바라보며 원호를 따라 이동합니다.',
-    '로버는 화면 중심에 머물고 배경이 옆으로 흘러 입체감이 커집니다.',
+    '캐릭터는 화면 중심에 머물고 배경이 옆으로 흘러 입체감이 커집니다.',
     t => arc(t, rad(105), rad(-52.5), 6.15, 1.62, 32),
     { related: 'orbit', keywords: '곡선 반원 선회 parallax 패럴랙스' }),
   move('orbit', 'curve', '360° 오빗', '360° Orbit', 'arc', 9.0,
     '일정한 반경을 유지하며 피사체 주위를 한 바퀴 돕니다.',
-    '로버의 앞과 옆, 뒷면이 모두 보이고 배경은 반대 방향으로 흐릅니다.',
+    '캐릭터의 앞과 옆, 뒷면이 모두 보이고 배경은 반대 방향으로 흐릅니다.',
     t => arc(t, TAU, 0, 5.15, 1.9, 28),
     { related: 'arc', keywords: '오르빗 원형 회전 선회' }),
   move('jib', 'curve', '지브 업', 'Jib / Boom Up', 'jib', 6.4,
     '짧은 암을 들어 올리며 카메라를 호를 따라 위쪽으로 보냅니다.',
-    '로버를 향한 조준을 유지하면서 바닥과 구조물의 윗면이 나타납니다.',
+    '캐릭터를 향하면서 꽃과 지면을 내려다보게 됩니다.',
     t => {
       const arm = rad(mix(-27, 52, ease(t)));
       return look([.7, 2.3 + 3.15 * Math.sin(arm), -7.2 + 3.15 * Math.cos(arm)], subjectPoint, 27);
     }, { view: 'side', related: 'pedestal-up', keywords: '집 붐 상승 boom' }),
   move('crane', 'curve', '크레인 다운', 'Crane Down', 'jib', 7.5,
     '높은 위치에서 호를 그리며 내려오고, 헤드는 피사체를 계속 향합니다.',
-    '세트 전체를 내려다보던 넓은 시점이 로버와 가까운 낮은 시점으로 이어집니다.',
+    '꽃밭을 내려다보던 시점이 캐릭터 눈높이에 가까워집니다.',
     t => {
       const arm = rad(mix(51, -20, ease(t)));
       return look([mix(-5.1, -.7, ease(t)), 4.3 + 7.6 * Math.sin(arm), -13.1 + 7.6 * Math.cos(arm)], [.2, .95, .3], 26);
@@ -877,15 +791,15 @@ const moves = [
 
   move('follow', 'tracking', '팔로우 숏', 'Follow Tracking', 'track', 6.5,
     '움직이는 피사체 뒤에서 속도와 방향을 맞춰 따라갑니다.',
-    '로버 뒤편의 거리와 프레이밍이 유지되는 동안 주변 풍경이 뒤로 흐릅니다.',
+    '캐릭터 뒤에서 거리를 유지하는 동안 주변 풍경이 뒤로 흐릅니다.',
     t => drive(t, 'follow'), { related: 'lead', keywords: '트래킹 뒤따르기 후방 chase tracking' }),
   move('lead', 'tracking', '리드 숏', 'Leading Shot', 'track', 6.5,
     '움직이는 피사체 앞에서 피사체를 바라보며 뒤로 물러납니다.',
-    '다가오는 로버의 정면을 일정한 크기로 유지할 수 있습니다.',
+    '다가오는 캐릭터의 정면을 일정한 크기로 유지할 수 있습니다.',
     t => drive(t, 'lead'), { related: 'follow', keywords: '리딩 역트래킹 앞에서 전면 reverse tracking' }),
   move('side-track', 'tracking', '사이드 트래킹', 'Side Tracking', 'truck', 6.5,
     '피사체 옆에서 같은 속도로 달리며 일정한 간격을 유지합니다.',
-    '로버의 옆모습은 프레임 안에 고정되고 배경이 옆으로 흐릅니다.',
+    '캐릭터의 옆모습을 유지하며 배경이 옆으로 흐릅니다.',
     t => drive(t, 'side'), { related: 'truck-right', keywords: '평행 트래킹 측면 동행' }),
   move('handheld', 'tracking', '핸드헬드', 'Handheld', 'wave', 5.9,
     '카메라를 손에 들고 걸으며 촬영하는 동작을 재현합니다.',
@@ -900,12 +814,12 @@ const moves = [
     '피사체에 다가가며 시점이 부드럽게 떠오르고 짧은 흔들림은 완화됩니다.',
     t => walk(t, 'steadicam'), { related: 'gimbal', keywords: '스테디 캠 안정화 보행 리그' }),
   move('pov', 'tracking', '이동 POV', 'Moving POV', 'viewfinder', 6.8,
-    '로버의 진행 방향을 향한 1인칭 시점으로 이동합니다.',
-    '카메라와 로버가 함께 움직여 관객이 통로를 직접 달리는 듯한 시야가 됩니다.',
+    '캐릭터의 시점에서 진행 방향을 바라봅니다.',
+    '걷기나 달리기와 함께 선택하면 꽃밭을 직접 지나가는 느낌을 볼 수 있습니다.',
     t => attached(t, true), { related: 'snorri', keywords: '주관 숏 1인칭 시점 point of view' }),
   move('snorri', 'tracking', '스노리캠', 'Snorricam', 'lock', 6.8,
-    '피사체에 붙인 리그가 피사체를 정면에서 바라보게 합니다. 이 예시에서는 로버에 장착합니다.',
-    '로버의 정면과 크기가 유지되고 배경이 로버의 회전과 이동에 따라 크게 움직입니다.',
+    '캐릭터 앞에 고정된 카메라가 캐릭터의 정면을 바라봅니다.',
+    '캐릭터의 크기는 안정적이고 배경이 회전과 이동에 따라 크게 움직입니다.',
     t => attached(t, false), { related: 'pov', keywords: '스노리 캠 바디 마운트 바디캠 body rig' }),
 
   move('zoom-in', 'optics', '줌 인', 'Optical Zoom In', 'zoom', 5.5,
@@ -918,22 +832,32 @@ const moves = [
     '화각이 넓어져 주변 풍경이 더 들어오고 장면 속 물체가 함께 작아집니다.',
     t => look(basePosition, subjectPoint, mix(68, 31, ease(t))),
     { related: 'dolly-out', keywords: '광학 축소 초점거리 wide optical' }),
+  move('micro-in', 'optics', '마이크로 줌 인', 'Micro Zoom In', 'zoom', 5.5,
+    '카메라 위치는 유지하고 렌즈의 초점거리를 약 8%만 늘립니다.',
+    '화면이 조금씩 조여지며 미세한 확대 차이가 보입니다.',
+    t => look(basePosition, subjectPoint, 31 * mix(1, 1.08, ease(t))),
+    { related: 'zoom-in', keywords: '마이크로줌 미세 확대 micro zoom 샷' }),
+  move('micro-out', 'optics', '마이크로 줌 아웃', 'Micro Zoom Out', 'zoom', 5.5,
+    '카메라 위치는 유지하고 렌즈의 초점거리를 약 8%만 줄입니다.',
+    '화면에 여백이 조금 생기며 구도가 완만하게 넓어집니다.',
+    t => look(basePosition, subjectPoint, 31 * mix(1, .92, ease(t))),
+    { related: 'zoom-out', keywords: '마이크로줌 미세 축소 micro zoom 샷' }),
   move('crash-zoom', 'optics', '크래시 줌', 'Crash / Snap Zoom', 'whip', 3.6,
     '초점거리를 짧은 시간에 크게 늘려 화면을 급히 당깁니다.',
-    '로버가 넓은 숏에서 급격히 클로즈업되며 시선이 즉시 집중됩니다.',
+    '프레임이 급격히 좁아지며 시선이 즉시 집중됩니다.',
     t => look(basePosition, subjectPoint, mix(28, 83, smooth((t - .37) / .18))),
     { related: 'zoom-in', keywords: '스냅 줌 급줌 급격 snap punch zoom' }),
   move('dolly-zoom-in', 'optics', '돌리 인 + 줌 아웃', 'Dolly Zoom · Push-in', 'dollyzoom', 6.4,
     '카메라를 가까이 보내면서 초점거리를 줄여 피사체 중심의 확대율을 맞춥니다.',
-    '로버의 중심부 크기는 거의 유지되고 뒤쪽 기지와 절벽이 멀어지는 듯 보입니다.',
+    '캐릭터의 중심부 크기는 거의 유지되고 뒤쪽 풍경이 멀어지는 듯 보입니다.',
     t => dolly(t, false, true), { related: 'dolly-zoom-out', keywords: '돌리 줌 버티고 히치콕 vertigo zolly' }),
   move('dolly-zoom-out', 'optics', '돌리 아웃 + 줌 인', 'Dolly Zoom · Pull-out', 'dollyzoom', 6.4,
     '카메라를 멀리 보내면서 초점거리를 늘려 피사체 중심의 확대율을 맞춥니다.',
-    '로버 중심부의 크기는 거의 유지되고 뒤쪽 기지와 절벽이 가까워지는 듯 보입니다.',
+    '캐릭터 중심부의 크기는 거의 유지되고 뒤쪽 풍경이 가까워지는 듯 보입니다.',
     t => dolly(t, true, true), { related: 'dolly-zoom-in', keywords: '돌리 줌 버티고 히치콕 vertigo zolly' }),
   move('rack', 'optics', '랙 포커스', 'Rack Focus', 'focus', 6.0,
-    '카메라와 화각을 고정하고 초점면을 가까운 로버에서 뒤쪽 기지로 옮깁니다.',
-    '로버가 흐려지는 동안 뒤쪽 기지의 창과 구조물이 선명해집니다.',
+    '카메라와 화각을 고정하고 초점면을 가까운 캐릭터에서 뒤쪽 꽃밭으로 옮깁니다.',
+    '캐릭터가 흐려지는 동안 뒤쪽의 꽃이 선명해집니다.',
     t => look([-1.8, 1.72, -5.8], [0, 1.14, 1.4], 37,
       { focus: 1 / mix(1 / 6.1, 1 / 15.2, smooth((t - .21) / .57)) }),
     { view: 'side', related: 'zoom-in', keywords: '랙포커스 랙 포커싱 초점 이동 focus pull' }),
@@ -944,18 +868,18 @@ const moves = [
     { related: 'zoom-in', keywords: '디지털 줌 크롭 후반 편집 확대 crop' }),
 
   move('drone-reveal', 'aerial', '드론 풀백 리빌', 'Drone Pullback Reveal', 'air', 7.4,
-    '로버를 조준한 채 뒤로 날아오르며 고도를 높입니다.',
-    '가까운 로버에서 출발해 기지와 협곡 지형을 한 프레임에 담습니다.',
+    '캐릭터를 조준한 채 뒤로 날아오르며 고도를 높입니다.',
+    '가까운 캐릭터에서 출발해 꽃밭과 언덕을 한 프레임에 담습니다.',
     t => look([mix(1.4, 7.6, ease(t)), mix(3, 16.5, ease(t)), mix(-4.4, -18.4, ease(t))], [0, .85, mix(0, 3.2, ease(t))], 26),
     { view: 'side', related: 'crane', keywords: '드론 후진 상승 항공 와이드' }),
   move('top-down', 'aerial', '탑다운 플라이오버', 'Top-down Flyover', 'overhead', 6.9,
     '렌즈를 지면에 수직으로 향한 채 일정한 높이로 통과합니다.',
-    '지평선이 사라지고 도로, 로버, 기지 배치가 평면 도안처럼 보입니다.',
+    '지평선이 사라지고 꽃밭과 오솔길의 배치가 평면처럼 보입니다.',
     t => orient([mix(-1.6, 1.25, ease(t)), 12.8, mix(-5.6, 9.3, ease(t))], 0, -PI / 2, 24),
     { related: 'drone-reveal', keywords: '오버헤드 버드아이 수직 하향 drone bird eye top down' }),
   move('fpv', 'aerial', 'FPV 플라이 스루', 'FPV Fly-through', 'air', 6.8,
-    '낮은 고도로 시설 입구를 통과하고 몸체를 기울여 방향을 바꿉니다.',
-    '가까운 문틀이 빠르게 스치고 기울어진 프레임에서 선회가 느껴집니다.',
+    '낮은 고도로 꽃 사이를 지나고 몸체를 기울여 방향을 바꿉니다.',
+    '전경이 빠르게 스치고 기울어진 프레임에서 선회가 느껴집니다.',
     t => {
       const travel = ease(t);
       const turn = smooth((travel - .53) / .47);
@@ -966,7 +890,7 @@ const moves = [
     }, { related: 'pov', keywords: '에프피브이 드론 통과 비행 1인칭' }),
   move('spiral', 'aerial', '드론 스파이럴', 'Spiral Orbit', 'arc', 8.0,
     '피사체 주위를 선회하면서 고도와 반경을 함께 늘립니다.',
-    '로버의 옆모습에서 시작해 그 위를 내려다보는 항공 시점으로 넘어갑니다.',
+    '캐릭터의 옆모습에서 시작해 그 위를 내려다보는 항공 시점으로 넘어갑니다.',
     t => {
       const travel = ease(t);
       const angle = rad(mix(-32, 246, travel));
@@ -974,8 +898,8 @@ const moves = [
       return look([Math.sin(angle) * radius, mix(2.3, 11.6, travel), -Math.cos(angle) * radius], subjectPoint, 26);
     }, { related: 'orbit', keywords: '드론 나선 선회 헬릭스 helix' }),
   move('cable', 'aerial', '케이블캠', 'Cablecam / Wirecam', 'cable', 7.1,
-    '공중에 설치된 와이어를 따라 카메라를 직선으로 이동시키며 로버를 조준합니다.',
-    '높은 시점에서 기지와 지면 구조가 가로로 흘러가는 모습을 볼 수 있습니다.',
+    '공중에 설치된 와이어를 따라 카메라를 직선으로 이동시키며 캐릭터를 조준합니다.',
+    '높은 시점에서 꽃밭과 오솔길이 가로로 흘러갑니다.',
     t => look([mix(-10.8, 9.8, ease(t)), mix(7.6, 6.25, ease(t)), -4.2], [0, .83, .3], 27),
     { related: 'top-down', keywords: '와이어캠 스카이캠 skycam 케이블 캠 와이어' }),
 ];
@@ -1103,6 +1027,14 @@ const cameraPrompts = {
     ko: '느린 광학 줌 아웃. 카메라 위치를 고정하고 렌즈의 초점거리를 부드럽게 줄여 화각을 넓힌다.',
     en: 'Slow optical zoom out. Keep the camera in place and smoothly decrease the focal length to widen the field of view.',
   },
+  'micro-in': {
+    ko: '마이크로 줌 인. 카메라 위치를 고정하고 렌즈의 초점거리를 약 8%만 천천히 늘려 화각을 미세하게 좁힌다.',
+    en: 'Subtle micro zoom in. Hold the camera in place and increase the focal length by about 8% for a barely perceptible tightening of the frame.',
+  },
+  'micro-out': {
+    ko: '마이크로 줌 아웃. 카메라 위치를 고정하고 렌즈의 초점거리를 약 8%만 천천히 줄여 화각을 미세하게 넓힌다.',
+    en: 'Subtle micro zoom out. Hold the camera in place and decrease the focal length by about 8% to gently open up the frame.',
+  },
   'crash-zoom': {
     ko: '크래시 줌 인. 카메라 위치를 고정하고 넓은 화각을 잠깐 유지한 뒤 렌즈의 초점거리를 급격히 늘린다. 좁아진 화각에서 멈춘다.',
     en: 'Crash zoom in. From a fixed camera position, hold a wide field of view briefly, then rapidly increase the focal length and hold the tighter framing.',
@@ -1145,22 +1077,156 @@ const cameraPrompts = {
   },
 };
 
-const ROCK = 1;
+const shots = [
+  { id: 'establishing', name: '익스트림 와이드', en: 'Extreme Wide Shot', distance: 16, lens: 26, height: 2.95, target: 'body', detail: '배경과 공간이 중심인 구도입니다.', ko: '시작 프레임은 익스트림 와이드 숏. 주변 공간을 넓게 담고 피사체는 프레임 안에 작게 배치한다.', prompt: 'Open on an extreme wide shot. Show the surrounding space with the subject small in the frame.' },
+  { id: 'wide', name: '와이드 숏', en: 'Wide Shot', distance: 10, lens: 29, height: 1.86, target: 'body', detail: '전신과 주변 환경이 함께 보입니다.', ko: '시작 프레임은 와이드 숏. 피사체의 전신과 이를 둘러싼 공간을 함께 담는다.', prompt: 'Open on a wide shot that shows the full subject and the space around it.' },
+  { id: 'full', name: '풀 숏', en: 'Full Shot', distance: 6.4, lens: 33, height: 1.5, target: 'body', detail: '귀부터 발끝까지 전신을 담습니다.', ko: '시작 프레임은 풀 숏. 피사체의 전신이 보이도록 위아래에 여백을 둔다.', prompt: 'Open on a full shot with the entire subject visible and breathing room above and below.' },
+  { id: 'medium', name: '미디엄 숏', en: 'Medium Shot', distance: 5.7, lens: 42, height: 1.53, target: 'chest', detail: '상체와 몸짓이 프레임의 중심입니다.', ko: '시작 프레임은 미디엄 숏. 상체와 동작이 읽히도록 피사체의 중간 높이부터 위쪽을 담는다.', prompt: 'Open on a medium shot from roughly mid-body up, emphasizing posture and gestures.' },
+  { id: 'medium-close', name: '미디엄 클로즈업', en: 'Medium Close-up', distance: 5.1, lens: 50, height: 1.5, target: 'head', detail: '가슴과 얼굴을 함께 잡아 표정이 드러납니다.', ko: '시작 프레임은 미디엄 클로즈업. 가슴 위를 담아 표정과 작은 몸짓이 또렷하게 보이게 한다.', prompt: 'Open on a medium close-up from the chest up, giving clear emphasis to expressions and small gestures.' },
+  { id: 'close', name: '클로즈업', en: 'Close-up', distance: 4.8, lens: 58, height: 1.62, target: 'face', detail: '얼굴이나 선택한 부위가 화면을 크게 채웁니다.', ko: '시작 프레임은 클로즈업. 선택한 부위가 프레임의 대부분을 채우도록 촘촘하게 잡는다.', prompt: 'Open on a close-up. Frame tightly so the chosen feature fills most of the image.' },
+  { id: 'extreme', name: '익스트림 클로즈업', en: 'Extreme Close-up', distance: 4.15, lens: 75, height: 1.55, target: 'eyes', detail: '눈이나 발처럼 작은 부위에 프레임을 좁힙니다.', ko: '시작 프레임은 익스트림 클로즈업. 선택한 작은 부위를 크게 담아 미세한 변화에 집중한다.', prompt: 'Open on an extreme close-up that isolates a small feature and makes subtle changes visible.' },
+  { id: 'macro', name: '매크로 디테일 숏', en: 'Macro Detail Shot', distance: 2.55, lens: 88, height: 1.6, target: 'eyes', aperture: .16, detail: '가까이 초점을 맞춰 작은 질감과 반사광을 보여 줍니다.', ko: '시작 프레임은 매크로 디테일 숏. 선택한 작은 부위의 표면 질감을 크게 잡고 얕은 심도로 주변을 부드럽게 흐린다.', prompt: 'Open on a macro detail shot. Magnify the texture of the chosen feature and let the surroundings soften with shallow depth of field.' },
+];
+const shotById = new Map(shots.map(shot => [shot.id, shot]));
+
+const targets = [
+  { id: 'auto', name: '샷 기본', en: 'Shot default' },
+  { id: 'body', name: '전신', en: 'Whole body', point: [0, 1.05, .14], ko: '전신의 중심을 기준으로 프레이밍한다.', prompt: 'Use the center of the body as the framing reference.' },
+  { id: 'chest', name: '가슴', en: 'Chest', point: [0, 1.26, -.42], bone: 'body', ko: '가슴을 프레이밍의 기준점으로 잡는다.', prompt: 'Frame around the chest.' },
+  { id: 'head', name: '머리와 어깨', en: 'Head and shoulders', point: [0, -.23, .13], bone: 'head', ko: '머리와 어깨를 프레임에 담는다.', prompt: 'Frame the head and shoulders.' },
+  { id: 'face', name: '얼굴', en: 'Face', point: [0, -.06, -.43], bone: 'head', ko: '얼굴 중심을 프레이밍의 기준점으로 잡는다.', prompt: 'Use the center of the face as the framing reference.' },
+  { id: 'eyes', name: '눈', en: 'Eyes', point: [.231, .01, -.50], bone: 'head', ko: '눈에 초점을 맞추고 눈 주변을 프레이밍한다.', prompt: 'Frame around the eye and keep the eye in focus.' },
+  { id: 'nose', name: '코', en: 'Nose', point: [0, -.144, -.59], bone: 'head', ko: '코에 초점을 맞추고 코 주변을 프레이밍한다.', prompt: 'Frame around the nose and keep the nose in focus.' },
+  { id: 'paw', name: '앞발', en: 'Front paw', bone: 'paw', ko: '앞발을 프레이밍의 기준점으로 잡는다.', prompt: 'Use the front paw as the framing reference.' },
+  { id: 'tail', name: '꼬리 끝', en: 'Tail tip', bone: 'tail', ko: '꼬리 끝을 프레이밍의 기준점으로 잡는다.', prompt: 'Use the tip of the tail as the framing reference.' },
+];
+const targetById = new Map(targets.map(target => [target.id, target]));
+
+const neutralFeet = [[-.34, .116, -.47], [.34, .116, -.47], [-.37, .116, .79], [.37, .116, .79]];
+
+function catPose(t, attributes = {}) {
+  const pulse = Math.sin(t * TAU * 1.6);
+  const blink = Math.max(0, 1 - Math.abs(t - .28) / .029, 1 - Math.abs(t - .81) / .032);
+  const pose = {
+    position: [0, 0, 0], heading: .12, lift: .012 * pulse, bodyPitch: 0, bodyRoll: 0,
+    headYaw: .045 * Math.sin(t * TAU), headPitch: 0, headRoll: 0,
+    tail: .18 * Math.sin(t * TAU), tailHeight: 0, eye: mix(1, .07, smooth(blink)),
+    breathing: 1 + .016 * pulse, feet: neutralFeet.map(foot => [...foot]),
+  };
+  return Object.assign(pose, attributes);
+}
+
+function gait(t, pace) {
+  const travel = smooth(t);
+  const vigor = smooth(t * 9) * smooth((1 - t) * 9);
+  const [cycles, stride, rise, range] = {
+    walk: [3.5, .28, .145, 3.85], trot: [4.9, .36, .23, 5.10], run: [6, .48, .36, 6.6],
+  }[pace];
+  const phase = travel * cycles * TAU;
+  const offsets = { walk: [0, .5, .72, .22], trot: [0, .5, .5, 0], run: [0, .15, .48, .66] }[pace];
+  const feet = neutralFeet.map(([x, y, z], index) => {
+    const legPhase = phase + offsets[index] * TAU;
+    return [x, y + rise * vigor * Math.max(0, Math.cos(legPhase)), z - stride * vigor * Math.sin(legPhase)];
+  });
+  const heading = -1.04;
+  const advance = range * (travel - .5);
+  return catPose(t, {
+    position: [-Math.sin(heading) * advance, pace === 'run' ? vigor * .155 * Math.max(0, Math.sin(phase)) : 0, -Math.cos(heading) * advance],
+    heading, feet, lift: vigor * (.038 + rise * .30 * Math.sin(phase * (pace === 'run' ? 1 : 2))),
+    bodyPitch: (pace === 'run' ? .15 : .042) * vigor * Math.cos(phase),
+    bodyRoll: .062 * vigor * Math.sin(phase), headYaw: .22,
+    headPitch: .06 * vigor * Math.sin(phase + .5), tail: .35 * Math.sin(phase * .63), tailHeight: pace === 'run' ? -.38 : 0,
+  });
+}
+
+function action(id, name, en, icon, duration, detail, ko, prompt, frame) {
+  return { id, name, en, icon, duration, detail, ko, prompt, frame };
+}
+
+const actions = [
+  action('idle', '제자리 호흡', 'Idle & Blink', 'lock', 4.4, '가볍게 호흡하고 자연스럽게 눈을 깜박입니다.',
+    '캐릭터가 제자리에 편하게 서서 호흡한다. 몸통이 작게 오르내리고 자연스러운 간격으로 눈을 깜박인다.',
+    'The character stands at ease, breathing gently with a small rise and fall of the torso and natural blinks.', t => catPose(t)),
+  action('walk', '걷기', 'Walk', 'track', 5.5, '네 발이 차례로 땅을 딛는 느린 걸음입니다.',
+    '캐릭터가 네 발을 순서대로 디디며 편안한 속도로 앞으로 걷는다. 몸통과 꼬리가 발걸음에 맞춰 가볍게 움직인다.',
+    'The character walks forward at an easy pace, placing its four feet in sequence. The torso and tail sway lightly with each stride.', t => gait(t, 'walk')),
+  action('trot', '경쾌한 속보', 'Trot', 'track', 4.8, '대각선 발 두 쌍이 번갈아 움직입니다.',
+    '캐릭터가 대각선으로 마주 보는 두 발을 함께 내딛으며 경쾌하게 속보한다. 몸이 일정한 박자로 가볍게 튄다.',
+    'The character trots briskly, alternating diagonal pairs of feet. The body bounces lightly in an even rhythm.', t => gait(t, 'trot')),
+  action('run', '달리기', 'Run', 'whip', 4.5, '보폭이 길어지고 몸이 지면에서 잠깐 뜹니다.',
+    '캐릭터가 보폭을 늘려 달린다. 앞발과 뒷발이 몸 아래로 모였다가 앞으로 뻗고, 발이 잠깐 지면에서 떨어진다.',
+    'The character breaks into a run with longer strides. The front and rear legs gather under the body, extend, and briefly leave the ground.', t => gait(t, 'run')),
+  action('jump', '점프 후 착지', 'Jump & Land', 'lift', 4.8, '몸을 낮췄다가 한 번 뛰어올라 착지합니다.',
+    '캐릭터가 낮게 웅크린 다음 한 번 뛰어오른다. 공중에서 발을 몸 쪽으로 당기고 착지할 때 관절을 굽혀 충격을 흡수한 뒤 몸을 펴고 멈춘다.',
+    'The character crouches, springs into a single jump, and tucks its feet in the air. It bends its joints on landing, straightens, and comes to rest.', t => {
+      const flight = clamp((t - .31) / .38);
+      const air = 4 * flight * (1 - flight);
+      const bend = .24 * Math.sin(PI * clamp((t - .08) / .24)) + .22 * Math.sin(PI * clamp((t - .69) / .19));
+      return catPose(t, { position: [.62 * smooth(flight), 1.24 * air, -.36 * smooth(flight)], lift: -.9 * bend, bodyPitch: -.2 * air, headPitch: .19 * air, tailHeight: .45 * air,
+        feet: neutralFeet.map(([x, y, z]) => [x, y + .36 * air, z + .30 * air * (z < 0 ? 1 : -1)]) });
+    }),
+  action('turn', '제자리 한 바퀴', 'Turn in Place', 'roll', 5.4, '짧게 발을 옮기며 한 바퀴 돕니다.',
+    '캐릭터가 짧게 발을 옮기며 제자리에서 천천히 한 바퀴 돈다. 몸통이 회전을 이끌고 꼬리가 뒤따라 움직인다.',
+    'The character takes small steps and turns once in place. The torso leads the turn and the tail follows with a slight delay.', t => {
+      const p = ease(t);
+      return catPose(t, { heading: .12 + TAU * p, tail: .43 * Math.sin(p * TAU),
+        feet: neutralFeet.map(([x, y, z], i) => [x, y + .13 * Math.sin(p * PI) * Math.max(0, Math.sin(p * TAU * 4 + i * 1.6)), z]) });
+    }),
+  action('look', '좌우 둘러보기', 'Look Around', 'pan', 5.4, '머리와 시선이 왼쪽, 오른쪽 순서로 움직입니다.',
+    '캐릭터가 발을 디딘 채 고개를 왼쪽으로 돌려 잠깐 살핀다. 이어 오른쪽을 보고 시선을 정면으로 돌린다.',
+    'The character keeps its feet planted, turns its head left and holds briefly, then looks right and returns its gaze forward.', t =>
+      catPose(t, { headYaw: .66 * smooth(t / .26) - 1.28 * smooth((t - .33) / .34) + .62 * smooth((t - .77) / .23), headRoll: .1 * Math.sin(t * TAU) })),
+  action('tail', '꼬리 흔들기', 'Tail Sway', 'wave', 5.2, '몸은 안정적으로 두고 꼬리만 부드럽게 흔듭니다.',
+    '캐릭터가 몸을 안정적으로 유지하면서 꼬리를 좌우로 부드럽게 흔든다. 꼬리 끝이 몸 쪽보다 조금 늦게 따라온다.',
+    'The character holds its body steady and gently sways its tail from side to side. The tip follows the motion with a slight delay.', t =>
+      catPose(t, { tail: .8 * Math.sin(t * TAU * 1.8), tailHeight: .11 * Math.sin(t * TAU * 2.4), headRoll: .055 * Math.sin(t * TAU) })),
+  action('sit', '앉기', 'Sit Down', 'tilt', 5.8, '뒷다리를 접어 앉고 앞발로 자세를 지탱합니다.',
+    '캐릭터가 앞발을 바닥에 둔 채 뒷다리를 접어 천천히 앉는다. 엉덩이를 낮추고 상체를 바로 세운 뒤 자세를 유지한다.',
+    'The character plants its front feet and slowly folds its rear legs. It lowers its hips, raises its chest, and holds the seated pose.', t => {
+      const p = smooth((t - .10) / .52);
+      const feet = neutralFeet.map(([x, y, z], i) => [x + (i % 2 ? .10 : -.10) * p, y, z - (i > 1 ? .24 : -.11) * p]);
+      return catPose(t, { feet, lift: -.25 * p, bodyPitch: -.36 * p, headPitch: .28 * p, tailHeight: -.51 * p });
+    }),
+  action('stretch', '앞발 뻗어 기지개', 'Forward Stretch', 'diagonal', 6.2, '앞발을 밀고 가슴을 낮췄다가 원래 자세로 돌아옵니다.',
+    '캐릭터가 앞발을 앞으로 밀어 가슴을 낮추고 엉덩이를 높여 기지개를 켠다. 잠시 유지한 후 천천히 원래 자세로 돌아온다.',
+    'The character slides its front paws forward, lowers its chest, and raises its hips in a stretch. It holds briefly and eases back to standing.', t => {
+      const p = smooth((t - .09) / .35) * (1 - smooth((t - .67) / .31));
+      return catPose(t, { lift: -.15 * p, bodyPitch: .44 * p, headPitch: -.22 * p, tailHeight: .42 * p,
+        feet: neutralFeet.map(([x, y, z], i) => [x, y, z - (i < 2 ? .64 * p : -.12 * p)]) });
+    }),
+  action('wave', '앞발 인사', 'Paw Wave', 'wave', 5.5, '한쪽 앞발을 들어 가볍게 흔들고 내려놓습니다.',
+    '캐릭터가 한쪽 앞발을 들어 올린다. 앞발을 좌우로 두어 번 가볍게 흔들어 인사한 뒤 바닥에 내려놓는다.',
+    'The character lifts one front paw, waves it gently from side to side a couple of times, then places it back on the ground.', t => {
+      const p = smooth((t - .12) / .2) * (1 - smooth((t - .78) / .20));
+      return catPose(t, { lift: -.033 * p, bodyRoll: -.14 * p, headRoll: .13 * p,
+        feet: neutralFeet.map(([x, y, z], i) => i === 1 ? [x + .16 * p * Math.sin(t * TAU * 4), y + .77 * p, z - .31 * p] : [x, y, z]) });
+    }),
+  action('sniff', '고개 숙여 냄새 맡기', 'Sniff', 'focus', 5.8, '고개와 코를 낮춰 두 번 가까이 살핍니다.',
+    '캐릭터가 고개와 코를 낮춘 채 짧게 두 번 냄새를 맡는다. 몸통과 발을 안정적으로 유지하고 천천히 고개를 다시 든다.',
+    'The character lowers its head and nose, takes two short sniffs with its feet planted, then slowly lifts its head again.', t => {
+      const p = smooth((t - .08) / .26) * (1 - smooth((t - .71) / .26));
+      return catPose(t, { lift: -.11 * p, bodyPitch: .24 * p, headPitch: p * (.42 + .075 * Math.sin(t * TAU * 4.5)),
+        headYaw: p * .13 * Math.sin(t * TAU), tailHeight: .20 * p });
+    }),
+];
+const actionById = new Map(actions.map(item => [item.id, item]));
+
+const MATTE = 0;
+const PLANT = 1;
 const GROUND = 2;
-const LIGHT = 3;
-const METAL = 0;
-
-function rgb(hex) {
-  return [0, 2, 4].map(offset => parseInt(hex.slice(offset, offset + 2), 16) / 255);
-}
-
-function tint(color, scale) {
-  return color.map(value => clamp(value * scale));
-}
-
-function shadeMix(a, b, amount) {
-  return a.map((value, i) => mix(value, b[i], amount));
-}
+const SHINE = 3;
+const CLOUD = 4;
+const IDENTITY = [1, 0, 0, 0, 1, 0, 0, 0, 1];
+const origin = [0, 0, 0];
+const add3 = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
+const sub3 = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+const mult3 = (a, scalar) => [a[0] * scalar, a[1] * scalar, a[2] * scalar];
+const dot3 = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+const cross3 = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+const normalized = a => mult3(a, 1 / (Math.hypot(...a) || 1));
+const mix3 = (a, b, t) => [mix(a[0], b[0], t), mix(a[1], b[1], t), mix(a[2], b[2], t)];
+const rgb = hex => [0, 2, 4].map(index => parseInt(hex.slice(index, index + 2), 16) / 255);
+const tint = (color, scale) => color.map(channel => clamp(channel * scale));
 
 function seededRandom(seed) {
   return () => {
@@ -1169,417 +1235,579 @@ function seededRandom(seed) {
   };
 }
 
-function normalized(vector) {
-  const length = Math.hypot(...vector) || 1;
-  return vector.map(value => value / length);
+function apply3(basis, [x, y, z]) {
+  return [basis[0] * x + basis[3] * y + basis[6] * z, basis[1] * x + basis[4] * y + basis[7] * z, basis[2] * x + basis[5] * y + basis[8] * z];
 }
 
-function normal(a, b, c) {
-  const u = b.map((value, i) => value - a[i]);
-  const v = c.map((value, i) => value - a[i]);
-  return normalized([u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]]);
+function multiplyBasis(a, b) {
+  return [...apply3(a, b.slice(0, 3)), ...apply3(a, b.slice(3, 6)), ...apply3(a, b.slice(6, 9))];
+}
+
+function rotationY(angle) {
+  const c = Math.cos(angle), s = Math.sin(angle);
+  return [c, 0, -s, 0, 1, 0, s, 0, c];
+}
+
+function rotationX(angle) {
+  const c = Math.cos(angle), s = Math.sin(angle);
+  return [1, 0, 0, 0, c, s, 0, -s, c];
+}
+
+function rotationZ(angle) {
+  const c = Math.cos(angle), s = Math.sin(angle);
+  return [c, s, 0, -s, c, 0, 0, 0, 1];
+}
+
+function scaleBasis([x, y, z]) { return [x, 0, 0, 0, y, 0, 0, 0, z]; }
+const transformPoint = (bone, point) => add3(bone.origin, apply3(bone.basis, point));
+
+function frameFromZ(normal) {
+  const ref = Math.abs(normal[1]) > .93 ? [0, 0, 1] : [0, 1, 0];
+  const x = normalized(cross3(ref, normal));
+  return [...x, ...cross3(normal, x), ...normal];
+}
+
+function yAlong(direction, length) {
+  const y = normalized(direction);
+  const x = normalized(cross3(y, Math.abs(y[2]) < .9 ? [0, 0, 1] : [1, 0, 0]));
+  return [...x, ...mult3(y, length), ...cross3(x, y)];
 }
 
 class Mesh {
   vertices = [];
 
-  tri(a, b, c, color, material = METAL, alpha = 1) {
-    const n = normal(a, b, c);
-    for (const point of [a, b, c]) this.vertices.push(...point, ...n, ...color, alpha, material);
+  tri(a, b, c, color, material = MATTE, alpha = 1, normals) {
+    const face = normals || Array(3).fill(normalized(cross3(sub3(b, a), sub3(c, a))));
+    [a, b, c].forEach((point, index) => this.vertices.push(...point, ...face[index], ...color, alpha, material));
   }
 
-  quad(a, b, c, d, color, material, alpha) {
-    this.tri(a, b, c, color, material, alpha);
-    this.tri(a, c, d, color, material, alpha);
-  }
+  data() { return new Float32Array(this.vertices); }
+}
 
-  data() {
-    return new Float32Array(this.vertices);
+function ellipsoid(mesh, center, size, color, options = {}) {
+  const { basis = IDENTITY, material = MATTE, steps = 12, rings = 8 } = options;
+  const surface = Array.from({ length: rings + 1 }, (_, row) => {
+    const angle = -PI / 2 + PI * row / rings;
+    return Array.from({ length: steps }, (_, column) => {
+      const theta = column * TAU / steps;
+      const unit = [Math.cos(angle) * Math.cos(theta), Math.sin(angle), Math.cos(angle) * Math.sin(theta)];
+      return {
+        point: add3(center, apply3(basis, unit.map((value, index) => value * size[index]))),
+        normal: normalized(apply3(basis, unit.map((value, index) => value / size[index]))),
+      };
+    });
+  });
+  const triangle = (a, b, c) => mesh.tri(a.point, b.point, c.point, color, material, 1, [a.normal, b.normal, c.normal]);
+  for (let row = 0; row < rings; row++) {
+    for (let i = 0; i < steps; i++) {
+      const next = (i + 1) % steps;
+      const [a, b, c, d] = [surface[row][i], surface[row + 1][i], surface[row + 1][next], surface[row][next]];
+      if (row > 0) triangle(a, b, d);
+      if (row < rings - 1) triangle(d, b, c);
+    }
   }
 }
 
-function turnY([x, y, z], angle) {
-  const s = Math.sin(angle);
-  const c = Math.cos(angle);
-  return [x * c + z * s, y, z * c - x * s];
-}
-
-function offset(point, origin) {
-  return point.map((value, index) => value + origin[index]);
-}
-
-function box(mesh, center, size, color, angle = 0, material = METAL) {
-  const [x, y, z] = size.map(value => value / 2);
-  const corners = [[-x, -y, -z], [x, -y, -z], [x, -y, z], [-x, -y, z],
-    [-x, y, -z], [x, y, -z], [x, y, z], [-x, y, z]]
-    .map(point => offset(turnY(point, angle), center));
-  const faces = [[0, 1, 2, 3], [4, 7, 6, 5], [0, 4, 5, 1], [3, 2, 6, 7], [0, 3, 7, 4], [1, 5, 6, 2]];
-  const faceTones = [.84, 1.03, .98, .88, .96, 1.01];
-  faces.forEach(([a, b, c, d], i) => mesh.quad(corners[a], corners[b], corners[c], corners[d], tint(color, faceTones[i]), material));
-}
-
-function ring(mesh, from, to, radiusFrom, radiusTo, color, sides = 10, material = METAL) {
-  const direction = normalized(to.map((value, i) => value - from[i]));
-  const axis = Math.abs(direction[1]) > .85 ? [1, 0, 0] : [0, 1, 0];
-  const right = normal([0, 0, 0], axis, direction);
-  const up = normal([0, 0, 0], direction, right);
-  const rim = (point, radius, theta) => point.map((value, i) =>
-    value + radius * (right[i] * Math.cos(theta) + up[i] * Math.sin(theta)));
-  for (let i = 0; i < sides; i++) {
-    const theta = i * TAU / sides;
-    const next = (i + 1) * TAU / sides;
-    const a = rim(from, radiusFrom, theta);
-    const b = rim(from, radiusFrom, next);
-    const c = rim(to, radiusTo, next);
-    const d = rim(to, radiusTo, theta);
-    mesh.quad(a, b, c, d, color, material);
-    if (radiusFrom > 0) mesh.tri(from, b, a, tint(color, .88), material);
-    if (radiusTo > 0) mesh.tri(to, d, c, tint(color, 1.03), material);
+function tube(mesh, points, radii, color, sides = 6, material = MATTE) {
+  const rings = points.map((point, i) => {
+    const tangent = normalized(sub3(points[Math.min(i + 1, points.length - 1)], points[Math.max(0, i - 1)]));
+    const frame = frameFromZ(tangent);
+    return Array.from({ length: sides }, (_, j) => {
+      const angle = j * TAU / sides;
+      const normal = apply3(frame, [Math.cos(angle), Math.sin(angle), 0]);
+      return { point: add3(point, mult3(normal, radii[i])), normal };
+    });
+  });
+  const triangle = (a, b, c, tint) => mesh.tri(a.point, b.point, c.point, tint, material, 1, [a.normal, b.normal, c.normal]);
+  for (let i = 1; i < rings.length; i++) {
+    const tint = typeof color === 'function' ? color((i - .5) / (rings.length - 1)) : color;
+    for (let j = 0; j < sides; j++) {
+      const next = (j + 1) % sides;
+      triangle(rings[i - 1][j], rings[i - 1][next], rings[i][j], tint);
+      triangle(rings[i - 1][next], rings[i][next], rings[i][j], tint);
+    }
   }
+}
+
+const groundHeight = (x, z) => {
+  const spread = smooth((Math.hypot(x * 1.15, z * .55) - 6) / 14);
+  return -.028 + spread * (.66 + .85 * Math.sin(x * .16 + z * .19) + .39 * Math.cos(z * .29 - x * .12));
+};
+const pathCenter = z => .9 * Math.sin(z * .21) + Math.max(0, z - 6) * .15;
+
+function buildTerrain() {
+  const mesh = new Mesh();
+  const grass = rgb('a5d279');
+  const honey = rgb('e6e8a7');
+  const random = seededRandom(24);
+  const step = 1.4;
+  for (let x = -63; x < 63; x += step) {
+    for (let z = -63; z < 63; z += step) {
+      const patch = .24 + .20 * Math.sin(x * .44 + z * .64) + .10 * random();
+      const color = mix3(grass, honey, patch);
+      const a = [x, groundHeight(x, z), z];
+      const b = [x, groundHeight(x, z + step), z + step];
+      const c = [x + step, groundHeight(x + step, z + step), z + step];
+      const d = [x + step, groundHeight(x + step, z), z];
+      mesh.tri(a, b, c, color, GROUND);
+      mesh.tri(a, c, d, color, GROUND);
+    }
+  }
+  return mesh;
+}
+
+const petalPalette = ['f791bb', 'a9a5f9', '80c9f0', 'fadb80', 'fff3eb', 'ffad98', 'e2b4f2'].map(rgb);
+const greens = ['72aa62', '79b66c', 'a5ca62', '539758', '8bb962'].map(rgb);
+
+function blossom(mesh, x, z, height, size, turn, palette, steps = 7) {
+  const ground = groundHeight(x, z);
+  const tilt = .23 + .09 * Math.sin(turn * 7);
+  const bend = [Math.sin(turn) * height * .21, 0, Math.cos(turn) * height * .19];
+  const center = [x + bend[0], ground + height, z + bend[2]];
+  tube(mesh, [[x, ground, z], [x + bend[0] * .28, ground + height * .44, z + bend[2] * .29], center],
+    [size * .085, size * .079, size * .052], greens[1], 5, PLANT);
+  for (const side of [-1, 1]) {
+    const level = side === 1 ? .64 : .35;
+    const leaf = [x + bend[0] * level + side * size * .35, ground + height * level, z + bend[2] * level];
+    const basis = multiplyBasis(rotationY(turn * .7), rotationZ(side * .65));
+    ellipsoid(mesh, leaf, [size * .56, size * .20, size * .095], greens[side + 1], { basis, material: PLANT, steps: 5, rings: 4 });
+  }
+  const facing = normalized([.5 * Math.sin(turn), .48 + tilt, -.64 * Math.cos(turn * .29)]);
+  const rotation = frameFromZ(facing);
+  const petals = 5 + (palette % 3);
+  for (let i = 0; i < petals; i++) {
+    const angle = turn + i * TAU / petals;
+    const axis = apply3(rotation, [Math.cos(angle), Math.sin(angle), .16]);
+    const tangential = apply3(rotation, [-Math.sin(angle), Math.cos(angle), 0]);
+    const normal = normalized(cross3(axis, tangential));
+    const petal = add3(center, mult3(axis, size * .59));
+    const color = tint(petalPalette[palette], .97 + .05 * Math.cos(i * 2.5));
+    ellipsoid(mesh, petal, [size * .61, size * .29, size * .16], color, {
+      basis: [...normalized(axis), ...tangential, ...normal], material: PLANT, steps, rings: steps > 8 ? 6 : 4,
+    });
+  }
+  ellipsoid(mesh, add3(center, mult3(facing, size * .15)), [size * .34, size * .34, size * .21], rgb('f8b74f'),
+    { basis: rotation, material: PLANT, steps, rings: 5 });
+}
+
+function buildMeadow() {
+  const general = new Mesh();
+  const shadow = new Mesh();
+  const random = seededRandom(11624);
+  const groundHills = ['b2d18b', 'b4d99b', 'a2cdab', 'b9dca2', 'c5d5a7', '93c492'].map(rgb);
+  for (let i = 0; i < 25; i++) {
+    const angle = i * TAU / 25;
+    const distance = mix(19, 54, random());
+    const spot = [Math.sin(angle) * distance, -1.7, Math.cos(angle) * distance];
+    ellipsoid(general, spot, [mix(4.2, 11, random()), mix(2.5, 5.8, random()), mix(5.8, 12.5, random())], groundHills[i % groundHills.length], { steps: 20, rings: 10, material: PLANT });
+  }
+  const cloudColors = ['fff1ec', 'fff7ef', 'f2e3f0', 'fbe9ed'].map(rgb);
+  for (const [x, y, z, scale] of [[-12, 6.25, 35, 1], [12, 8.05, 44, 1.13]]) {
+    const puffs = [[-4.1, -.57, .9, 2.65], [-2.3, .3, -.6, 2.95], [0, 1.05, -.7, 3.50],
+      [1.9, .2, -.4, 2.90], [3.8, -.3, .3, 2.15], [-.4, -.37, -1.65, 2.44]];
+    for (const [px, py, pz, breadth] of puffs) {
+      ellipsoid(general, [x + px * scale, y + py * scale, z + pz],
+        [breadth * scale, breadth * .55 * scale, breadth * .68], cloudColors[0], { steps: 22, rings: 12, material: CLOUD });
+    }
+  }
+  for (let group = 0; group < 14; group++) {
+    const angle = group * TAU / 14 + .064;
+    const dist = mix(31, 62, random());
+    const height = mix(8, 25.5, random());
+    const center = [Math.sin(angle) * dist, height, Math.cos(angle) * dist];
+    const side = [Math.cos(angle), 0, -Math.sin(angle)];
+    for (let puff = 0; puff < 6; puff++) {
+      const breadth = mix(2.7, 5.6, random());
+      const offset = (puff - 2.5) * 1.82;
+      const point = add3(add3(center, mult3(side, offset)), [0, mix(-1.1, 2.8, random()) * (1 - .12 * Math.abs(puff - 2.5)), mix(-2.3, 2.3, random())]);
+      ellipsoid(general, point, [breadth, breadth * mix(.49, .69, random()), breadth * .82],
+        cloudColors[(puff + group) % cloudColors.length], { steps: 18, rings: 10, material: CLOUD });
+    }
+  }
+  const planted = [
+    [-2.5, -3.8, 1.29, .35, 0], [2.5, -3.15, .94, .29, 2], [2.75, -1.8, 1.37, .40, 0],
+    [-2.08, -2.15, .85, .29, 2], [-2.39, -.95, 1.11, .31, 1], [1.83, -2.1, .62, .23, 3],
+    [-3.3, -2.97, 1.55, .43, 5], [3.32, -3.0, 1.17, .31, 6], [2.33, -1.5, .86, .25, 4],
+    [-2.0, .6, .95, .24, 3], [1.99, 1.9, 1.12, .32, 1], [-2.46, 1.2, .97, .27, 0],
+    [3.2, 4.2, 1.66, .37, 5], [-3.55, 3.44, 1.53, .37, 3], [2.45, 3.1, 1.43, .35, 4],
+  ];
+  for (const [x, z, height, size, color] of planted) blossom(general, x, z, height, size, (random() - .5) * 2, color, 10);
+  for (let i = 0; i < 214; i++) {
+    const x = mix(-18, 18, random());
+    const z = mix(-12.8, 28, random());
+    if (Math.abs(x - pathCenter(z)) < 1.65 && z < 13) continue;
+    const height = .18 + random() ** 1.45 * (z < 2 ? .94 : 1.42);
+    blossom(general, x, z, height, mix(.10, .32, random()) * (z > 3 ? 1.15 : 1), (random() - .5) * 4.7, i % petalPalette.length);
+  }
+  for (let i = 0; i < 1230; i++) {
+    const x = mix(-16, 16, random()), z = mix(-11.3, 28, random());
+    if (Math.abs(x - pathCenter(z)) < 1.27 && random() < .89) continue;
+    const y = groundHeight(x, z);
+    const scale = mix(.055, .41, random() ** 1.7);
+    const color = greens[i % greens.length];
+    const angle = random() * TAU;
+    const skew = [Math.cos(angle) * scale * .71, 0, Math.sin(angle) * scale * .71];
+    const root = [x, y, z];
+    const mid = add3(root, [skew[0] * .42, scale * .83, skew[2] * .42]);
+    general.tri(add3(root, [-.03, 0, .023]), mid, add3(root, [.026, 0, -.016]), color, PLANT);
+    general.tri(mid, add3(root, [skew[0], scale * 1.26, skew[2]]), add3(root, [.022, 0, -.019]), tint(color, 1.05), PLANT);
+  }
+  for (let i = 0; i < 30; i++) {
+    const x = mix(-9.5, 9.5, random()), z = mix(-9, 13, random());
+    if (Math.abs(x - pathCenter(z)) < .64) continue;
+    const radius = mix(.06, .24, random());
+    ellipsoid(general, [x, groundHeight(x, z) - .015, z], [radius, radius * .43, radius * .74],
+      rgb(i % 2 ? 'e3c9ad' : 'd6c5cb'), { steps: 7, rings: 4 });
+  }
+  diskShadow(shadow, .26, .14, 1.04, 1.34, .29);
+  return { general, shadow };
 }
 
 function diskShadow(mesh, x, z, width, depth, opacity) {
-  const center = [x, .035, z];
-  const color = rgb('23191f');
-  for (let i = 0; i < 24; i++) {
-    const a = i * TAU / 24;
-    const b = (i + 1) * TAU / 24;
-    mesh.tri(center, [x + Math.cos(a) * width, .035, z + Math.sin(a) * depth],
-      [x + Math.cos(b) * width, .035, z + Math.sin(b) * depth], color, LIGHT, opacity);
+  const color = rgb('426943');
+  const y = .014, sides = 32, bands = 4;
+  for (let j = 0; j < bands; j++) {
+    const makeRing = (band, i) => [x + width * band / bands * Math.cos(i * TAU / sides), y, z + depth * band / bands * Math.sin(i * TAU / sides)];
+    for (let i = 0; i < sides; i++) {
+      const a = makeRing(j, i), b = makeRing(j, i + 1), c = makeRing(j + 1, i + 1), d = makeRing(j + 1, i);
+      const feather = opacity * (1 - (j + .5) / bands) ** 1.38;
+      if (j > 0) mesh.tri(a, b, c, color, SHINE, feather);
+      mesh.tri(a, c, d, color, SHINE, feather);
+    }
   }
 }
 
-function mesa(mesh, random, x, z, width, depth, height, palette, sides = 8) {
-  const twist = random() * TAU;
-  const profile = Array.from({ length: sides }, () => mix(.78, 1.18, random()));
-  const levels = [-.28, height * .19, height * .46, height * .56, height * .84, height * .96, height];
-  const radii = [1.07, .86, .73, .76, .62, .61, .46];
-  const tones = [1.0, 1.06, .86, 1.02, 1.12, 1.04];
-  const lean = (random() - .5) * .46;
-  const leanZ = (random() - .5) * .5;
-  const rings = levels.map((y, level) => profile.map((scale, index) => {
-    const theta = twist + index * TAU / sides;
-    const swell = radii[level] * scale * mix(.92, 1.09, random());
-    return [x + width * (swell * Math.cos(theta) + lean * level / levels.length),
-      y + (level === 0 ? 0 : height * (random() - .5) * .085),
-      z + depth * (swell * Math.sin(theta) + leanZ * level / levels.length)];
+const fur = rgb('f3b576');
+const peach = rgb('e89b65');
+const cream = rgb('ffecd2');
+const lilac = rgb('ae98e7');
+const deepLilac = rgb('8975c2');
+const pink = rgb('ec9da6');
+const ink = rgb('53415b');
+
+function ear(mesh, side) {
+  const profile = [[.27, .32, .16, .20], [.39, .40, .17, .18], [.51, .44, .132, .129], [.62, .485, .075, .082], [.676, .496, .028, .04], [.69, .49, .008, .012]];
+  const steps = 23;
+  const points = profile.map(([y, x, rx, rz]) => Array.from({ length: steps }, (_, i) => {
+    const angle = i * TAU / steps;
+    return [side * x + rx * Math.cos(angle), y, -.005 + rz * Math.sin(angle) + (y - .32) * .16];
   }));
-  for (let level = 0; level < rings.length - 1; level++) {
-    for (let side = 0; side < sides; side++) {
-      const next = (side + 1) % sides;
-      const color = tint(palette, tones[level] * mix(.83, 1.15, random()));
-      mesh.quad(rings[level][next], rings[level][side], rings[level + 1][side], rings[level + 1][next], color, ROCK);
+  const normals = points.map((ring, row) => ring.map((_, i) => {
+    const up = sub3(points[Math.min(row + 1, points.length - 1)][i], points[Math.max(0, row - 1)][i]);
+    const tangent = sub3(ring[(i + 1) % steps], ring[(i + steps - 1) % steps]);
+    return normalized(cross3(up, tangent));
+  }));
+  for (let row = 1; row < points.length; row++) {
+    for (let i = 0; i < steps; i++) {
+      const next = (i + 1) % steps;
+      const face = [points[row - 1][i], points[row][i], points[row][next], points[row - 1][next]];
+      const faceNormals = [normals[row - 1][i], normals[row][i], normals[row][next], normals[row - 1][next]];
+      mesh.tri(face[0], face[1], face[2], fur, MATTE, 1, faceNormals.slice(0, 3));
+      mesh.tri(face[0], face[2], face[3], fur, MATTE, 1, [faceNormals[0], faceNormals[2], faceNormals[3]]);
     }
   }
-  const top = rings.at(-1);
-  const cap = [x + width * lean, height * 1.002, z + depth * leanZ];
-  top.forEach((point, index) => mesh.tri(top[(index + 1) % sides], point, cap, tint(palette, 1.15), ROCK));
+  ellipsoid(mesh, [side * .438, .471, -.132], [.098, .151, .066], pink,
+    { basis: rotationZ(side * -.32), steps: 15, rings: 8 });
+  ellipsoid(mesh, [side * .456, .538, -.118], [.054, .098, .045], pink,
+    { basis: rotationZ(side * -.28), steps: 12, rings: 7 });
 }
 
-function buildGround() {
-  const mesh = new Mesh();
-  const random = seededRandom(7069);
-  const sand = rgb('ab694f');
-  const rock = rgb('955745');
-  const groundHeight = (x, z) => {
-    const amplitude = smooth((Math.abs(x) - 9) / 21) + .33 * smooth((Math.abs(z) - 19) / 15);
-    return -.13 + amplitude * (.18 + .30 * Math.sin(x * .22 + z * .12) + .19 * Math.cos(z * .32 - x * .15));
-  };
-  for (let x = -112; x < 112; x += 4) {
-    for (let z = -112; z < 112; z += 4) {
-      const a = [x, groundHeight(x, z), z];
-      const b = [x, groundHeight(x, z + 4), z + 4];
-      const c = [x + 4, groundHeight(x + 4, z + 4), z + 4];
-      const d = [x + 4, groundHeight(x + 4, z), z];
-      const baseTone = clamp(.18 + .25 * Math.sin(x * .105 - z * .083), .05, .52);
-      const color = tint(shadeMix(sand, rock, baseTone), mix(.95, 1.04, random()));
-      mesh.tri(a, b, c, color, GROUND);
-      mesh.tri(a, c, d, tint(color, mix(.978, 1.032, random())), GROUND);
-    }
-  }
-  const road = rgb('be7d60');
-  const roadEdge = rgb('ad6a52');
-  const tire = rgb('9d614f');
-  const trackCenter = z => .95 * Math.sin(z * .11) + (z > 11 ? (z - 11) * -.24 : 0);
-  function strip(z, x1, x2, tone, y, toneScale = 1) {
-    mesh.quad([trackCenter(z) + x1, y, z], [trackCenter(z + 1) + x1, y, z + 1],
-      [trackCenter(z + 1) + x2, y, z + 1], [trackCenter(z) + x2, y, z], tint(tone, toneScale), GROUND);
-  }
-  for (let z = -25; z < 24; z++) {
-    const width = mix(2.65, 3.05, random());
-    strip(z, -width, width, road, -.088, mix(.95, 1.04, random()));
-    strip(z, -width - .65, -width, roadEdge, -.089, mix(.93, 1.04, random()));
-    strip(z, width, width + .65, roadEdge, -.089, mix(.93, 1.04, random()));
-    for (const edge of [-1.02, .95]) {
-      strip(z, edge, edge + .075, tire, -.085, mix(.95, 1.02, random()));
-      if (random() > .38) strip(z, edge + .12, edge + .19, tire, -.084, .98);
-    }
-  }
-  for (let i = 0; i < 520; i++) {
-    const x = mix(-22, 22, random());
-    const z = mix(-17, 31, random());
-    const onRoad = Math.abs(x - trackCenter(z)) < 3;
-    const size = random() ** 2 * (onRoad ? .09 : .23) + .025;
-    const y = onRoad ? -.082 : groundHeight(x, z) + .015;
-    const color = tint(roadEdge, mix(.72, 1.26, random()));
-    mesh.tri([x, y, z], [x + size * 1.85, y + .004, z + size * .65], [x - size * .54, y + size * .25, z + size * 1.6], color, GROUND);
-  }
-  return mesh;
-}
-
-function buildCliffs(mesh) {
-  const random = seededRandom(4627);
-  const reds = ['a25346', '91504c', 'aa5b49', '84464b', 'a95950', 'a26655'];
-  const features = [
-    [-10.7, 12.4, 4.8, 4.4, 6.9], [-13.3, 16.8, 4.6, 5.4, 9.6], [-17.0, 20.8, 7.3, 6.8, 11.1],
-    [-13.0, 1.5, 4.5, 4.2, 4.9], [-16.6, -5.7, 6.4, 5.2, 7.3], [-22.2, -11.3, 6.9, 8.0, 9.2],
-    [12.7, 14.0, 4.0, 5.6, 6.7], [17.5, 17.2, 6.1, 5.7, 10.4], [19.5, 26.7, 7.2, 5.3, 12.8],
-    [13.9, -2.0, 4.5, 5.2, 5.3], [18.0, -8.2, 5.7, 5.8, 8.2], [20.8, 5.8, 5.6, 6.2, 9.8],
-    [-7.4, 30.5, 4.5, 3.3, 9.7], [-3.0, 35.3, 4.2, 4.1, 12.2], [5.2, 35.9, 5.9, 5.2, 7.4],
-    [11.8, 37.1, 7.7, 7.4, 10.9], [26.3, 38.7, 8.2, 9.2, 13.2],
-  ];
-  for (let i = 0; i < 49; i++) {
-    const angle = i * TAU / 49 + random() * .12;
-    const radius = mix(42, 91, random());
-    const size = mix(3.2, 12.5, random());
-    mesa(mesh, random, Math.cos(angle) * radius, Math.sin(angle) * radius, size, size * .74,
-      mix(4.7, 17, random()), rgb(reds[i % reds.length]), 7);
-  }
-  features.forEach(([x, z, w, d, h], i) => {
-    mesa(mesh, random, x, z, w, d, h, rgb(reds[i % reds.length]), 9);
-    mesa(mesh, random, x + w * .58, z - d * .48, w * .58, d * .61, h * .54, rgb(reds[(i + 2) % reds.length]), 7);
+function starCharm(mesh) {
+  const yellow = rgb('fae5a0');
+  const shadow = rgb('dfad65');
+  const center = [0, -.051, -.055];
+  const tips = Array.from({ length: 10 }, (_, i) => {
+    const angle = PI / 2 + i * TAU / 10;
+    const radius = i % 2 ? .061 : .133;
+    return [radius * Math.cos(angle), center[1] + radius * Math.sin(angle), -.025];
   });
-  const foreground = [[-4.8, -1.6, .66], [4.55, -4.1, .55], [-4.7, 3.1, .79], [5.8, -.8, .82], [4.3, 4.6, .53], [-4.7, -7.5, .54]];
-  for (let i = 0; i < 62; i++) {
-    const x = (i % 2 ? -1 : 1) * mix(3.9, 24, random());
-    const z = mix(-20, 35, random());
-    if (x > 2 && x < 10 && z > 5 && z < 14) continue;
-    foreground.push([x, z, mix(.08, .62, random())]);
+  for (let i = 0; i < tips.length; i++) {
+    const b = tips[(i + 1) % tips.length], a = tips[i];
+    const back = p => [p[0], p[1], .012];
+    mesh.tri(center, b, a, yellow, SHINE);
+    mesh.tri(a, b, back(a), shadow);
+    mesh.tri(b, back(b), back(a), shadow);
   }
-  foreground.forEach(([x, z, size], i) => mesa(mesh, random, x, z, size * 1.35, size * .87, size * .63, rgb(reds[i % reds.length]), 6));
+  ellipsoid(mesh, [0, .084, -.005], [.028, .047, .019], yellow, { steps: 9, rings: 5 });
 }
 
-const slate = rgb('4c555f');
-const alloy = rgb('8f9094');
-const lightAlloy = rgb('c7aa92');
-const darkMetal = rgb('36333d');
-const terracotta = rgb('d88044');
-const tealGlass = rgb('446b73');
-const litCyan = rgb('9bd6d8');
-const litAmber = rgb('ffb76a');
+function buildCat() {
+  const body = new Mesh(), head = new Mesh(), eye = new Mesh(), eyelid = new Mesh(), charm = new Mesh();
+  const leg = new Mesh(), paw = new Mesh();
+  ellipsoid(body, [0, 1.0, .35], [.57, .54, .89], fur, { steps: 32, rings: 18 });
+  ellipsoid(body, [0, .95, -.27], [.455, .471, .38], cream, { steps: 26, rings: 14 });
+  ellipsoid(body, [0, 1.27, -.25], [.476, .17, .47], lilac, { basis: rotationX(-.34), steps: 26, rings: 14 });
+  ellipsoid(body, [-.377, 1.20, -.54], [.179, .085, .135], deepLilac, { basis: rotationZ(-.35) });
+  ellipsoid(body, [-.434, 1.10, -.59], [.083, .218, .067], lilac, { basis: rotationZ(-.43) });
+  ellipsoid(body, [-.542, 1.17, -.48], [.137, .08, .082], lilac, { basis: rotationZ(.12) });
+  starCharm(charm);
 
-function facility(mesh, shadow) {
-  const B = (x, y, z, w, h, d, color, angle, material) => box(mesh, [x, y, z], [w, h, d], color, angle, material);
-  diskShadow(shadow, 4.5, 10.4, 5.8, 4.3, .22);
-  B(4.65, .14, 10.1, 7.4, .29, 5.35, darkMetal);
-  B(4.65, .32, 10.1, 7.05, .15, 5.07, alloy);
-  B(4.62, 1.8, 10.16, 5.95, 2.92, 3.46, lightAlloy);
-  B(4.62, .7, 10.16, 6.15, .33, 3.62, slate);
-  B(4.62, 3.30, 10.11, 6.18, .24, 3.73, slate);
-  B(4.62, 3.49, 10.22, 5.55, .16, 3.39, alloy);
-  B(3.7, 3.69, 10.1, 1.67, .31, .91, lightAlloy);
-  B(3.7, 3.87, 10.1, 1.84, .08, 1.01, slate);
-  B(6.44, 3.64, 10.58, 1.39, .24, .9, terracotta);
-  B(4.72, 2.22, 8.393, 4.27, 1.03, .10, darkMetal);
-  B(4.72, 2.03, 8.331, 4.24, .035, .04, litCyan, 0, LIGHT);
-  for (let i = 0; i < 4; i++) {
-    const x = 3.12 + i * 1.07;
-    B(x, 2.31, 8.33, .94, .66, .028, tint(tealGlass, 1 + i * .043));
-    B(x + .18, 2.54, 8.302, .45, .035, .015, litCyan, 0, LIGHT);
-    B(x - .26, 2.18, 8.299, .16, .14, .018, tint(tealGlass, 1.48));
-    B(x - .30, 1.47, 8.30, .57, .30, .10, alloy);
-    for (let j = 0; j < 3; j++) B(x - .30, 1.38 + j * .085, 8.236, .44, .032, .02, slate);
-  }
-  for (const x of [1.84, 7.43]) {
-    B(x, 1.9, 8.37, .35, 2.68, .18, slate);
-    B(x, 1.91, 8.264, .11, 2.52, .06, terracotta);
-    B(x, 2.96, 8.207, .13, .10, .06, litAmber, 0, LIGHT);
-  }
-  B(7.8, 2.13, 10.1, .16, .83, 2.51, darkMetal);
-  for (let i = 0; i < 3; i++) {
-    B(7.89, 2.18, 9.34 + i * .79, .027, .63, .68, tealGlass);
-    B(7.92, 2.43, 9.34 + i * .79, .027, .055, .57, litCyan, 0, LIGHT);
-  }
-  B(5.47, 1.09, 8.29, .73, 1.44, .16, slate);
-  B(5.47, 1.04, 8.19, .60, 1.23, .045, alloy);
-  B(5.47, 1.36, 8.16, .29, .17, .025, tealGlass);
-  B(5.68, .88, 8.14, .055, .08, .03, litAmber, 0, LIGHT);
-  for (let i = 0; i < 3; i++) B(5.47, .09 + i * .085, 7.14 + i * .24, 1.21, .18, .38, slate);
-
-  const entry = -1.95;
-  const gateZ = 5.65;
+  ellipsoid(head, [0, 0, 0], [.605, .49, .51], fur, { steps: 36, rings: 20 });
   for (const side of [-1, 1]) {
-    const x = entry + side * 1.97;
-    diskShadow(shadow, x, gateZ, .65, .65, .19);
-    B(x, .12, gateZ, .78, .24, .72, darkMetal);
-    B(x, 1.72, gateZ, .40, 3.42, .46, slate);
-    B(x, 1.74, gateZ - .248, .25, 3.34, .065, terracotta);
-    B(x, 2.44, gateZ - .29, .13, .66, .03, lightAlloy);
-    B(x, 2.53, gateZ - .31, .07, .36, .02, litAmber, 0, LIGHT);
-    const armX = x - side * .5;
-    ring(mesh, [x, 2.77, gateZ], [armX, 3.48, gateZ], .09, .09, slate, 5);
-  }
-  B(entry, 3.57, gateZ, 4.35, .37, .49, slate);
-  B(entry, 3.56, gateZ - .26, 3.91, .14, .043, terracotta);
-  B(entry, 3.55, gateZ - .288, 1.4, .067, .02, litAmber, 0, LIGHT);
-  B(entry, 3.37, gateZ, 1.18, .07, .31, lightAlloy, 0, LIGHT);
-
-  for (const [x, z, height] of [[-1.28, -3.77, 2.06], [3.1, -3.65, 1.27], [-4.65, 1.8, .92], [2.98, 3.14, .73], [6.7, 5.0, .82]]) {
-    diskShadow(shadow, x, z, .47, .4, .22);
-    B(x, .08, z, .58, .18, .48, darkMetal);
-    B(x, height / 2, z, .31, height, .33, slate);
-    B(x, height * .79, z, .39, .30, .39, terracotta);
-    B(x, height * .79, z - .21, .24, .055, .034, lightAlloy);
-    B(x, height + .055, z, .33, .12, .35, darkMetal);
-    B(x, height + .132, z, .15, .06, .16, litAmber, 0, LIGHT);
-  }
-
-  const mast = [8.0, 0, 12.05];
-  B(mast[0], .19, mast[2], .91, .36, .91, slate);
-  ring(mesh, [mast[0], .36, mast[2]], [mast[0], 7.1, mast[2]], .11, .077, alloy, 8);
-  ring(mesh, [mast[0], 7.08, mast[2]], [mast[0], 7.32, mast[2]], .077, .035, litAmber, 7, LIGHT);
-  for (const [dx, dz] of [[-.58, -.42], [.52, -.4], [.24, .58]]) {
-    ring(mesh, [mast[0] + dx, .31, mast[2] + dz], [mast[0], 3.2, mast[2]], .045, .032, slate, 5);
-  }
-  ring(mesh, [7.27, 4.92, 12.04], [8.68, 4.92, 12.04], .052, .052, alloy, 6);
-  for (const x of [7.34, 8.6]) ring(mesh, [x, 4.42, 12.05], [x, 5.8, 12.05], .035, .026, lightAlloy, 6);
-  const dishCenter = [8.0, 5.5, 11.82];
-  const dishFace = [8.0, 5.77, 10.84];
-  ring(mesh, [8.0, 5.4, 12.12], dishCenter, .19, .32, slate, 12);
-  ring(mesh, dishCenter, dishFace, .35, .84, lightAlloy, 20);
-  ring(mesh, dishFace, [8.0, 5.87, 10.60], .84, 0, slate, 20);
-  ring(mesh, [8.0, 5.9, 10.58], [8.0, 6.15, 10.08], .042, .065, alloy, 8);
-
-  for (let panel = 0; panel < 2; panel++) {
-    const x = -6.5 + panel * 2.05;
-    const z = 9.7 + panel * 1.14;
-    diskShadow(shadow, x, z, 1.44, 1.01, .20);
-    B(x, .12, z, 1.04, .26, .82, darkMetal);
-    B(x, .87, z, .21, 1.48, .21, slate);
-    const shape = (left, right, low, high, lift, color, material) => mesh.quad(
-      [x + left, 1.41 + low * .56 + lift, z + low],
-      [x + left, 1.41 + high * .56 + lift, z + high],
-      [x + right, 1.41 + high * .56 + lift, z + high],
-      [x + right, 1.41 + low * .56 + lift, z + low], color, material);
-    shape(-1.04, 1.04, -.70, .70, 0, alloy);
-    for (let col = 0; col < 5; col++) {
-      for (let row = 0; row < 3; row++) {
-        const l = -.97 + .39 * col;
-        const low = -.65 + .43 * row;
-        shape(l, l + .35, low, low + .39, .014, tint(tealGlass, .82 + col * .045));
-        shape(l, l + .35, low + .342, low + .357, .017, tint(litCyan, .54));
-      }
+    ear(head, side);
+    ellipsoid(head, [side * .154, -.157, -.392], [.284, .188, .195], cream, { steps: 20, rings: 13 });
+    ellipsoid(head, [side * .385, -.111, -.392], [.110, .064, .039], pink, { basis: rotationY(side * -.49), steps: 13, rings: 8 });
+    for (let whisker = 0; whisker < 3; whisker++) {
+      const lift = .048 * (1 - whisker);
+      tube(head, [[side * .386, -.14 + lift * .4, -.499], [side * .52, -.14 + lift, -.477], [side * .68, -.136 + lift * 1.47, -.417]],
+        [.013, .011, .003], rgb('f7e9df'), 5, SHINE);
     }
+    tube(head, [[0, -.177, -.596], [side * .025, -.205, -.591], [side * .075, -.216, -.578], [side * .116, -.185, -.558]],
+      [.013, .012, .012, .007], ink, 5);
   }
-  for (let i = 0; i < 5; i++) {
-    const x = 2.52 + i * 1.17;
-    const z = 14.68 + .24 * (i % 2);
-    B(x, .33, z, .87, .65, .76, i % 2 ? slate : terracotta);
-    B(x, .68, z, .92, .10, .80, lightAlloy);
-    B(x, .46, z - .39, .18, .08, .03, darkMetal);
+  ellipsoid(head, [0, -.137, -.591], [.083, .048, .035], rgb('bd6f83'), { material: SHINE, steps: 16, rings: 9 });
+  for (const side of [-1, 1]) {
+    ellipsoid(head, [side * .035, .326, -.375], [.018, .064, .015], rgb('eba473'), { basis: rotationZ(side * .19), steps: 9, rings: 7 });
   }
-  for (let i = 0; i < 8; i++) {
-    const x = 8.7 + i * .84;
-    const z = 7.05 + i * .35;
-    B(x, .42, z, .09, .85, .09, slate);
-    if (i) for (const y of [.35, .65]) ring(mesh, [x - .84, y, z - .35], [x, y, z], .022, .022, alloy, 5);
+  ellipsoid(eye, [0, 0, 0], [.105, .136, .050], ink, { material: SHINE, steps: 32, rings: 18 });
+  ellipsoid(eye, [0, -.014, -.038], [.073, .099, .019], rgb('69547f'), { material: SHINE, steps: 29, rings: 17 });
+  ellipsoid(eye, [-.026, .046, -.055], [.031, .034, .015], rgb('fffaf1'), { material: SHINE, steps: 21, rings: 13 });
+  ellipsoid(eye, [.039, -.049, -.052], [.012, .015, .008], rgb('f0dffd'), { material: SHINE, steps: 8, rings: 6 });
+  tube(eyelid, [[-.097, .006, -.009], [-.052, -.022, -.033], [0, -.031, -.044], [.054, -.023, -.031], [.09, .003, -.008]], [.009, .016, .017, .015, .009], ink, 6);
+  ellipsoid(leg, [0, .49, 0], [.159, .63, .169], peach, { steps: 16, rings: 12 });
+  ellipsoid(paw, [0, 0, -.041], [.183, .126, .208], cream, { steps: 18, rings: 11 });
+  for (const x of [-.060, .060]) {
+    tube(paw, [[x, .080, -.184], [x, .049, -.225], [x, -.002, -.244]], [.007, .009, .004], rgb('dcae93'), 5);
   }
-  for (const [x, z] of [[-8.4, 14.65], [5.5, 21.7], [-6.9, -10.2]]) {
-    diskShadow(shadow, x, z, 2.2, 1.4, .16);
-    B(x, .70, z, 2.8, 1.38, 1.7, iColor(x));
-    B(x, 1.46, z, 2.96, .16, 1.84, slate);
-    B(x + .61, .82, z - .86, .65, .39, .05, tealGlass);
-    B(x + .61, .97, z - .89, .50, .041, .03, litCyan, 0, LIGHT);
-  }
-  function iColor(x) { return x > 0 ? terracotta : lightAlloy; }
+  return { body, head, eye, eyelid, charm, leg, paw };
 }
 
-function buildRover() {
+function tailPoints(pose) {
+  return [[.03, 1.10, 1.04], [.19, 1.22, 1.31], [.40, 1.38, 1.54], [.63, 1.60, 1.62], [.70, 1.84, 1.57], [.58, 2.07, 1.43]].map(([x, y, z], i) => {
+    const weight = smooth(i / 5);
+    return [x + weight * pose.tail, y + weight * pose.tailHeight, z + .32 * weight * Math.abs(pose.tail)];
+  });
+}
+
+function buildTail(pose) {
+  const anchors = tailPoints(pose);
+  const count = 22;
+  const curve = Array.from({ length: count + 1 }, (_, i) => {
+    const progress = i * (anchors.length - 1) / count;
+    const index = Math.min(anchors.length - 2, Math.floor(progress));
+    const t = progress - index;
+    const a = anchors[Math.max(0, index - 1)], b = anchors[index], c = anchors[index + 1],
+      d = anchors[Math.min(anchors.length - 1, index + 2)];
+    const tangentB = mult3(sub3(c, a), .5);
+    const tangentC = mult3(sub3(d, b), .5);
+    const t2 = t * t, t3 = t2 * t;
+    return b.map((value, axis) => (2 * t3 - 3 * t2 + 1) * value + (t3 - 2 * t2 + t) * tangentB[axis] +
+      (-2 * t3 + 3 * t2) * c[axis] + (t3 - t2) * tangentC[axis]);
+  });
+  const radii = curve.map((_, i) => {
+    const t = i / count;
+    const cap = Math.sqrt(1 - clamp((t - .90) / .10) ** 2);
+    return Math.max(.002, (.157 - .063 * t) * cap);
+  });
   const mesh = new Mesh();
-  const B = (x, y, z, w, h, d, color, angle, material) => box(mesh, [x, y, z], [w, h, d], color, angle, material);
-  const tire = rgb('292936');
-  const tread = rgb('3b383f');
-  const rim = rgb('666973');
-  const bright = rgb('f4a755');
-  const shell = rgb('d78548');
-  for (const side of [-1, 1]) {
-    for (const z of [-.99, -.03, .94]) {
-      const x = side * .92;
-      ring(mesh, [x - .175, .38, z], [x + .175, .38, z], .378, .378, tire, 18);
-      for (let step = 0; step < 18; step++) {
-        const a = step * TAU / 18;
-        const b = a + .145;
-        const edge = (dx, angle) => [x + dx, .38 + .389 * Math.cos(angle), z + .389 * Math.sin(angle)];
-        mesh.quad(edge(-.174, a), edge(-.174, b), edge(.174, b + .04), edge(.174, a + .04), tread);
-      }
-      const hubX = x + side * .185;
-      ring(mesh, [hubX - .018, .38, z], [hubX + .018, .38, z], .252, .252, rim, 16);
-      ring(mesh, [hubX - .041, .38, z], [hubX + .041, .38, z], .170, .170, slate, 12);
-      ring(mesh, [hubX - .06, .38, z], [hubX + .06, .38, z], .084, .084, bright, 10);
-      for (let bolt = 0; bolt < 5; bolt++) {
-        const a = bolt * TAU / 5;
-        const px = hubX + side * .042;
-        B(px, .38 + .117 * Math.cos(a), z + .117 * Math.sin(a), .04, .032, .032, lightAlloy);
-      }
-      ring(mesh, [side * .67, .44, z], [side * .33, .73, z + .12], .055, .066, alloy, 6);
-    }
-    B(side * .79, .78, -.02, .38, .15, 2.36, slate);
-    B(side * .87, .88, -.02, .38, .085, 2.36, bright);
-    B(side * .84, .99, .56, .10, .18, .75, shell);
-    B(side * .87, .96, -.51, .12, .12, .55, darkMetal);
-    B(side * .94, .99, -.62, .055, .06, .23, lightAlloy);
-  }
-  B(0, .61, -.04, 1.56, .36, 2.73, darkMetal);
-  B(0, .91, -.01, 1.65, .37, 2.66, shell);
-  B(0, 1.125, .38, 1.55, .11, 1.64, bright);
-  B(0, .60, -1.43, 1.82, .16, .22, slate);
-  B(0, .62, -1.56, .93, .10, .062, alloy);
-  B(0, .87, -1.36, .64, .22, .18, darkMetal);
-  for (let i = 0; i < 6; i++) B((i - 2.5) * .092, .87, -1.465, .034, .165, .031, alloy);
-  for (const side of [-1, 1]) {
-    B(side * .61, .91, -1.36, .42, .23, .19, darkMetal);
-    B(side * .60, .92, -1.467, .307, .105, .038, litCyan, 0, LIGHT);
-    B(side * .64, .935, -1.491, .19, .041, .018, rgb('d9f2e3'), 0, LIGHT);
-    B(side * .60, .89, 1.348, .39, .15, .055, darkMetal);
-    B(side * .60, .89, 1.383, .25, .065, .03, rgb('fb765b'), 0, LIGHT);
-  }
+  tube(mesh, curve, radii, t => mix3(fur, cream, smooth((t - .72) / .16)), 13);
+  return mesh.data();
+}
 
-  const cab = [[-.69, 1.04, -.97], [.69, 1.04, -.97], [.68, 1.04, .38], [-.68, 1.04, .38],
-    [-.55, 1.50, -.57], [.55, 1.50, -.57], [.54, 1.50, .28], [-.54, 1.50, .28]];
-  const [a, b, c, d, e, f, g, h] = cab;
-  mesh.quad(a, e, f, b, tealGlass);
-  mesh.quad(b, f, g, c, tint(tealGlass, .79));
-  mesh.quad(d, h, e, a, tint(tealGlass, .89));
-  mesh.quad(c, g, h, d, darkMetal);
-  mesh.quad(e, h, g, f, lightAlloy);
-  mesh.quad([-.49, 1.39, -.674], [-.38, 1.46, -.614], [.48, 1.46, -.614], [.51, 1.39, -.674], rgb('779b9d'));
-  for (const [p, q] of [[a, e], [b, f], [c, g], [d, h], [e, f], [f, g], [g, h], [h, e], [a, b]]) ring(mesh, p, q, .035, .035, slate, 5);
-  ring(mesh, [0, 1.04, -.978], [0, 1.50, -.579], .025, .025, slate, 5);
-  B(0, 1.53, -.145, 1.20, .105, .91, lightAlloy);
-  B(0, 1.589, -.51, 1.14, .039, .16, terracotta);
-  B(0, 1.28, .83, 1.24, .32, .65, slate);
-  B(0, 1.468, .83, 1.30, .105, .70, alloy);
-  for (const x of [-.42, .42]) B(x, 1.51, .84, .075, .055, .76, darkMetal);
-  B(-.38, 1.606, .12, .23, .16, .22, slate);
-  ring(mesh, [-.38, 1.68, .12], [-.46, 2.19, .18], .025, .013, alloy, 6);
-  ring(mesh, [-.46, 2.19, .18], [-.466, 2.28, .19], .028, .017, litAmber, 7, LIGHT);
-  B(.34, 1.626, -.18, .245, .119, .2, darkMetal);
-  B(.34, 1.671, -.275, .159, .061, .03, litCyan, 0, LIGHT);
-  return mesh;
+function catSkeleton(pose) {
+  const root = { origin: pose.position, basis: rotationY(pose.heading) };
+  const bodyTilt = multiplyBasis(rotationZ(pose.bodyRoll), rotationX(-pose.bodyPitch));
+  const center = [0, .98, .26];
+  const body = {
+    origin: transformPoint(root, add3(sub3(center, apply3(bodyTilt, center)), [0, pose.lift, 0])),
+    basis: multiplyBasis(root.basis, bodyTilt),
+  };
+  const headBasis = multiplyBasis(rotationY(pose.headYaw), multiplyBasis(rotationZ(pose.headRoll), rotationX(-pose.headPitch)));
+  const head = { origin: transformPoint(body, [0, 1.58, -.53]), basis: multiplyBasis(body.basis, headBasis) };
+  return { root, body, head };
+}
+
+function catLandmark(pose, target, skeleton = catSkeleton(pose)) {
+  if (target.bone === 'paw') return transformPoint(skeleton.root, add3(pose.feet[1], [0, .055, -.10]));
+  if (target.bone === 'tail') return transformPoint(skeleton.body, tailPoints(pose).at(-1));
+  return transformPoint(skeleton[target.bone || 'root'], target.point);
+}
+
+function catObjects(pose) {
+  const { root, body, head } = catSkeleton(pose);
+  const bodySize = scaleBasis([pose.breathing, pose.breathing, 1]);
+  const parts = [
+    { name: 'body', ...body, basis: multiplyBasis(body.basis, bodySize) },
+    { name: 'head', ...head },
+    { name: 'charm', origin: transformPoint(body, [0, 1.18, -.702]), basis: multiplyBasis(body.basis, rotationZ(pose.tail * .16 + pose.bodyRoll)) },
+  ];
+  for (const side of [-1, 1]) {
+    const eyeBasis = multiplyBasis(head.basis, rotationY(-side * .31));
+    const blink = pose.eye < .19;
+    parts.push({
+      name: blink ? 'eyelid' : 'eye', origin: transformPoint(head, [side * .231, .01, -.477]),
+      basis: multiplyBasis(eyeBasis, scaleBasis([1, blink ? 1 : pose.eye, 1])),
+    });
+  }
+  for (let i = 0; i < pose.feet.length; i++) {
+    const foot = transformPoint(root, pose.feet[i]);
+    const hip = transformPoint(body, [i % 2 ? .34 : -.34, i < 2 ? .84 : .914, i < 2 ? -.43 : .72]);
+    const vector = sub3(hip, foot);
+    parts.push({ name: 'leg', origin: foot, basis: yAlong(vector, Math.max(.12, Math.hypot(...vector))) });
+    parts.push({ name: 'paw', origin: foot, basis: root.basis });
+  }
+  parts.push({ name: 'tail', ...body });
+  return parts;
 }
 
 function buildSet() {
-  const ground = buildGround();
-  const scenery = new Mesh();
-  const shadows = new Mesh();
-  const roverShadow = new Mesh();
-  buildCliffs(scenery);
-  facility(scenery, shadows);
-  diskShadow(roverShadow, -.22, -.23, 1.8, 2.2, .14);
-  diskShadow(roverShadow, -.09, -.04, 1.25, 1.57, .29);
+  const { general, shadow } = buildMeadow();
+  const meshes = { ground: buildTerrain(), general, shadow, ...buildCat() };
+  return Object.fromEntries(Object.entries(meshes).map(([key, mesh]) => [key, mesh.data()]));
+}
+
+const defaultSetup = { shot: 'full', target: 'auto', move: 'micro-in', action: 'tail' };
+const fixedAxes = new Set(['lock', 'truck-left', 'truck-right', 'pedestal-up', 'pedestal-down']);
+const linkedRigs = new Set(['follow', 'lead', 'side-track', 'pov', 'snorri']);
+const centeredMoves = new Set(['arc', 'orbit', 'spiral', 'jib', 'crane']);
+const dollyZooms = new Set(['dolly-zoom-in', 'dolly-zoom-out']);
+
+function composeScene(selection) {
+  const shot = shotById.get(selection.shot);
+  const technique = moveById.get(selection.move);
+  const actor = actionById.get(selection.action);
+  const target = targetById.get(selection.target === 'auto' ? shot.target : selection.target);
+  const start = technique.frame(0);
+  const midpoint = technique.frame(.5);
+  const firstPose = actor.frame(0);
+  const firstAim = catLandmark(firstPose, target);
+  const side = rotationY(rad(-17));
+  const d = shot.distance;
+  const scale = clamp(d / 7, .27, 1.62);
+  const detail = ['close', 'extreme', 'macro'].includes(shot.id);
+  const level = shot.height + (detail ? clamp(firstAim[1] - 1.48, -1.15, .65) * .87 : 0);
+  const horizontal = [firstPose.position[0], 0, firstPose.position[2]];
+  const baseEye = offsetEye([0, level, -d], horizontal);
+  const aimInitial = look(baseEye, firstAim, shot.lens);
+  const yawRange = clamp(34 / shot.lens, .26, 1);
+  const pitchRange = clamp(32 / shot.lens, .24, 1);
+
+  function offsetEye(local, shift) {
+    return add3(apply3(side, local), shift);
+  }
+
+  function fitted(raw, aim, translation) {
+    const rawRadius = Math.hypot(raw.position[0], raw.position[2]);
+    const startRadius = Math.hypot(start.position[0], start.position[2]);
+    const ratio = rawRadius / startRadius;
+    const safeDistance = 1.65;
+    const straightTrack = technique.id === 'slider' || technique.id === 'cable';
+    const radius = straightTrack ? d * ratio : safeDistance + (d - safeDistance) * ratio;
+    const lift = ['crane', 'cable'].includes(technique.id) ? (start.position[1] - 1.4) * scale * .74 : 0;
+    const height = Math.max(.27, level + lift + (raw.position[1] - start.position[1]) * scale);
+    const eye = offsetEye([raw.position[0] * radius / rawRadius, height, raw.position[2] * radius / rawRadius], translation);
+    return look(eye, aim, shot.lens);
+  }
+
+  function linked(pose, aim, raw) {
+    const heading = rotationY(pose.heading);
+    const y = level + pose.position[1] * .84;
+    if (technique.id === 'pov') {
+      const eye = add3(pose.position, apply3(heading, [0, Math.max(.56, y - pose.position[1]) + pose.lift, -1.24]));
+      return orient(eye, Math.atan2(-heading[6], -heading[8]), -.065, shot.lens, { roll: raw.roll * .41 });
+    }
+    const relative = {
+      follow: [-.43, 0, d],
+      lead: [.32, 0, -d],
+      'side-track': [d, 0, -.13],
+      snorri: [0, 0, -d],
+    }[technique.id];
+    const eye = add3([pose.position[0], y, pose.position[2]], apply3(heading, relative));
+    return look(eye, aim, shot.lens);
+  }
+
+  function frame(t) {
+    const raw = technique.frame(t);
+    const pose = actor.frame(t);
+    const posePoint = catLandmark(pose, target);
+    const follow = linkedRigs.has(technique.id) || centeredMoves.has(technique.id);
+    const aim = follow ? posePoint : firstAim;
+    let state;
+    if (linkedRigs.has(technique.id)) {
+      state = linked(pose, aim, raw);
+    } else if (technique.category === 'turn') {
+      state = orient(baseEye, aimInitial.yaw + (raw.yaw - midpoint.yaw) * yawRange,
+        aimInitial.pitch + (raw.pitch - midpoint.pitch) * pitchRange, shot.lens, { roll: raw.roll });
+    } else if (fixedAxes.has(technique.id)) {
+      const delta = mult3(sub3(raw.position, midpoint.position), scale);
+      const eye = add3(baseEye, apply3(side, delta));
+      eye[1] = Math.max(.24, eye[1]);
+      state = orient(eye, aimInitial.yaw, aimInitial.pitch, shot.lens);
+    } else if (technique.id === 'top-down') {
+      state = orient([horizontal[0] + raw.position[0] * scale, 2.4 + d * .95, horizontal[2] + raw.position[2] * scale], 0, -PI / 2, shot.lens);
+    } else if (technique.id === 'fpv') {
+      const fly = Math.max(.68, scale);
+      state = orient([raw.position[0] * fly, Math.max(.63, raw.position[1] * fly), raw.position[2] * fly],
+        raw.yaw, raw.pitch, shot.lens, { roll: raw.roll });
+    } else if (technique.category === 'optics' && !dollyZooms.has(technique.id)) {
+      state = { ...aimInitial, lens: shot.lens * raw.lens / start.lens };
+    } else {
+      const pivot = follow ? [pose.position[0], pose.position[1] * .45, pose.position[2]] : horizontal;
+      state = fitted(raw, aim, pivot);
+      if (dollyZooms.has(technique.id)) {
+        const initial = fitted(start, firstAim, horizontal);
+        state.lens *= distance3(state.position, aim) / distance3(initial.position, firstAim);
+      }
+      if (['handheld', 'gimbal', 'steadicam'].includes(technique.id)) {
+        const clean = look(raw.position, [.1, 1.16, 0]);
+        state.yaw += raw.yaw - clean.yaw;
+        state.pitch += raw.pitch - clean.pitch;
+        state.roll = raw.roll;
+      }
+    }
+    state.subject = pose.position;
+    state.actor = pose;
+    state.hideActor = technique.id === 'pov';
+    state.blur = raw.blur;
+    state.crop = raw.crop;
+    state.rack = technique.id === 'rack';
+    state.aperture = state.rack ? .26 : shot.aperture || (detail ? .084 : .042);
+    const focus = dot3(sub3(posePoint, state.position), cameraBasis(state).forward);
+    const focusNear = Math.max(.42, focus);
+    state.focus = state.hideActor ? 6 : state.rack ? 1 / mix(1 / focusNear, 1 / (focusNear + 12), smooth((t - .21) / .57)) : focusNear;
+    return state;
+  }
+
+  return { shot, target, technique, actor, duration: Math.max(technique.duration, actor.duration), frame };
+}
+
+function frameCoverage(state, aspect) {
+  if (state.hideActor) return null;
+  const rig = catSkeleton(state.actor);
+  const points = [
+    ...[-.59, .59].map(x => transformPoint(rig.head, [x, 0, -.03])),
+    ...[-.46, .46].map(x => transformPoint(rig.head, [x, .68, -.025])),
+    ...state.actor.feet.map(foot => transformPoint(rig.root, add3(foot, [0, -.12, -.10]))),
+    catLandmark(state.actor, targetById.get('tail'), rig),
+  ];
+  const { right, up, forward } = cameraBasis(state);
+  const focal = state.lens * state.crop / 18;
+  const screen = points.map(point => {
+    const ray = sub3(point, state.position);
+    const depth = dot3(ray, forward);
+    return depth > .1 ? [dot3(ray, right) * focal / depth, dot3(ray, up) * focal * aspect / depth] : null;
+  }).filter(Boolean);
+  if (!screen.length) return 0;
+  const xs = screen.map(([x]) => x);
+  if (Math.min(...xs) > 1 || Math.max(...xs) < -1) return 0;
+  const ys = screen.map(([, y]) => y);
+  return Math.round(50 * Math.max(0, Math.min(1, Math.max(...ys)) - Math.max(-1, Math.min(...ys))));
+}
+
+function promptPieces(selection, language) {
+  const shot = shotById.get(selection.shot);
+  const actor = actionById.get(selection.action);
+  const target = targetById.get(selection.target === 'auto' ? shot.target : selection.target);
+  const english = language === 'en';
+  const framing = english ? shot.prompt : shot.ko;
+  const position = selection.target === 'auto' && target.id === 'body' ? '' : (english ? target.prompt : target.ko);
+  const pov = english
+    ? 'Use the ' + shot.en.toLowerCase() + ' field of view as the starting lens for this first-person shot.'
+    : '1인칭 시점에서 ' + shot.name + '에 해당하는 화각으로 시작한다.';
   return {
-    ground: ground.data(), scenery: scenery.data(), shadows: shadows.data(),
-    rover: buildRover().data(), roverShadow: roverShadow.data(),
+    shot: selection.move === 'pov' ? pov : position ? framing + ' ' + position : framing,
+    move: cameraPrompts[selection.move][language],
+    action: english ? actor.prompt : actor.ko,
   };
 }
 
@@ -1605,16 +1833,16 @@ const skyFragment = [
   'void main() {',
   '  vec3 d = normalize(uForward + vScreen.x/uFocal.x*uRight + vScreen.y/uFocal.y*uUp);',
   '  float h = max(0.0, d.y);',
-  '  vec3 color = mix(vec3(.91,.58,.43), vec3(.255,.27,.39), smoothstep(-.03,.67,h));',
-  '  vec3 sun = normalize(vec3(-.37,.19,.9));',
+  '  vec3 color = mix(vec3(.90,.95,.93), vec3(.36,.665,.925), smoothstep(-.052,.38,h));',
+  '  vec3 sun = normalize(vec3(-.65,.41,.76));',
   '  float glow = max(0.0, dot(d,sun));',
-  '  color += vec3(.24,.13,.055) * pow(glow, 15.0);',
-  '  color = mix(color, vec3(1.0,.86,.64), smoothstep(.99956,.99972,glow));',
-  '  vec2 p = vec2(atan(d.x,d.z)*7.8, h*55.0);',
+  '  color = mix(color, vec3(1.,.936,.876), .45 * pow(glow, 13.0));',
+  '  color = mix(color, vec3(1.0,.983,.92), smoothstep(.998,.9998,glow));',
+  '  vec2 p = vec2(atan(d.x,d.z)*6.0, h*21.0);',
   '  float cloud = .61*noise(p) + .27*noise(p*2.09) + .12*noise(p*4.2);',
-  '  float band = smoothstep(.052,.19,h) * (1.0-smoothstep(.25,.49,h));',
-  '  color = mix(color, mix(vec3(.82,.49,.40),vec3(.94,.65,.51),pow(glow,4.0)), .55*band*smoothstep(.48,.72,cloud));',
-  '  color += (hash(gl_FragCoord.xy)-.5)*.016;',
+  '  float band = smoothstep(.04,.17,h) * (1.0-smoothstep(.26,.67,h));',
+  '  color = mix(color, vec3(1.0,.95,.965), .50*band*smoothstep(.49,.71,cloud));',
+  '  color += (hash(gl_FragCoord.xy)-.5)*.006;',
   '  gl_FragColor = vec4(color, 1.0);',
   '}',
 ].join('\n');
@@ -1625,20 +1853,20 @@ const setVertex = [
   'attribute float aMaterial;',
   'uniform mediump vec3 uEye;',
   'uniform vec3 uRight, uUp, uForward, uObject;',
-  'uniform vec2 uFocal, uTurn;',
+  'uniform vec2 uFocal;',
+  'uniform mat3 uModel;',
   'varying mediump vec3 vWorld, vNormal;',
   'varying mediump vec4 vColor;',
   'varying mediump float vMaterial, vDepth;',
-  'vec3 rotateY(vec3 v) { return vec3(v.x*uTurn.x+v.z*uTurn.y, v.y, v.z*uTurn.x-v.x*uTurn.y); }',
   'void main() {',
-  '  vWorld = rotateY(aPoint) + uObject;',
-  '  vNormal = rotateY(aNormal);',
+  '  vWorld = uModel*aPoint + uObject;',
+  '  vNormal = uModel*aNormal;',
   '  vColor = aColor;',
   '  vMaterial = aMaterial;',
   '  vec3 p = vWorld - uEye;',
   '  float z = dot(p,uForward);',
   '  vDepth = z;',
-  '  gl_Position = vec4(dot(p,uRight)*uFocal.x, dot(p,uUp)*uFocal.y, 1.00083*z-.20008, z);',
+  '  gl_Position = vec4(dot(p,uRight)*uFocal.x, dot(p,uUp)*uFocal.y, 1.0009*z-.15007, z);',
   '}',
 ].join('\n');
 
@@ -1655,28 +1883,38 @@ const setFragment = [
   '  return mix(mix(hash(p),hash(p+vec2(1.0,0.0)),w.x),mix(hash(p+vec2(0.0,1.0)),hash(p+1.0),w.x),w.y);',
   '}',
   'void main() {',
-  '  vec3 sun = normalize(vec3(-.56,.46,-.68));',
+  '  vec3 sun = normalize(vec3(-.59,.75,-.42));',
   '  vec3 n = normalize(vNormal);',
   '  float direct = max(0.0, dot(n,sun));',
-  '  float sky = .5+.5*n.y;',
-  '  vec3 lighting = vec3(.62,.57,.65) + sky*vec3(.15,.13,.125) + direct*vec3(.47,.33,.19);',
+  '  float sky = .42+.58*max(0.0,n.y);',
+  '  vec3 lighting = vec3(.72,.69,.78) + sky*vec3(.18,.185,.18) + direct*vec3(.27,.22,.16);',
   '  vec3 color = vColor.rgb * lighting;',
   '  float grain = hash(gl_FragCoord.xy);',
-  '  if (vMaterial > .5 && vMaterial < 1.5) {',
-  '    float strata = sin(vWorld.y*13.3 + vWorld.x*.61 + sin(vWorld.z*1.11)*1.7);',
-  '    float coarse = noise(vWorld.xz*2.0+vWorld.y*1.6);',
-  '    color *= (.94 + .078*strata + .145*coarse + .10*(grain-.5));',
-  '    color += vec3(.024,.017,.025)*smoothstep(.28,1.2,vWorld.y);',
-  '  }',
   '  if (vMaterial > 1.5 && vMaterial < 2.5) {',
-  '    color *= .875+.13*noise(vWorld.xz*3.7)+.105*noise(vWorld.xz*.62)+.072*(grain-.5);',
+  '    float trail = .9*sin(vWorld.z*.21)+max(0.0,vWorld.z-6.0)*.15;',
+  '    float edge = 1.0-smoothstep(.79,1.90,abs(vWorld.x-trail)+.27*noise(vWorld.xz*3.4));',
+  '    color = mix(color,vec3(.902,.833,.668),edge*.93);',
+  '    color *= .94+.065*noise(vWorld.xz*6.9)+.070*noise(vWorld.xz*.88)+.034*(grain-.5);',
+  '  } else if (vMaterial < 2.5) {',
+  '    vec3 halfDir = normalize(sun+normalize(uEye-vWorld));',
+  '    float bright = pow(max(0.0,dot(n,halfDir)), 20.0);',
+  '    color += vec3(.125,.106,.091)*bright;',
+  '    color *= .86+.14*smoothstep(-.1,.4,vWorld.y);',
+  '    if (vMaterial < .5) color *= .985+.028*noise(vWorld.xz*37.1+vWorld.y*24.3);',
   '  }',
-  '  if (vMaterial > 2.5) color = vColor.rgb;',
+  '  if (vMaterial > 2.5 && vMaterial < 3.5) {',
+  '    float glossy = pow(max(0.0,dot(n,normalize(sun+normalize(uEye-vWorld)))),15.0);',
+  '    color = vColor.a < .995 ? vColor.rgb : vColor.rgb*(.91+.09*direct)+vec3(.064,.055,.068)*glossy;',
+  '  }',
+  '  if (vMaterial > 3.5) {',
+  '    vec3 pearl = vColor.rgb*vec3(.83,.77,.89);',
+  '    color = mix(pearl, vec3(1.0,.961,.924), smoothstep(-.76,.67,n.y+.35*direct));',
+  '  }',
   '  float d = length(vWorld - uEye);',
-  '  vec3 haze = mix(vec3(.71,.407,.37), vec3(.88,.56,.46), smoothstep(15.0,120.0,d));',
-  '  float fog = 1.0-exp(-.013*d);',
-  '  color = mix(color, haze, fog*.94);',
-  '  float alpha = mix(vColor.a, min(.996,vDepth/75.0), uStoreDepth);',
+  '  vec3 haze = vMaterial > 3.5 ? vec3(.935,.911,.95) : vec3(.84,.915,.896);',
+  '  float fog = smoothstep(5.0,90.0,d)*.74;',
+  '  color = mix(color, haze, fog);',
+  '  float alpha = mix(vColor.a, min(.996,vDepth/55.0), uStoreDepth);',
   '  gl_FragColor = vec4(color, alpha);',
   '}',
 ].join('\n');
@@ -1686,32 +1924,44 @@ const postFragment = [
   'varying mediump vec2 vScreen;',
   'uniform sampler2D uImage;',
   'uniform vec2 uSize;',
-  'uniform float uFocus, uBlur;',
+  'uniform float uFocus, uBlur, uAperture;',
   'void main() {',
   '  vec2 uv = vScreen*.5+.5;',
   '  vec4 center = texture2D(uImage,uv);',
   '  vec3 color = center.rgb;',
   '  if (uFocus > 0.0) {',
-  '    float depth = max(.4, center.a*75.0);',
-  '    float spread = min(.036, abs(1.0/depth-1.0/uFocus)*.22);',
+  '    float depth = max(.3, center.a*55.0);',
+  '    float spread = min(.046, abs(1.0/depth-1.0/uFocus)*uAperture);',
+  '    if (spread*uSize.y > 1.1) {',
   '    vec2 radius = spread * vec2(uSize.y/uSize.x,1.0);',
   '    vec3 sum = color;',
   '    float count = 1.0;',
-  '    for (int i=0; i<18; i++) {',
+  '    for (int i=0; i<13; i++) {',
   '      float index = float(i);',
-  '      vec2 tap = vec2(cos(index*2.399963),sin(index*2.399963))*sqrt((index+.6)/18.0);',
+  '      vec2 tap = vec2(cos(index*2.399963),sin(index*2.399963))*sqrt((index+.6)/13.0);',
   '      vec4 sampleColor = texture2D(uImage,uv+tap*radius);',
-  '      float weight = .7+.3*smoothstep(0.0,.075,sampleColor.a-center.a);',
+  '      float weight = .40+.60*smoothstep(-.055,.012,sampleColor.a-center.a);',
   '      sum += sampleColor.rgb*weight;',
   '      count += weight;',
   '    }',
   '    color = sum/count;',
+  '    }',
   '  }',
   '  if (abs(uBlur)>.02) {',
   '    vec2 direction = uBlur > 0.0 ? vec2(.15*uBlur,0.0) : vec2(0.0,-.25*uBlur);',
   '    vec3 sum = color;',
   '    for (int i=1; i<13; i++) sum += texture2D(uImage,uv+direction*(float(i)/12.0-.54)).rgb;',
   '    color = sum/13.0;',
+  '  } else {',
+  '    vec2 stepUV = 1.0/uSize;',
+  '    vec3 left = texture2D(uImage,uv-vec2(stepUV.x,0.0)).rgb;',
+  '    vec3 right = texture2D(uImage,uv+vec2(stepUV.x,0.0)).rgb;',
+  '    vec3 up = texture2D(uImage,uv+vec2(0.0,stepUV.y)).rgb;',
+  '    vec3 down = texture2D(uImage,uv-vec2(0.0,stepUV.y)).rgb;',
+  '    float edgeX = length(left-right);',
+  '    float edgeY = length(up-down);',
+  '    vec3 across = edgeX > edgeY ? (left+right)*.5 : (up+down)*.5;',
+  '    color = mix(color, across, .23*smoothstep(.15,.47,max(edgeX,edgeY)));',
   '  }',
   '  gl_FragColor = vec4(color,1.0);',
   '}',
@@ -1744,15 +1994,16 @@ function createProgram(gl, vertexSource, fragmentSource, attributes, uniforms) {
 function glRenderer(gl, set) {
   const geometry = createProgram(gl, setVertex, setFragment,
     ['aPoint', 'aNormal', 'aColor', 'aMaterial'],
-    ['uEye', 'uRight', 'uUp', 'uForward', 'uFocal', 'uObject', 'uTurn', 'uStoreDepth']);
+    ['uEye', 'uRight', 'uUp', 'uForward', 'uFocal', 'uObject', 'uModel', 'uStoreDepth']);
   const sky = createProgram(gl, skyVertex, skyFragment, ['aQuad'], ['uRight', 'uUp', 'uForward', 'uFocal']);
-  const post = createProgram(gl, skyVertex, postFragment, ['aQuad'], ['uImage', 'uSize', 'uFocus', 'uBlur']);
+  const post = createProgram(gl, skyVertex, postFragment, ['aQuad'], ['uImage', 'uSize', 'uFocus', 'uBlur', 'uAperture']);
   const buffers = Object.fromEntries(Object.entries(set).map(([key, data]) => {
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
     return [key, { buffer, length: data.length / 11 }];
   }));
+  buffers.tail = { buffer: gl.createBuffer(), length: 0 };
   const quad = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, quad);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
@@ -1790,9 +2041,9 @@ function glRenderer(gl, set) {
     gl.disableVertexAttribArray(index);
   }
 
-  function drawMesh(mesh, object = [0, 0, 0], heading = 0) {
+  function drawMesh(mesh, object = origin, basis = IDENTITY) {
     gl.uniform3fv(geometry.uniforms.uObject, object);
-    gl.uniform2f(geometry.uniforms.uTurn, Math.cos(heading), Math.sin(heading));
+    gl.uniformMatrix3fv(geometry.uniforms.uModel, false, basis);
     gl.bindBuffer(gl.ARRAY_BUFFER, mesh.buffer);
     const pointers = [['aPoint', 3, 0], ['aNormal', 3, 12], ['aColor', 4, 24], ['aMaterial', 1, 40]];
     pointers.forEach(([name, size, offset]) => {
@@ -1811,8 +2062,8 @@ function glRenderer(gl, set) {
     gl.uniform2f(program.uniforms.uFocal, focal, focal * width / height);
   }
 
-  return (state, width, height, hideRover) => {
-    const usePost = state.focus > 0 || Math.abs(state.blur) > .02;
+  return (state, width, height) => {
+    const usePost = state.aperture > .03 || Math.abs(state.blur) > .02;
     if (usePost) selectTarget(width, height);
     else gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.viewport(0, 0, width, height);
@@ -1831,19 +2082,25 @@ function glRenderer(gl, set) {
     gl.uniform3fv(geometry.uniforms.uEye, state.position);
     gl.uniform1f(geometry.uniforms.uStoreDepth, Number(usePost));
     drawMesh(buffers.ground);
-    drawMesh(buffers.scenery);
+    drawMesh(buffers.general);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     gl.depthMask(false);
     if (usePost) gl.colorMask(true, true, true, false);
     gl.uniform1f(geometry.uniforms.uStoreDepth, 0);
-    drawMesh(buffers.shadows);
-    drawMesh(buffers.roverShadow, state.subject, state.heading);
+    const shadow = shadowTransform(state.actor);
+    drawMesh(buffers.shadow, shadow.origin, shadow.basis);
     gl.colorMask(true, true, true, true);
     gl.depthMask(true);
     gl.disable(gl.BLEND);
     gl.uniform1f(geometry.uniforms.uStoreDepth, Number(usePost));
-    if (!hideRover) drawMesh(buffers.rover, state.subject, state.heading);
+    if (!state.hideActor) {
+      const tailData = buildTail(state.actor);
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffers.tail.buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, tailData, gl.DYNAMIC_DRAW);
+      buffers.tail.length = tailData.length / 11;
+      for (const part of catObjects(state.actor)) drawMesh(buffers[part.name], part.origin, part.basis);
+    }
     if (usePost) {
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       gl.disable(gl.DEPTH_TEST);
@@ -1853,6 +2110,7 @@ function glRenderer(gl, set) {
       gl.uniform1i(post.uniforms.uImage, 0);
       gl.uniform2f(post.uniforms.uSize, width, height);
       gl.uniform1f(post.uniforms.uFocus, state.focus);
+      gl.uniform1f(post.uniforms.uAperture, state.aperture);
       gl.uniform1f(post.uniforms.uBlur, state.blur);
       drawQuad(post);
       gl.bindTexture(gl.TEXTURE_2D, null);
@@ -1860,26 +2118,35 @@ function glRenderer(gl, set) {
   };
 }
 
+function shadowTransform(actor) {
+  const [x, y, z] = actor.position;
+  const spread = 1 + y * .27;
+  return { origin: [x + y * .31, groundHeight(x, z) + .001, z + y * .18], basis: multiplyBasis(rotationY(actor.heading), scaleBasis([spread, 1, spread])) };
+}
+
 function canvasRenderer(context, set) {
-  const triangles = Object.fromEntries(Object.entries(set).map(([name, vertices]) => {
+  function facesFrom(name, vertices) {
     const faces = [];
     for (let i = 0; i < vertices.length; i += 33) {
       const data = vertices.subarray(i, i + 33);
       const [x, y, z] = data;
+      const color = Array.from(data.subarray(6, 9));
+      const trail = name === 'ground' ? 1 - smooth((Math.abs(x - pathCenter(z)) - .79) / 1.11) : 0;
       faces.push({
         points: [[x, y, z], [data[11], data[12], data[13]], [data[22], data[23], data[24]]],
-        normal: Array.from(data.subarray(3, 6)), color: Array.from(data.subarray(6, 9)),
+        normal: normalized([data[3] + data[14] + data[25], data[4] + data[15] + data[26], data[5] + data[16] + data[27]]),
+        color: mix3(color, [.902, .833, .668], trail * .93),
         alpha: data[9], material: data[10],
       });
     }
-    return [name, faces];
-  }));
+    return faces;
+  }
+  const triangles = Object.fromEntries(Object.entries(set).map(([name, vertices]) => [name, facesFrom(name, vertices)]));
   const far = document.createElement('canvas');
   const near = document.createElement('canvas');
   const farCtx = far.getContext('2d');
   const nearCtx = near.getContext('2d');
-  const sun = normalized([-.56, .46, -.68]);
-  const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  const sun = normalized([-.59, .75, -.42]);
   const rgba = (color, alpha) => 'rgba(' + color.map(channel => Math.round(clamp(channel) * 255)).join(',') + ',' + alpha + ')';
 
   function clipped(points, limit) {
@@ -1897,7 +2164,7 @@ function canvasRenderer(context, set) {
     return result;
   }
 
-  return (state, width, height, hideRover) => {
+  return (state, width, height) => {
     if (far.width !== width || far.height !== height) {
       far.width = near.width = width;
       far.height = near.height = height;
@@ -1906,40 +2173,50 @@ function canvasRenderer(context, set) {
     const focal = state.lens / 18 * state.crop * width / 2;
     const skyY = height / 2 + Math.tan(clamp(state.pitch, -1.2, 1.2)) * focal;
     const grad = farCtx.createLinearGradient(0, skyY - height, 0, skyY + height * .2);
-    grad.addColorStop(0, '#49465c');
-    grad.addColorStop(.38, '#a96f70');
-    grad.addColorStop(.86, '#f4ac84');
-    grad.addColorStop(1, '#e49678');
+    grad.addColorStop(0, '#6aa6e1');
+    grad.addColorStop(.36, '#a4d2fa');
+    grad.addColorStop(.86, '#eef8e8');
+    grad.addColorStop(1, '#e1ebd3');
     farCtx.fillStyle = grad;
     farCtx.fillRect(0, 0, width, height);
     nearCtx.clearRect(0, 0, width, height);
     const painter = [];
-    const visibleMeshes = ['ground', 'scenery', 'shadows', 'roverShadow'];
-    if (!hideRover) visibleMeshes.push('rover');
+    const visibleMeshes = [
+      { name: 'ground', origin, basis: IDENTITY },
+      { name: 'general', origin, basis: IDENTITY },
+      { name: 'shadow', ...shadowTransform(state.actor) },
+    ];
+    if (!state.hideActor) {
+      triangles.tail = facesFrom('tail', buildTail(state.actor));
+      visibleMeshes.push(...catObjects(state.actor));
+    }
     const project = point => {
       const relative = [point[0] - state.position[0], point[1] - state.position[1], point[2] - state.position[2]];
-      return [dot(relative, basis.right), dot(relative, basis.up), dot(relative, basis.forward)];
+      return [dot3(relative, basis.right), dot3(relative, basis.up), dot3(relative, basis.forward)];
     };
-    for (const name of visibleMeshes) {
-      const attached = name === 'rover' || name === 'roverShadow';
+    for (const mesh of visibleMeshes) {
+      const { name } = mesh;
+      const attached = name !== 'ground' && name !== 'general';
       for (const face of triangles[name]) {
-        const points = face.points.map(point => project(attached ? offset(turnY(point, state.heading), state.subject) : point));
-        if (points.every(point => point[2] < .1)) continue;
+        const world = attached ? face.points.map(point => transformPoint(mesh, point)) : face.points;
+        const facing = attached ? normalized(apply3(mesh.basis, face.normal)) : face.normal;
+        if (face.material !== PLANT && face.alpha === 1 && dot3(facing, sub3(state.position, world[0])) < -.07) continue;
+        const points = world.map(project);
+        if (points.every(point => point[2] < .075)) continue;
         const depth = (points[0][2] + points[1][2] + points[2][2]) / 3;
-        const visible = points.some(point => point[2] < .1) ? clipped(points, .1) : points;
+        const visible = points.some(point => point[2] < .075) ? clipped(points, .075) : points;
         const screen = visible.map(([x, y, z]) => [width / 2 + x * focal / z, height / 2 - y * focal / z]);
         if (screen.every(([x]) => x < 0) || screen.every(([x]) => x > width) ||
             screen.every(([, y]) => y < 0) || screen.every(([, y]) => y > height)) continue;
-        const facing = attached ? turnY(face.normal, state.heading) : face.normal;
-        const light = .66 + .13 * Math.max(0, facing[1]) + .42 * Math.max(0, dot(facing, sun));
-        const shade = face.material === LIGHT ? face.color : tint(face.color, light);
-        const color = shadeMix(shade, [.83, .50, .43], .91 * (1 - Math.exp(-.014 * Math.max(0, depth))));
-        painter.push({ screen, depth, color: rgba(color, face.alpha), near: attached || (name === 'scenery' && depth < 10) });
+        const light = .78 + .14 * Math.max(0, facing[1]) + .21 * Math.max(0, dot3(facing, sun));
+        const shade = face.material === SHINE ? face.color : tint(face.color, light);
+        const color = mix3(shade, [.84, .915, .896], .72 * smooth((depth - 5) / 85));
+        painter.push({ screen, depth, color: rgba(color, face.alpha), near: attached });
       }
     }
     painter.sort((a, b) => b.depth - a.depth);
     for (const face of painter) {
-      const target = state.focus > 0 && face.near ? nearCtx : farCtx;
+      const target = state.aperture > .03 && face.near ? nearCtx : farCtx;
       const [first, ...rest] = face.screen;
       target.beginPath();
       target.moveTo(...first);
@@ -1947,12 +2224,18 @@ function canvasRenderer(context, set) {
       target.closePath();
       target.fillStyle = face.color;
       target.fill();
+      if (face.color.endsWith(',1)')) {
+        target.strokeStyle = face.color;
+        target.lineWidth = .55;
+        target.stroke();
+      }
     }
     context.clearRect(0, 0, width, height);
-    if (state.focus > 0) {
-      context.filter = 'blur(' + (10 * clamp((14 - state.focus) / 8) * width / 750) + 'px)';
+    if (state.aperture > .03) {
+      const blur = state.aperture * width * .062;
+      context.filter = 'blur(' + (blur * clamp((14 - state.focus) / 9)) + 'px)';
       context.drawImage(far, 0, 0);
-      context.filter = 'blur(' + (10 * clamp((state.focus - 6) / 8) * width / 750) + 'px)';
+      context.filter = 'blur(' + (state.rack ? blur * clamp((state.focus - 6) / 8) : 0) + 'px)';
       context.drawImage(near, 0, 0);
       context.filter = 'none';
     } else if (Math.abs(state.blur) > .02) {
@@ -1998,7 +2281,7 @@ function createScene(canvas) {
 
   return {
     get accelerated() { return accelerated; },
-    draw(state, hideRover) {
+    draw(state) {
       const dpr = Math.min(accelerated ? 1.65 : 1.15, window.devicePixelRatio || 1);
       const width = Math.max(1, Math.round(canvas.clientWidth * dpr));
       const height = Math.max(1, Math.round(canvas.clientHeight * dpr));
@@ -2007,21 +2290,21 @@ function createScene(canvas) {
         canvas.height = height;
       }
       try {
-        renderer(state, width, height, hideRover);
+        renderer(state, width, height);
       } catch (error) {
         if (!accelerated) throw error;
         fallback();
         canvas.width = width;
         canvas.height = height;
-        renderer(state, width, height, hideRover);
+        renderer(state, width, height);
       }
     },
   };
 }
 
 const mapColors = {
-  background: '#10191e', grid: '#263840', outline: '#3a545f', muted: '#a1b4bd',
-  accent: '#9eeadd', orange: '#ffb18a', path: '#629590',
+  background: '#f6f2fd', grid: '#e3d9ef', outline: '#cbbfdf', muted: '#6e5f83',
+  accent: '#7954bf', orange: '#c55f80', path: '#9e81c3', actorPath: '#cf87a0',
 };
 
 function makePath(technique) {
@@ -2051,6 +2334,7 @@ function createMap(canvas) {
   let project;
   let axisScale;
   const mapPlane = (point, view) => view === 'top' ? [point[0], point[2]] : [point[2], point[1]];
+  const marker = state => add3(state.subject, [0, .96, 0]);
 
   function polyline(ctx, points, color, width, dash = []) {
     if (points.length === 0) return;
@@ -2086,14 +2370,14 @@ function createMap(canvas) {
 
     const extents = path.frames.flatMap(state => [
       mapPlane(state.position, view),
-      mapPlane([state.subject[0], side ? 1.1 : 0, state.subject[2]], view),
+      mapPlane(marker(state), view),
     ]);
     const horizontal = extents.map(([x]) => x);
     const vertical = extents.map(([, y]) => y);
-    const left = Math.min(side ? -10 : -8, ...horizontal) - .8;
-    const right = Math.max(side ? 10 : 8, ...horizontal) + .8;
-    const bottom = Math.min(side ? -1.1 : -10, ...vertical) - .45;
-    const top = Math.max(side ? 6.4 : 10, ...vertical) + .65;
+    const left = Math.min(side ? -7 : -5.5, ...horizontal) - .8;
+    const right = Math.max(side ? 7 : 5.5, ...horizontal) + .8;
+    const bottom = Math.min(side ? -1.1 : -7, ...vertical) - .45;
+    const top = Math.max(side ? 4.8 : 6, ...vertical) + .65;
     const middleX = (left + right) / 2;
     const middleY = (bottom + top) / 2;
     const cx = width / 2;
@@ -2119,45 +2403,36 @@ function createMap(canvas) {
     bg.lineWidth = .75;
     bg.stroke();
     if (side) {
-      bg.fillStyle = '#1b2629';
+      bg.fillStyle = '#e9ece1';
       bg.fillRect(0, oy, width, Math.max(0, height - oy));
       polyline(bg, [[0, oy], [width, oy]], mapColors.outline, 1);
-      polyline(bg, [[ox, 19], [ox, height - 26]], '#3a515a', .8, [3, 4]);
+      polyline(bg, [[ox, 19], [ox, height - 26]], '#baa9d0', .8, [3, 4]);
       for (const y of [2, 4, 6, 8, 12, 16]) {
         const [, position] = planeToScreen([0, y]);
         if (position < 19 || position > height - 30 || (scale < 8 && y % 4 !== 0)) continue;
-        bg.fillStyle = '#9aabb4';
+        bg.fillStyle = '#6e5f83';
         bg.font = '9px Consolas, monospace';
         bg.fillText(y + 'm', 8, position + 3);
       }
     } else {
-      polyline(bg, [[ox, 0], [ox, height]], '#334954', .8);
-      polyline(bg, [[0, oy], [width, oy]], '#334954', .8);
-      const facilityA = project([1.15, 0, 12.78]);
-      const facilityB = project([8.23, 0, 7.44]);
-      bg.fillStyle = '#1e2d33';
-      bg.strokeStyle = '#3f5964';
-      bg.lineWidth = .9;
-      bg.fillRect(facilityA[0], facilityA[1], facilityB[0] - facilityA[0], facilityB[1] - facilityA[1]);
-      bg.strokeRect(facilityA[0], facilityA[1], facilityB[0] - facilityA[0], facilityB[1] - facilityA[1]);
-      const gate = [-4.2, 0, .25].map(x => project([x, 0, 5.65]));
-      polyline(bg, [gate[0], gate[2]], '#57727a', 1.1, [3, 3]);
-      if (facilityA[1] >= 12 && facilityA[0] < width - 35) {
-        bg.fillStyle = '#8da3ae';
-        bg.font = '9px system-ui, sans-serif';
-        bg.fillText('기지', facilityA[0] + 4, facilityA[1] + 12);
-      }
+      const trail = Array.from({ length: 45 }, (_, i) => {
+        const z = i * 1.25 - 27.5;
+        return project([pathCenter(z), 0, z]);
+      });
+      polyline(bg, trail, '#eee6d9a6', 2.7 * scale);
+      polyline(bg, [[ox, 0], [ox, height]], mapColors.outline, .8);
+      polyline(bg, [[0, oy], [width, oy]], mapColors.outline, .8);
     }
 
     const camera = path.frames.map(state => project(state.position));
-    const subject = path.frames.map(state => project([state.subject[0], side ? 1.1 : 0, state.subject[2]]));
-    if (distance3(path.frames[0].subject, path.frames.at(-1).subject) > .1) {
-      polyline(bg, subject, '#a27362', 1.25, [2, 4]);
+    const subject = path.frames.map(state => project(marker(state)));
+    if (subject.some(([x, y]) => Math.hypot(x - subject[0][0], y - subject[0][1]) > 1.5)) {
+      polyline(bg, subject, mapColors.actorPath, 1.65, [2, 4]);
     }
     if (path.lengths.at(-1) > .015) {
       polyline(bg, camera, mapColors.path, 1.5, [4, 4]);
-      dot(bg, camera[0], 3.2, mapColors.background, '#86a8a9');
-      dot(bg, camera.at(-1), 3.2, mapColors.background, '#86a8a9');
+      dot(bg, camera[0], 3.2, mapColors.background, mapColors.path);
+      dot(bg, camera.at(-1), 3.2, mapColors.background, mapColors.path);
       if (Math.hypot(camera[0][0] - camera.at(-1)[0], camera[0][1] - camera.at(-1)[1]) > 24) {
         bg.font = '9px Consolas, monospace';
         bg.fillStyle = mapColors.muted;
@@ -2169,11 +2444,11 @@ function createMap(canvas) {
     const legendY = height - 14;
     const legendRight = width - 12;
     const legendLeft = legendRight - 2 * scale;
-    polyline(bg, [[legendLeft, legendY], [legendRight, legendY]], '#9ab0b9', .9);
-    polyline(bg, [[legendLeft, legendY - 3], [legendLeft, legendY + 3]], '#9ab0b9', .9);
-    polyline(bg, [[legendRight, legendY - 3], [legendRight, legendY + 3]], '#9ab0b9', .9);
+    polyline(bg, [[legendLeft, legendY], [legendRight, legendY]], mapColors.muted, .9);
+    polyline(bg, [[legendLeft, legendY - 3], [legendLeft, legendY + 3]], mapColors.muted, .9);
+    polyline(bg, [[legendRight, legendY - 3], [legendRight, legendY + 3]], mapColors.muted, .9);
     bg.font = '9px Consolas, monospace';
-    bg.fillStyle = '#a9bcc3';
+    bg.fillStyle = mapColors.muted;
     bg.textAlign = 'center';
     bg.fillText('2m', (legendLeft + legendRight) / 2, legendY - 4);
     bg.textAlign = 'left';
@@ -2202,9 +2477,9 @@ function createMap(canvas) {
 
     const side = view === 'side';
     const camera = project(state.position);
-    const subject = project([state.subject[0], side ? 1.1 : 0, state.subject[2]]);
+    const subject = project(marker(state));
     const prefix = path.frames.slice(0, Math.floor(t * (path.frames.length - 1)) + 1).map(frame => project(frame.position));
-    polyline(context, [...prefix, camera], '#9eeaddc7', 2.1);
+    polyline(context, [...prefix, camera], '#7954bfc7', 2.1);
 
     const { right, up, forward } = cameraBasis(state);
     const angle = 18 / state.lens;
@@ -2229,30 +2504,30 @@ function createMap(canvas) {
     context.moveTo(...hull[0]);
     hull.slice(1).forEach(position => context.lineTo(...position));
     context.closePath();
-    context.fillStyle = '#76c9b524';
+    context.fillStyle = '#9c77d82c';
     context.fill();
-    context.strokeStyle = '#75cabb9a';
+    context.strokeStyle = '#8a62bd9c';
     context.lineWidth = 1;
     context.stroke();
-    polyline(context, [camera, center], '#b8fff294', .9, [3, 3]);
+    polyline(context, [camera, center], '#8063a4a8', .9, [3, 3]);
 
-    if (state.focus) {
+    if (state.rack) {
       const depth = Math.min(state.focus, 23);
       const half = depth * angle * .62;
       const focusLine = side
         ? [point(depth, 0, -half / aspect), point(depth, 0, half / aspect)]
         : [point(depth, -half, 0), point(depth, half, 0)];
-      polyline(context, focusLine, '#ffb18ad0', 1.2, [4, 3]);
+      polyline(context, focusLine, '#bc5277bd', 1.2, [4, 3]);
     }
 
-    dot(context, subject, 8.5, '#ffb18a18');
-    dot(context, subject, 4.4, mapColors.orange, '#ffd1b8');
+    dot(context, subject, 8.5, '#db82a32f');
+    dot(context, subject, 4.4, mapColors.orange, '#fff4f8');
     context.save();
     context.translate(...camera);
     const vector = [center[0] - camera[0], center[1] - camera[1]];
     context.rotate(Math.hypot(...vector) < 1 ? -PI / 2 : Math.atan2(vector[1], vector[0]));
     context.fillStyle = mapColors.accent;
-    context.strokeStyle = '#0b2e2e';
+    context.strokeStyle = '#593393';
     context.lineWidth = 1.5;
     context.beginPath();
     context.roundRect(-8.5, -5.5, 13, 11, 2);
@@ -2294,6 +2569,8 @@ const iconPaths = {
   copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
   check: '<path d="m5 12 4.5 4.5L19 7"/>',
   prompt: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m7 9 3 3-3 3m6 0h4"/>',
+  sliders: '<path d="M4 7h16M4 12h16M4 17h16"/><circle cx="9" cy="7" r="1.6" fill="#fff"/><circle cx="15" cy="12" r="1.6" fill="#fff"/><circle cx="11" cy="17" r="1.6" fill="#fff"/>',
+  character: '<path d="M5 11 6 5l4 3h4l4-3 1 6c1 1 1 2 1 3 0 3-3.5 5-8 5s-8-2-8-5c0-1 .4-2 1-3Z"/><path d="M9 13h.2m5.6 0h.2m-4 2.5 1 1 1-1"/>',
   search: '<circle cx="10.7" cy="10.7" r="5.7"/><path d="m15 15 4 4"/>',
   close: '<path d="m6 6 12 12M18 6 6 18"/>',
   lock: '<rect x="6" y="10" width="12" height="10" rx="2"/><path d="M8.5 10V7a3.5 3.5 0 0 1 7 0v3m-3.5 4v2"/>',
@@ -2322,11 +2599,15 @@ function svgIcon(name) {
   return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + iconPaths[name] + '</svg>';
 }
 
+
 const byId = id => document.getElementById(id);
-document.querySelectorAll('[data-icon]').forEach(node => { node.innerHTML = svgIcon(node.dataset.icon); });
+const all = selector => Array.from(document.querySelectorAll(selector));
+all('[data-icon]').forEach(node => { node.innerHTML = svgIcon(node.dataset.icon); });
+
 const scene = createScene(byId('scene'));
 const drawMap = createMap(byId('map'));
 const viewport = byId('viewport');
+const studio = byId('studio');
 const seek = byId('seek');
 const speed = byId('speed');
 const play = byId('play');
@@ -2336,32 +2617,39 @@ const gridToggle = byId('grid-toggle');
 const search = byId('search');
 const filters = byId('filters');
 const cards = byId('cards');
-const related = byId('related');
-const studio = byId('studio');
 const keys = byId('keys');
-const promptText = byId('prompt-text');
-const libraryLanguage = byId('library-language');
-const copyButton = byId('copy-prompt');
-const copyLabel = byId('copy-label');
+const related = byId('related');
+const copyAll = byId('copy-all');
 const copyStatus = byId('copy-status');
 const copyFeedback = byId('copy-feedback');
 const copyDialog = byId('copy-dialog');
 const copyFallback = byId('copy-fallback');
+const libraryLanguage = byId('library-language');
 const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
-const viewButtons = [...document.querySelectorAll('[data-view]')];
-const languageButtons = [...document.querySelectorAll('[data-lang]')];
-const filterButtons = new Map();
-const cardButtons = new Map();
-const copyTimers = new WeakMap();
-const labels = {
-  distance: byId('distance'), height: byId('height'), angle: byId('angle'), metric: byId('metric-label'),
-  lens: byId('scene-lens'), time: byId('time'), play: byId('play-label'),
+const viewButtons = all('[data-view]');
+const languageButtons = all('[data-lang]');
+const libraryButtons = all('[data-library]');
+const panelCopyButtons = all('[data-copy]');
+const fieldControls = {
+  shot: byId('shot-select'), target: byId('target-select'), move: byId('move-select'), action: byId('action-select'),
 };
-let technique;
+const labels = {
+  distance: byId('distance'), coverage: byId('coverage'), angle: byId('angle'), metric: byId('metric-label'),
+  lens: byId('scene-lens'), shot: byId('scene-shot'), time: byId('time'), play: byId('play-label'),
+};
+const copyNames = { shot: '샷 · 프레이밍', move: '카메라 무빙', action: '캐릭터 무빙', all: '전체 프롬프트' };
+const promptNodes = { shot: byId('prompt-shot'), move: byId('prompt-move'), action: byId('prompt-action') };
+const libraryEntries = { shot: shots, move: moves, action: actions };
+const filterButtons = new Map();
+const copyTimers = new WeakMap();
+const selection = { ...defaultSetup };
+let composer;
 let path;
+let prompts;
 let position = 0;
 let view = 'top';
 let category = 'all';
+let library = 'move';
 let promptLanguage = 'ko';
 let feedbackTimer;
 let announcementTimer;
@@ -2379,30 +2667,16 @@ function markup(node, value) {
   if (node.innerHTML !== value) node.innerHTML = value;
 }
 
-function renderPrompt() {
-  promptText.lang = promptLanguage;
-  write(promptText, cameraPrompts[technique.id][promptLanguage]);
-  libraryLanguage.value = promptLanguage;
-  languageButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.lang === promptLanguage)));
-  setCopied(copyButton, false);
-}
-
-function changePromptLanguage(language) {
-  if (language === promptLanguage || !['ko', 'en'].includes(language)) return;
-  promptLanguage = language;
-  renderPrompt();
-  for (const { copy } of cardButtons.values()) setCopied(copy, false);
-}
-
 function setCopied(button, copied) {
   clearTimeout(copyTimers.get(button));
   markup(button.firstElementChild, svgIcon(copied ? 'check' : 'copy'));
   button.toggleAttribute('data-copied', copied);
-  if (button === copyButton) write(copyLabel, copied ? '복사 완료' : '프롬프트 복사');
+  const label = button.querySelector('[data-copy-label]');
+  if (label) write(label, copied ? '복사 완료' : button === copyAll ? '전체 복사' : '복사');
   if (copied) copyTimers.set(button, setTimeout(() => setCopied(button, false), 1700));
 }
 
-function copyWithSelection(text, origin) {
+function copyWithSelection(text, button) {
   const field = document.createElement('textarea');
   field.className = 'copy-source';
   field.readOnly = true;
@@ -2418,15 +2692,14 @@ function copyWithSelection(text, origin) {
     return false;
   } finally {
     field.remove();
-    if (document.activeElement === document.body && origin.isConnected && !origin.closest('[hidden]')) {
-      origin.focus({ preventScroll: true });
+    if (document.activeElement === document.body && button.isConnected && !button.closest('[hidden]')) {
+      button.focus({ preventScroll: true });
     }
   }
 }
 
-async function copyPrompt(move, origin) {
+async function copyText(text, name, button) {
   const language = promptLanguage;
-  const text = cameraPrompts[move.id][language];
   let copied = false;
   if (navigator.clipboard?.writeText) {
     try {
@@ -2436,7 +2709,7 @@ async function copyPrompt(move, origin) {
       // Some browser containers block the asynchronous clipboard API.
     }
   }
-  if (!copied) copied = copyWithSelection(text, origin);
+  if (!copied) copied = copyWithSelection(text, button);
   if (!copied) {
     copyFallback.lang = language;
     copyFallback.value = text;
@@ -2445,38 +2718,58 @@ async function copyPrompt(move, origin) {
     copyFallback.select();
     return;
   }
-  if (promptLanguage === language && (origin !== copyButton || technique === move)) setCopied(origin, true);
-  const message = move.name + ' · ' + (language === 'ko' ? '한국어' : 'English') + ' 프롬프트 복사 완료';
+  if (button.isConnected) setCopied(button, true);
+  const message = name + ' · ' + (language === 'ko' ? '한국어' : 'English') + ' 복사 완료';
   clearTimeout(feedbackTimer);
   clearTimeout(announcementTimer);
   write(copyFeedback, message);
   copyFeedback.hidden = false;
   write(copyStatus, '');
-  announcementTimer = setTimeout(() => write(copyStatus, message), 40);
-  feedbackTimer = setTimeout(() => { copyFeedback.hidden = true; }, 2100);
+  announcementTimer = setTimeout(() => write(copyStatus, message), 35);
+  feedbackTimer = setTimeout(() => { copyFeedback.hidden = true; }, 2200);
+}
+
+function refreshPrompts() {
+  prompts = promptPieces(selection, promptLanguage);
+  for (const [key, node] of Object.entries(promptNodes)) {
+    node.lang = promptLanguage;
+    write(node, prompts[key]);
+  }
+  libraryLanguage.value = promptLanguage;
+  languageButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.lang === promptLanguage)));
+  [copyAll, ...panelCopyButtons, ...cards.querySelectorAll('[data-copied]')].forEach(button => setCopied(button, false));
+}
+
+function changePromptLanguage(language) {
+  if (language !== promptLanguage && (language === 'ko' || language === 'en')) {
+    promptLanguage = language;
+    refreshPrompts();
+  }
 }
 
 function render() {
-  const state = technique.frame(position);
-  scene.draw(state, technique.id === 'pov');
-  drawMap(state, path, position, view, viewport.clientWidth / Math.max(1, viewport.clientHeight));
+  const state = composer.frame(position);
+  const aspect = viewport.clientWidth / Math.max(1, viewport.clientHeight);
+  scene.draw(state);
+  drawMap(state, path, position, view, aspect);
   markup(labels.distance, traveled(path, position).toFixed(2) + ' <small>m</small>');
-  markup(labels.height, state.position[1].toFixed(2) + ' <small>m</small>');
-  if (technique.id === 'rack') {
+  const coverage = frameCoverage(state, aspect);
+  markup(labels.coverage, coverage === null ? '—' : coverage + '<small>%</small>');
+  if (state.rack) {
     write(labels.metric, '초점 거리');
     markup(labels.angle, state.focus.toFixed(1) + ' <small>m</small>');
-  } else if (technique.id === 'digital') {
+  } else if (composer.technique.id === 'digital') {
     write(labels.metric, '크롭 배율');
     markup(labels.angle, state.crop.toFixed(2) + '<small>×</small>');
   } else {
     write(labels.metric, '수평 화각');
     markup(labels.angle, deg(2 * Math.atan(18 / state.lens)).toFixed(1) + '<small>°</small>');
   }
-  write(labels.lens, Math.round(state.lens) + ' mm');
+  write(labels.lens, Math.round(state.lens * 10) / 10 + ' mm');
   seek.value = Math.round(position * 1000);
   seek.style.setProperty('--progress', (position * 100).toFixed(1) + '%');
-  const time = (position * technique.duration).toFixed(1);
-  const duration = technique.duration.toFixed(1);
+  const time = (position * composer.duration).toFixed(1);
+  const duration = composer.duration.toFixed(1);
   seek.setAttribute('aria-valuetext', duration + '초 중 ' + time + '초');
   markup(labels.time, '<b>' + time + '</b> / ' + duration + '초');
 }
@@ -2485,13 +2778,13 @@ function updatePlayButton() {
   const name = playing ? '일시정지' : position >= 1 ? '다시 재생' : '재생';
   write(labels.play, name);
   play.setAttribute('aria-label', name);
-  play.firstElementChild.innerHTML = svgIcon(playing ? 'pause' : position >= 1 ? 'replay' : 'play');
+  markup(play.firstElementChild, svgIcon(playing ? 'pause' : position >= 1 ? 'replay' : 'play'));
 }
 
 function step(now) {
   if (!playing) return;
   if (!lastTick) lastTick = now;
-  position += Math.min(now - lastTick, 100) / 1000 * Number(speed.value) / technique.duration;
+  position += Math.min(now - lastTick, 150) / 1000 * Number(speed.value) / composer.duration;
   lastTick = now;
   if (position >= 1) {
     if (!repeat) {
@@ -2502,7 +2795,7 @@ function step(now) {
     }
     position %= 1;
   }
-  if (now - lastDraw >= (scene.accelerated ? 13 : 31)) {
+  if (now - lastDraw >= (scene.accelerated ? 13 : 49)) {
     render();
     lastDraw = now;
   }
@@ -2532,97 +2825,156 @@ function setView(next, draw = true) {
   if (draw) render();
 }
 
-function selectTechnique(next, options = {}) {
-  const { autoplay = false, jump = false } = options;
+function refreshSetup({ followView = false, autoplay = false } = {}) {
   setPlaying(false);
-  technique = next;
-  path = makePath(next);
+  composer = composeScene(selection);
+  path = makePath(composer);
   position = 0;
-  setView(next.view, false);
-  write(byId('shot-category'), categories[next.category]);
-  write(byId('move-name'), next.name);
-  write(byId('move-english'), next.english);
-  write(byId('mechanics'), next.mechanics);
-  write(byId('observe'), next.observe);
-  cardButtons.forEach(({ preview }, id) => preview.setAttribute('aria-pressed', String(id === next.id)));
-  renderPrompt();
-  const comparison = moveById.get(next.related);
+  if (followView) setView(composer.technique.view, false);
+  for (const [key, field] of Object.entries(fieldControls)) field.value = selection[key];
+  const defaultTarget = targetById.get(composer.shot.target);
+  write(fieldControls.target.options[0], '기본 · ' + defaultTarget.name);
+  const pov = composer.technique.id === 'pov';
+  fieldControls.target.disabled = pov;
+  write(byId('shot-detail'), pov ? '1인칭 시점에서는 선택한 샷의 화각으로 진행 방향을 봅니다.' : composer.shot.detail);
+  write(byId('move-detail'), composer.technique.mechanics);
+  byId('move-detail').title = composer.technique.observe;
+  write(byId('action-detail'), composer.actor.detail);
+  write(labels.shot, composer.shot.name + (selection.target !== 'auto' && !pov ? ' · ' + composer.target.name : ''));
+  const comparison = moveById.get(composer.technique.related);
   related.hidden = !comparison;
   if (comparison) {
     related.dataset.move = comparison.id;
     related.innerHTML = comparison.name + ' 보기 ' + svgIcon('arrow-up-right');
   }
+  refreshPrompts();
+  markSelection();
   render();
-  if (jump) {
-    studio.scrollIntoView({ behavior: motion.matches ? 'instant' : 'smooth', block: 'start' });
-    play.focus({ preventScroll: true });
-  }
   if (autoplay && !motion.matches) setPlaying(true);
   else updatePlayButton();
-  if (jump) write(byId('selection-status'), next.name + ' 선택됨. ' + labels.play.textContent + ' 상태.');
+}
+
+function choose(key, value, autoplay = false) {
+  if (selection[key] === value) {
+    if (autoplay) {
+      seekTo(0);
+      if (!motion.matches) setPlaying(true);
+    }
+    return;
+  }
+  selection[key] = value;
+  refreshSetup({ followView: key === 'move', autoplay });
+  const chosen = key === 'shot' ? composer.shot.name : key === 'target' ? composer.target.name : key === 'move' ? composer.technique.name : composer.actor.name;
+  write(byId('selection-status'), chosen + ' 선택됨.');
+}
+
+function appendOptions(select, values) {
+  const fragment = document.createDocumentFragment();
+  for (const item of values) {
+    const option = document.createElement('option');
+    option.value = item.id;
+    option.textContent = item.name;
+    fragment.append(option);
+  }
+  select.append(fragment);
+}
+
+appendOptions(fieldControls.shot, shots);
+appendOptions(fieldControls.target, targets);
+appendOptions(fieldControls.action, actions);
+for (const [id, label] of Object.entries(categories)) {
+  const group = document.createElement('optgroup');
+  group.label = label;
+  appendOptions(group, moves.filter(move => move.category === id));
+  fieldControls.move.append(group);
+}
+Object.entries(fieldControls).forEach(([key, field]) => {
+  field.addEventListener('change', () => choose(key, field.value, key === 'move' || key === 'action'));
+});
+
+function markSelection() {
+  for (const button of cards.querySelectorAll('.card')) {
+    button.setAttribute('aria-pressed', String(selection[library] === button.dataset.entry));
+  }
 }
 
 const normalizeSearch = value => value.toLocaleLowerCase('ko').replace(/[^\p{L}\p{N}]+/gu, '');
-const searchableMoves = new Map(moves.map(move =>
-  [move.id, normalizeSearch([move.name, move.english, move.keywords, categories[move.category]].join(' '))]));
 
-function filterMoves() {
-  const query = search.value.trim().split(/\s+/).map(normalizeSearch).filter(Boolean);
-  let visible = 0;
-  for (const move of moves) {
-    const matches = (category === 'all' || move.category === category) &&
-      query.every(token => searchableMoves.get(move.id).includes(token));
-    cardButtons.get(move.id).item.hidden = !matches;
-    if (matches) visible++;
-  }
-  for (const [id, button] of filterButtons) button.setAttribute('aria-pressed', String(id === category));
-  byId('empty').hidden = visible !== 0;
-  write(byId('total-count'), visible === moves.length ? moves.length + '개' : visible + ' / ' + moves.length);
-  write(byId('result-status'), visible + '개 기법 표시');
+function renderLibrary() {
+  const tokens = search.value.trim().split(/\s+/).map(normalizeSearch).filter(Boolean);
+  const matches = libraryEntries[library].filter(item => {
+    if (library === 'move' && category !== 'all' && item.category !== category) return false;
+    const searchable = normalizeSearch([item.name, item.english || item.en, item.keywords, item.detail, categories[item.category]].join(' '));
+    return tokens.every(token => searchable.includes(token));
+  });
+  libraryButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.library === library)));
+  filterButtons.forEach((button, id) => button.setAttribute('aria-pressed', String(id === category)));
+  filters.hidden = library !== 'move';
+  cards.replaceChildren(...matches.map(item => createCard(item, library)));
+  markSelection();
+  byId('empty').hidden = matches.length > 0;
+  write(byId('total-count'), matches.length + '개');
+  write(byId('result-status'), matches.length + '개 기법 표시');
+}
+
+function createCard(item, section) {
+  const container = document.createElement('div');
+  container.className = 'move-item';
+  const preview = document.createElement('button');
+  preview.type = 'button';
+  preview.className = 'card';
+  preview.dataset.entry = item.id;
+  preview.innerHTML = '<span class="card-icon" aria-hidden="true">' + svgIcon(item.icon || 'viewfinder') +
+    '</span><span><strong></strong><small></small></span><span class="card-go" aria-hidden="true">' + svgIcon('play') + '</span>';
+  preview.querySelector('strong').textContent = item.name;
+  preview.querySelector('small').textContent = item.english || item.en;
+  preview.addEventListener('click', () => {
+    choose(section, item.id, true);
+    studio.scrollIntoView({ behavior: motion.matches ? 'instant' : 'smooth', block: 'start' });
+    play.focus({ preventScroll: true });
+  });
+  const copy = document.createElement('button');
+  copy.type = 'button';
+  copy.className = 'card-copy';
+  copy.title = item.name + ' 프롬프트 복사';
+  copy.setAttribute('aria-label', copy.title);
+  copy.innerHTML = '<span aria-hidden="true">' + svgIcon('copy') + '</span>';
+  copy.addEventListener('click', () => {
+    const text = promptPieces({ ...selection, [section]: item.id }, promptLanguage)[section];
+    return copyText(text, item.name, copy);
+  });
+  container.append(preview, copy);
+  return container;
 }
 
 for (const [id, label] of [['all', '전체'], ...Object.entries(categories)]) {
   const button = document.createElement('button');
   button.type = 'button';
   button.textContent = label;
-  button.addEventListener('click', () => {
-    category = id;
-    filterMoves();
-  });
+  button.addEventListener('click', () => { category = id; renderLibrary(); });
   filterButtons.set(id, button);
   filters.append(button);
 }
-for (const move of moves) {
-  const item = document.createElement('div');
-  item.className = 'move-item';
-  const button = document.createElement('button');
-  button.type = 'button';
-  button.className = 'card';
-  button.dataset.move = move.id;
-  button.innerHTML =
-    '<span class="card-icon" aria-hidden="true">' + svgIcon(move.icon) + '</span>' +
-    '<span class="card-names"><strong></strong><small></small></span>' +
-    '<span class="card-go" aria-hidden="true">' + svgIcon('play') + '</span>';
-  button.querySelector('strong').textContent = move.name;
-  button.querySelector('small').textContent = move.english;
-  button.addEventListener('click', () => selectTechnique(move, { autoplay: true, jump: true }));
-  const copy = document.createElement('button');
-  copy.type = 'button';
-  copy.className = 'card-copy';
-  copy.setAttribute('aria-label', move.name + ' 프롬프트 복사');
-  copy.title = move.name + ' 프롬프트 복사';
-  copy.innerHTML = '<span aria-hidden="true">' + svgIcon('copy') + '</span>';
-  copy.addEventListener('click', () => copyPrompt(move, copy));
-  item.append(button, copy);
-  cardButtons.set(move.id, { item, preview: button, copy });
-  cards.append(item);
-}
 
-copyButton.addEventListener('click', () => copyPrompt(technique, copyButton));
+copyAll.addEventListener('click', () => copyText(Object.values(prompts).join('\n'), copyNames.all, copyAll));
+panelCopyButtons.forEach(button => {
+  const key = button.dataset.copy;
+  button.addEventListener('click', () => copyText(prompts[key], copyNames[key], button));
+});
 languageButtons.forEach(button => button.addEventListener('click', () => changePromptLanguage(button.dataset.lang)));
 libraryLanguage.addEventListener('change', () => changePromptLanguage(libraryLanguage.value));
+libraryButtons.forEach(button => button.addEventListener('click', () => {
+  library = button.dataset.library;
+  category = 'all';
+  renderLibrary();
+}));
 play.addEventListener('click', () => setPlaying(!playing));
 byId('restart').addEventListener('click', () => seekTo(0));
+byId('reset-setup').addEventListener('click', () => {
+  Object.assign(selection, defaultSetup);
+  refreshSetup({ followView: true });
+  write(byId('selection-status'), '기본 조합으로 초기화됨.');
+});
 seek.addEventListener('input', () => seekTo(Number(seek.value) / 1000));
 loop.addEventListener('click', () => {
   repeat = !repeat;
@@ -2633,12 +2985,12 @@ gridToggle.addEventListener('click', () => {
   gridToggle.setAttribute('aria-pressed', String(!guide.hidden));
 });
 viewButtons.forEach(button => button.addEventListener('click', () => setView(button.dataset.view)));
-related.addEventListener('click', () => selectTechnique(moveById.get(related.dataset.move), { autoplay: true, jump: true }));
-search.addEventListener('input', filterMoves);
+related.addEventListener('click', () => choose('move', related.dataset.move, true));
+search.addEventListener('input', renderLibrary);
 byId('clear-filters').addEventListener('click', () => {
   search.value = '';
   category = 'all';
-  filterMoves();
+  renderLibrary();
   search.focus();
 });
 byId('open-keys').addEventListener('click', () => keys.showModal());
@@ -2649,23 +3001,23 @@ document.addEventListener('keydown', event => {
   if (event.altKey || event.ctrlKey || event.metaKey || keys.open || copyDialog.open || target.isContentEditable ||
       target.closest?.('input, select, textarea')) return;
   if (event.key === ' ' && target.closest?.('button, a, summary')) return;
-  const actions = {
+  const commands = {
     ' ': () => setPlaying(!playing),
-    ArrowLeft: () => seekTo(position - .25 / technique.duration),
-    ArrowRight: () => seekTo(position + .25 / technique.duration),
+    ArrowLeft: () => seekTo(position - .25 / composer.duration),
+    ArrowRight: () => seekTo(position + .25 / composer.duration),
     KeyR: () => seekTo(0),
     KeyL: () => loop.click(),
     KeyG: () => gridToggle.click(),
   };
-  const action = actions[event.code] || actions[event.key];
-  if (action) {
+  const command = commands[event.code] || commands[event.key];
+  if (command) {
     event.preventDefault();
-    action();
+    command();
   }
 });
 
-filterMoves();
-selectTechnique(moveById.get('dolly-in'));
+renderLibrary();
+refreshSetup({ followView: true });
 const resize = new ResizeObserver(() => { if (!playing) render(); });
 resize.observe(viewport);
 resize.observe(byId('map').parentElement);
