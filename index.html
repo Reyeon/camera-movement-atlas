@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
-  <meta name="theme-color" content="#f5f1fc">
+  <meta name="theme-color" content="#edf6f0">
   <meta name="description" content="샷 크기와 카메라 무빙, 캐릭터 동작을 조합해 3D 장면으로 확인하고 영상 프롬프트를 복사하세요.">
   <title>카메라 무브먼트 아틀라스</title>
   <link rel="icon" href="data:,">
@@ -23,7 +23,7 @@
   --mono: "IBM Plex Mono", Consolas, monospace;
   font-family: var(--sans);
   color: var(--ink);
-  background: #f7f4fc;
+  background: #f8f8f5;
   scroll-padding-top: 16px;
 }
 
@@ -34,20 +34,20 @@ body::before, body::after { content: ""; position: absolute; z-index: -1; inset:
 body::before {
   height: min(100%, 1460px);
   background:
-    radial-gradient(ellipse 59% 43% at 85% 6%, #d8edfc 12%, #dceffd77 57%, transparent 100%),
-    radial-gradient(ellipse 61% 34% at 39% 8%, #e5d8fc 0%, #e5d6fb88 48%, transparent 100%),
-    radial-gradient(ellipse 51% 45% at 5% 29%, #ffe4e9 3%, #ffe9ed7d 49%, transparent 95%),
-    radial-gradient(ellipse 61% 37% at 82% 63%, #def4e9 0%, #e2f3ee55 59%, transparent 100%),
-    radial-gradient(ellipse 60% 40% at 10% 76%, #e9e5fd 10%, transparent 100%),
-    linear-gradient(180deg, #faf4fb, #f7f4fc 97%);
+    radial-gradient(ellipse 59% 43% at 85% 6%, #d8eee5 12%, #e0f1e877 57%, transparent 100%),
+    radial-gradient(ellipse 61% 34% at 39% 8%, #ece1f0 0%, #efe4f288 48%, transparent 100%),
+    radial-gradient(ellipse 51% 45% at 5% 29%, #f7e2de 3%, #faeae47d 49%, transparent 95%),
+    radial-gradient(ellipse 61% 37% at 82% 63%, #e2f1e7 0%, #e3f0e955 59%, transparent 100%),
+    radial-gradient(ellipse 60% 40% at 10% 76%, #eee6f4 10%, transparent 100%),
+    linear-gradient(180deg, #faf6f4, #f8f8f5 97%);
 }
 body::after {
   height: 660px;
   opacity: .93;
   background:
-    radial-gradient(ellipse 28% 45% at 20% 12%, #fff6dbb0, transparent 100%),
-    radial-gradient(ellipse 30% 40% at 74% 14%, #d8f8e9a6, transparent 100%),
-    radial-gradient(ellipse 25% 38% at 56% 9%, #fbd9f0b8, transparent 100%);
+    radial-gradient(ellipse 28% 45% at 20% 12%, #fff2e2a2, transparent 100%),
+    radial-gradient(ellipse 30% 40% at 74% 14%, #d9efe3a6, transparent 100%),
+    radial-gradient(ellipse 25% 38% at 56% 9%, #f3deebb0, transparent 100%);
   background-size: 111% 110%;
   animation: aurora 23s ease-in-out alternate infinite;
 }
@@ -95,7 +95,7 @@ svg { display: block; width: 19px; height: 19px; }
 .shot-panel { display: flex; flex-direction: column; }
 .scene-tag { display: inline-flex; align-items: center; gap: 6px; color: #545169; font-size: 11px; font-weight: 730; white-space: nowrap; }
 .scene-tag i { width: 6px; height: 6px; border-radius: 50%; background: #45946c; box-shadow: 0 0 0 3px #e5f6e9; }
-.viewport { position: relative; flex: 1 0 auto; aspect-ratio: 1.91; isolation: isolate; background: linear-gradient(#b4d9ee, #d3e2c2 52%, #bee39e); overflow: hidden; }
+.viewport { position: relative; flex: 1 0 auto; aspect-ratio: 1.91; isolation: isolate; background: linear-gradient(160deg, #b5d4c8, #d4e7dc 82%); overflow: hidden; }
 #scene, #map { display: block; width: 100%; height: 100%; position: absolute; inset: 0; }
 .viewport::after { content: ""; z-index: 0; position: absolute; inset: 0; box-shadow: inset 0 -28px 44px -27px #2d3a3a66; pointer-events: none; }
 .corner-marks { position: absolute; z-index: 1; inset: 12px; pointer-events: none; }
@@ -235,7 +235,10 @@ svg { display: block; width: 19px; height: 19px; }
 .empty { border: 1px dashed var(--line); border-radius: 8px; padding: 17px; color: var(--muted); font-size: 13px; }
 .empty button { margin-top: 4px; }
 
-.footer { display: flex; justify-content: space-between; gap: 12px; border-top: 1px solid #dfd7eb; padding: 14px 0 23px; color: var(--muted); font-size: 11px; line-height: 1.65; }
+.footer { border-top: 1px solid #dfd7eb; padding: 14px 0 23px; color: var(--muted); font-size: 11px; line-height: 1.65; }
+.footer-notes { display: flex; justify-content: space-between; gap: 12px; }
+.footer-credits { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 13px 0 0; }
+.footer-credits strong { color: var(--ink); }
 .footer summary { cursor: pointer; white-space: nowrap; }
 .footer ul { padding-left: 19px; }
 .footer a { text-underline-offset: 3px; }
@@ -356,14 +359,14 @@ kbd { display: inline-block; min-width: 22px; padding: 3px 5px; text-align: cent
           <header class="panel-head">
             <h2 id="shot-heading"><span data-icon="viewfinder" aria-hidden="true"></span> 장면 미리보기</h2>
             <div class="panel-actions">
-              <span class="scene-tag"><i></i> 3D 꽃밭</span>
+              <span class="scene-tag"><i></i> 파스텔 스튜디오</span>
               <button class="tool-button square" id="grid-toggle" type="button" aria-label="구도 격자" aria-pressed="false" title="구도 격자 (G)">
                 <span data-icon="grid" aria-hidden="true"></span>
               </button>
             </div>
           </header>
           <div class="viewport" id="viewport">
-            <canvas id="scene" role="img" aria-label="촬영 카메라로 바라본 3D 꽃밭과 움직이는 고양이 캐릭터"></canvas>
+            <canvas id="scene" role="img" aria-label="민트색 스튜디오에서 움직이는 안경과 한복 차림의 나비 날개 캐릭터를 촬영한 3D 화면"></canvas>
             <div class="guide" id="guide" aria-hidden="true" hidden><span></span><span></span><span></span><span></span></div>
             <div class="corner-marks" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
             <div class="scene-overlay" aria-hidden="true">
@@ -521,16 +524,23 @@ kbd { display: inline-block; min-width: 22px; padding: 3px 5px; text-align: cent
 
     <noscript><p>3D 장면과 재생 컨트롤을 사용하려면 브라우저에서 JavaScript를 켜 주세요.</p></noscript>
     <footer class="footer">
-      <p>세로 점유율은 화면 높이에서 캐릭터가 차지하는 비율의 근사치입니다.</p>
-      <details>
-        <summary>참고 자료</summary>
-        <ul>
-          <li><a href="https://www.adobe.com/uk/creativecloud/video/production/cinematography/camera-shots-and-angles.html" target="_blank" rel="noopener noreferrer">Adobe · 카메라 샷과 앵글</a></li>
-          <li><a href="https://www.nikonusa.com/learn-and-explore/photography-glossary" target="_blank" rel="noopener noreferrer">Nikon · 매크로 렌즈</a></li>
-          <li><a href="https://help.runwayml.com/hc/en-us/articles/46749315925395-Camera-Terms-Prompts-Examples" target="_blank" rel="noopener noreferrer">Runway · 카메라 기법 프롬프트</a></li>
-          <li><a href="https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/video/video-gen-prompt-guide" target="_blank" rel="noopener noreferrer">Google Cloud · 영상 프롬프트</a></li>
-        </ul>
-      </details>
+      <div class="footer-notes">
+        <p>세로 점유율은 화면 높이에서 캐릭터가 차지하는 비율의 근사치입니다.</p>
+        <details>
+          <summary>참고 자료</summary>
+          <ul>
+            <li><a href="https://www.adobe.com/uk/creativecloud/video/production/cinematography/camera-shots-and-angles.html" target="_blank" rel="noopener noreferrer">Adobe · 카메라 샷과 앵글</a></li>
+            <li><a href="https://www.nikonusa.com/learn-and-explore/photography-glossary" target="_blank" rel="noopener noreferrer">Nikon · 매크로 렌즈</a></li>
+            <li><a href="https://help.runwayml.com/hc/en-us/articles/46749315925395-Camera-Terms-Prompts-Examples" target="_blank" rel="noopener noreferrer">Runway · 카메라 기법 프롬프트</a></li>
+            <li><a href="https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/video/video-gen-prompt-guide" target="_blank" rel="noopener noreferrer">Google Cloud · 영상 프롬프트</a></li>
+          </ul>
+        </details>
+      </div>
+      <p class="footer-credits" lang="en">
+        <strong>Created by <a href="https://reyeon.notion.site/RY-Visual-Art-Storytelling-13e2c6dbbdb0801397d3c41601ab3ee5" target="_blank" rel="noopener noreferrer">Reyeon</a></strong>
+        <span>Built with HTML5, CSS &amp; JavaScript</span>
+        <span>Development assisted by Codex 6.1 Sol</span>
+      </p>
     </footer>
   </main>
 
@@ -693,22 +703,22 @@ const moves = [
     { keywords: '스태틱 정지 정적 static tripod 삼각대' }),
   move('pan-left', 'turn', '팬 왼쪽', 'Pan Left', 'pan', 4.6,
     '카메라를 제자리에 두고 수평으로 왼쪽을 향해 돌립니다.',
-    '장면이 오른쪽으로 흐르며 꽃밭 왼쪽이 프레임에 들어옵니다.',
+    '장면이 오른쪽으로 흐르며 왼쪽 소품이 프레임에 들어옵니다.',
     t => orient(basePosition, rad(mix(27, -26, ease(t))), rad(-4)),
     { related: 'truck-left', keywords: '패닝 수평 회전' }),
   move('pan-right', 'turn', '팬 오른쪽', 'Pan Right', 'pan', 4.6,
     '카메라를 제자리에 두고 수평으로 오른쪽을 향해 돌립니다.',
-    '캐릭터를 지나 오른쪽 꽃과 언덕이 차례로 드러납니다.',
+    '캐릭터를 지나 오른쪽 아치가 드러납니다.',
     t => orient(basePosition, rad(mix(-26, 27, ease(t))), rad(-4)),
     { related: 'truck-right', keywords: '패닝 수평 회전' }),
   move('tilt-up', 'turn', '틸트 업', 'Tilt Up', 'tilt', 4.8,
     '고정된 위치에서 렌즈가 향하는 방향을 위로 돌립니다.',
-    '땅에서 캐릭터와 구름을 향해 시선이 올라갑니다.',
+    '바닥에서 캐릭터를 지나 배경 위쪽으로 시선이 올라갑니다.',
     t => orient(basePosition, rad(5), rad(mix(-24, 21, ease(t))), 30),
     { view: 'side', related: 'pedestal-up', keywords: '상향 수직 회전' }),
   move('tilt-down', 'turn', '틸트 다운', 'Tilt Down', 'tilt', 4.8,
     '고정된 위치에서 렌즈가 향하는 방향을 아래로 돌립니다.',
-    '하늘에서 캐릭터와 발밑의 지면으로 시선이 내려갑니다.',
+    '배경 위쪽에서 캐릭터와 발밑의 지면으로 시선이 내려갑니다.',
     t => orient(basePosition, rad(5), rad(mix(21, -23, ease(t))), 30),
     { view: 'side', related: 'pedestal-down', keywords: '하향 수직 회전' }),
   move('roll', 'turn', '롤', 'Camera Roll', 'roll', 5.5,
@@ -726,13 +736,13 @@ const moves = [
     t => whip(t, true), { view: 'side', related: 'tilt-up', keywords: '스위시 틸트 swish tilt 전환' }),
   move('pan-tilt', 'turn', '팬 + 틸트', 'Pan & Tilt', 'diagonal', 5.6,
     '제자리에서 좌우 회전과 상하 회전을 동시에 적용합니다.',
-    '화면 아래의 꽃밭에서 오른쪽 위의 하늘로 시선이 이동합니다.',
+    '화면 아래에서 오른쪽 위로 시선이 대각선으로 이동합니다.',
     t => orient(basePosition, rad(mix(-13, 28, ease(t))), rad(mix(-15, 18, ease(t))), 32),
     { keywords: '복합 패닝 대각선' }),
 
   move('dolly-in', 'linear', '돌리 인', 'Dolly In / Push-in', 'dolly', 5.5,
     '초점거리를 고정하고 카메라 본체를 피사체 쪽으로 밀어 넣습니다.',
-    '캐릭터가 커지는 동안 가까운 꽃과 먼 언덕의 크기 비율과 위치가 달라집니다.',
+    '캐릭터가 커지는 동안 가까운 소품과 먼 배경의 크기 비율과 위치가 달라집니다.',
     t => dolly(t), { related: 'zoom-in', keywords: '푸시 인 접근 전진 트랙 dolly forward' }),
   move('dolly-out', 'linear', '돌리 아웃', 'Dolly Out / Pull-out', 'dolly', 5.5,
     '초점거리를 고정하고 카메라 본체를 피사체에서 뒤로 뺍니다.',
@@ -740,12 +750,12 @@ const moves = [
     t => dolly(t, true), { related: 'zoom-out', keywords: '풀 아웃 후진 후퇴 트랙' }),
   move('truck-left', 'linear', '트럭 왼쪽', 'Truck Left', 'truck', 5.3,
     '렌즈가 향하는 방향과 높이를 유지하며 카메라를 왼쪽으로 평행 이동합니다.',
-    '가까운 꽃이 먼 언덕보다 빠르게 화면을 가로지릅니다.',
+    '가까운 소품이 먼 소품보다 빠르게 화면을 가로지릅니다.',
     t => orient([mix(2.3, -2.3, ease(t)), 1.62, -7.6], 0, rad(-4), 28),
     { related: 'pan-left', keywords: '트러킹 측면 수평 좌측 slide crab' }),
   move('truck-right', 'linear', '트럭 오른쪽', 'Truck Right', 'truck', 5.3,
     '렌즈가 향하는 방향과 높이를 유지하며 카메라를 오른쪽으로 평행 이동합니다.',
-    '전경의 꽃과 배경의 언덕이 서로 다른 속도로 흐르며 깊이가 보입니다.',
+    '앞뒤에 놓인 소품이 서로 다른 속도로 흐르며 깊이가 보입니다.',
     t => orient([mix(-2.3, 2.3, ease(t)), 1.62, -7.6], 0, rad(-4), 28),
     { related: 'pan-right', keywords: '트러킹 측면 수평 우측 slide crab' }),
   move('pedestal-up', 'linear', '페데스털 업', 'Pedestal Up', 'lift', 5.3,
@@ -760,7 +770,7 @@ const moves = [
     { view: 'side', related: 'tilt-down', keywords: '페데스탈 페데스털 피데스탈 높이 하강 vertical' }),
   move('slider', 'linear', '슬라이더 리빌', 'Slider Reveal', 'reveal', 5.0,
     '짧은 레일을 따라 옆으로 미끄러지며 전경 뒤에 있던 피사체를 드러냅니다.',
-    '가까운 꽃이 프레임 옆으로 빠져나가며 뒤쪽이 드러납니다.',
+    '가까운 소품이 프레임 옆으로 빠져나가며 뒤쪽이 드러납니다.',
     t => look([mix(-2.92, -.25, ease(t)), 1.48, -8.6], subjectPoint, 36),
     { related: 'truck-right', keywords: '슬라이드 가림막 reveal 전경' }),
 
@@ -776,14 +786,14 @@ const moves = [
     { related: 'arc', keywords: '오르빗 원형 회전 선회' }),
   move('jib', 'curve', '지브 업', 'Jib / Boom Up', 'jib', 6.4,
     '짧은 암을 들어 올리며 카메라를 호를 따라 위쪽으로 보냅니다.',
-    '캐릭터를 향하면서 꽃과 지면을 내려다보게 됩니다.',
+    '캐릭터를 향하면서 소품과 바닥을 내려다보게 됩니다.',
     t => {
       const arm = rad(mix(-27, 52, ease(t)));
       return look([.7, 2.3 + 3.15 * Math.sin(arm), -7.2 + 3.15 * Math.cos(arm)], subjectPoint, 27);
     }, { view: 'side', related: 'pedestal-up', keywords: '집 붐 상승 boom' }),
   move('crane', 'curve', '크레인 다운', 'Crane Down', 'jib', 7.5,
     '높은 위치에서 호를 그리며 내려오고, 헤드는 피사체를 계속 향합니다.',
-    '꽃밭을 내려다보던 시점이 캐릭터 눈높이에 가까워집니다.',
+    '스튜디오를 내려다보던 시점이 캐릭터 눈높이에 가까워집니다.',
     t => {
       const arm = rad(mix(51, -20, ease(t)));
       return look([mix(-5.1, -.7, ease(t)), 4.3 + 7.6 * Math.sin(arm), -13.1 + 7.6 * Math.cos(arm)], [.2, .95, .3], 26);
@@ -815,7 +825,7 @@ const moves = [
     t => walk(t, 'steadicam'), { related: 'gimbal', keywords: '스테디 캠 안정화 보행 리그' }),
   move('pov', 'tracking', '이동 POV', 'Moving POV', 'viewfinder', 6.8,
     '캐릭터의 시점에서 진행 방향을 바라봅니다.',
-    '걷기나 달리기와 함께 선택하면 꽃밭을 직접 지나가는 느낌을 볼 수 있습니다.',
+    '걷기나 달리기와 함께 선택하면 캐릭터의 시점으로 공간을 지나갑니다.',
     t => attached(t, true), { related: 'snorri', keywords: '주관 숏 1인칭 시점 point of view' }),
   move('snorri', 'tracking', '스노리캠', 'Snorricam', 'lock', 6.8,
     '캐릭터 앞에 고정된 카메라가 캐릭터의 정면을 바라봅니다.',
@@ -856,8 +866,8 @@ const moves = [
     '캐릭터 중심부의 크기는 거의 유지되고 뒤쪽 풍경이 가까워지는 듯 보입니다.',
     t => dolly(t, true, true), { related: 'dolly-zoom-in', keywords: '돌리 줌 버티고 히치콕 vertigo zolly' }),
   move('rack', 'optics', '랙 포커스', 'Rack Focus', 'focus', 6.0,
-    '카메라와 화각을 고정하고 초점면을 가까운 캐릭터에서 뒤쪽 꽃밭으로 옮깁니다.',
-    '캐릭터가 흐려지는 동안 뒤쪽의 꽃이 선명해집니다.',
+    '카메라와 화각을 고정하고 초점을 가까운 캐릭터에서 뒤쪽 소품으로 옮깁니다.',
+    '캐릭터가 흐려지는 동안 뒤쪽의 소품이 선명해집니다.',
     t => look([-1.8, 1.72, -5.8], [0, 1.14, 1.4], 37,
       { focus: 1 / mix(1 / 6.1, 1 / 15.2, smooth((t - .21) / .57)) }),
     { view: 'side', related: 'zoom-in', keywords: '랙포커스 랙 포커싱 초점 이동 focus pull' }),
@@ -869,16 +879,16 @@ const moves = [
 
   move('drone-reveal', 'aerial', '드론 풀백 리빌', 'Drone Pullback Reveal', 'air', 7.4,
     '캐릭터를 조준한 채 뒤로 날아오르며 고도를 높입니다.',
-    '가까운 캐릭터에서 출발해 꽃밭과 언덕을 한 프레임에 담습니다.',
+    '가까운 캐릭터에서 출발해 주변에 놓인 소품과 바닥 전체를 담습니다.',
     t => look([mix(1.4, 7.6, ease(t)), mix(3, 16.5, ease(t)), mix(-4.4, -18.4, ease(t))], [0, .85, mix(0, 3.2, ease(t))], 26),
     { view: 'side', related: 'crane', keywords: '드론 후진 상승 항공 와이드' }),
   move('top-down', 'aerial', '탑다운 플라이오버', 'Top-down Flyover', 'overhead', 6.9,
     '렌즈를 지면에 수직으로 향한 채 일정한 높이로 통과합니다.',
-    '지평선이 사라지고 꽃밭과 오솔길의 배치가 평면처럼 보입니다.',
+    '바닥의 원과 소품 배치가 평면도처럼 보입니다.',
     t => orient([mix(-1.6, 1.25, ease(t)), 12.8, mix(-5.6, 9.3, ease(t))], 0, -PI / 2, 24),
     { related: 'drone-reveal', keywords: '오버헤드 버드아이 수직 하향 drone bird eye top down' }),
   move('fpv', 'aerial', 'FPV 플라이 스루', 'FPV Fly-through', 'air', 6.8,
-    '낮은 고도로 꽃 사이를 지나고 몸체를 기울여 방향을 바꿉니다.',
+    '낮은 고도로 소품 사이를 지나고 몸체를 기울여 방향을 바꿉니다.',
     '전경이 빠르게 스치고 기울어진 프레임에서 선회가 느껴집니다.',
     t => {
       const travel = ease(t);
@@ -899,7 +909,7 @@ const moves = [
     }, { related: 'orbit', keywords: '드론 나선 선회 헬릭스 helix' }),
   move('cable', 'aerial', '케이블캠', 'Cablecam / Wirecam', 'cable', 7.1,
     '공중에 설치된 와이어를 따라 카메라를 직선으로 이동시키며 캐릭터를 조준합니다.',
-    '높은 시점에서 꽃밭과 오솔길이 가로로 흘러갑니다.',
+    '높은 시점에서 바닥과 소품이 가로로 흘러갑니다.',
     t => look([mix(-10.8, 9.8, ease(t)), mix(7.6, 6.25, ease(t)), -4.2], [0, .83, .3], 27),
     { related: 'top-down', keywords: '와이어캠 스카이캠 skycam 케이블 캠 와이어' }),
 ];
@@ -1080,62 +1090,82 @@ const cameraPrompts = {
 const shots = [
   { id: 'establishing', name: '익스트림 와이드', en: 'Extreme Wide Shot', distance: 16, lens: 26, height: 2.95, target: 'body', detail: '배경과 공간이 중심인 구도입니다.', ko: '시작 프레임은 익스트림 와이드 숏. 주변 공간을 넓게 담고 피사체는 프레임 안에 작게 배치한다.', prompt: 'Open on an extreme wide shot. Show the surrounding space with the subject small in the frame.' },
   { id: 'wide', name: '와이드 숏', en: 'Wide Shot', distance: 10, lens: 29, height: 1.86, target: 'body', detail: '전신과 주변 환경이 함께 보입니다.', ko: '시작 프레임은 와이드 숏. 피사체의 전신과 이를 둘러싼 공간을 함께 담는다.', prompt: 'Open on a wide shot that shows the full subject and the space around it.' },
-  { id: 'full', name: '풀 숏', en: 'Full Shot', distance: 6.4, lens: 33, height: 1.5, target: 'body', detail: '귀부터 발끝까지 전신을 담습니다.', ko: '시작 프레임은 풀 숏. 피사체의 전신이 보이도록 위아래에 여백을 둔다.', prompt: 'Open on a full shot with the entire subject visible and breathing room above and below.' },
+  { id: 'full', name: '풀 숏', en: 'Full Shot', distance: 6.55, lens: 33, height: 1.52, target: 'body', detail: '머리부터 발끝까지 전신을 담습니다.', ko: '시작 프레임은 풀 숏. 피사체의 전신이 보이도록 위아래에 여백을 둔다.', prompt: 'Open on a full shot with the entire subject visible and breathing room above and below.' },
   { id: 'medium', name: '미디엄 숏', en: 'Medium Shot', distance: 5.7, lens: 42, height: 1.53, target: 'chest', detail: '상체와 몸짓이 프레임의 중심입니다.', ko: '시작 프레임은 미디엄 숏. 상체와 동작이 읽히도록 피사체의 중간 높이부터 위쪽을 담는다.', prompt: 'Open on a medium shot from roughly mid-body up, emphasizing posture and gestures.' },
-  { id: 'medium-close', name: '미디엄 클로즈업', en: 'Medium Close-up', distance: 5.1, lens: 50, height: 1.5, target: 'head', detail: '가슴과 얼굴을 함께 잡아 표정이 드러납니다.', ko: '시작 프레임은 미디엄 클로즈업. 가슴 위를 담아 표정과 작은 몸짓이 또렷하게 보이게 한다.', prompt: 'Open on a medium close-up from the chest up, giving clear emphasis to expressions and small gestures.' },
+  { id: 'medium-close', name: '미디엄 클로즈업', en: 'Medium Close-up', distance: 4.9, lens: 50, height: 1.69, target: 'head', detail: '가슴 위를 잡아 고개와 어깨의 움직임을 읽기 쉽습니다.', ko: '시작 프레임은 미디엄 클로즈업. 가슴 위를 담아 고개와 어깨의 작은 움직임이 또렷하게 보이게 한다.', prompt: 'Open on a medium close-up from the chest up, emphasizing small head and shoulder movements.' },
   { id: 'close', name: '클로즈업', en: 'Close-up', distance: 4.8, lens: 58, height: 1.62, target: 'face', detail: '얼굴이나 선택한 부위가 화면을 크게 채웁니다.', ko: '시작 프레임은 클로즈업. 선택한 부위가 프레임의 대부분을 채우도록 촘촘하게 잡는다.', prompt: 'Open on a close-up. Frame tightly so the chosen feature fills most of the image.' },
-  { id: 'extreme', name: '익스트림 클로즈업', en: 'Extreme Close-up', distance: 4.15, lens: 75, height: 1.55, target: 'eyes', detail: '눈이나 발처럼 작은 부위에 프레임을 좁힙니다.', ko: '시작 프레임은 익스트림 클로즈업. 선택한 작은 부위를 크게 담아 미세한 변화에 집중한다.', prompt: 'Open on an extreme close-up that isolates a small feature and makes subtle changes visible.' },
-  { id: 'macro', name: '매크로 디테일 숏', en: 'Macro Detail Shot', distance: 2.55, lens: 88, height: 1.6, target: 'eyes', aperture: .16, detail: '가까이 초점을 맞춰 작은 질감과 반사광을 보여 줍니다.', ko: '시작 프레임은 매크로 디테일 숏. 선택한 작은 부위의 표면 질감을 크게 잡고 얕은 심도로 주변을 부드럽게 흐린다.', prompt: 'Open on a macro detail shot. Magnify the texture of the chosen feature and let the surroundings soften with shallow depth of field.' },
+  { id: 'extreme', name: '익스트림 클로즈업', en: 'Extreme Close-up', distance: 3.95, lens: 75, height: 1.53, target: 'hand', detail: '손이나 소매처럼 작은 부위에 프레임을 좁힙니다.', ko: '시작 프레임은 익스트림 클로즈업. 선택한 작은 부위를 크게 담아 미세한 변화에 집중한다.', prompt: 'Open on an extreme close-up that isolates a small feature and makes subtle changes visible.' },
+  { id: 'macro', name: '매크로 디테일 숏', en: 'Macro Detail Shot', distance: 2.35, lens: 89, height: 1.53, target: 'wrist', aperture: .16, detail: '작은 부위에 초점을 맞추고 주변을 부드럽게 흐립니다.', ko: '시작 프레임은 매크로 디테일 숏. 선택한 작은 부위의 표면을 크게 잡고 얕은 심도로 주변을 부드럽게 흐린다.', prompt: 'Open on a macro detail shot. Magnify the surface of the chosen feature and let the surroundings soften with shallow depth of field.' },
 ];
 const shotById = new Map(shots.map(shot => [shot.id, shot]));
 
 const targets = [
   { id: 'auto', name: '샷 기본', en: 'Shot default' },
-  { id: 'body', name: '전신', en: 'Whole body', point: [0, 1.05, .14], ko: '전신의 중심을 기준으로 프레이밍한다.', prompt: 'Use the center of the body as the framing reference.' },
-  { id: 'chest', name: '가슴', en: 'Chest', point: [0, 1.26, -.42], bone: 'body', ko: '가슴을 프레이밍의 기준점으로 잡는다.', prompt: 'Frame around the chest.' },
-  { id: 'head', name: '머리와 어깨', en: 'Head and shoulders', point: [0, -.23, .13], bone: 'head', ko: '머리와 어깨를 프레임에 담는다.', prompt: 'Frame the head and shoulders.' },
-  { id: 'face', name: '얼굴', en: 'Face', point: [0, -.06, -.43], bone: 'head', ko: '얼굴 중심을 프레이밍의 기준점으로 잡는다.', prompt: 'Use the center of the face as the framing reference.' },
-  { id: 'eyes', name: '눈', en: 'Eyes', point: [.231, .01, -.50], bone: 'head', ko: '눈에 초점을 맞추고 눈 주변을 프레이밍한다.', prompt: 'Frame around the eye and keep the eye in focus.' },
-  { id: 'nose', name: '코', en: 'Nose', point: [0, -.144, -.59], bone: 'head', ko: '코에 초점을 맞추고 코 주변을 프레이밍한다.', prompt: 'Frame around the nose and keep the nose in focus.' },
-  { id: 'paw', name: '앞발', en: 'Front paw', bone: 'paw', ko: '앞발을 프레이밍의 기준점으로 잡는다.', prompt: 'Use the front paw as the framing reference.' },
-  { id: 'tail', name: '꼬리 끝', en: 'Tail tip', bone: 'tail', ko: '꼬리 끝을 프레이밍의 기준점으로 잡는다.', prompt: 'Use the tip of the tail as the framing reference.' },
+  { id: 'body', name: '전신', en: 'Whole body', point: [0, 1.36, 0], ko: '전신의 중심을 기준으로 프레이밍한다.', prompt: 'Use the center of the body as the framing reference.' },
+  { id: 'chest', name: '가슴', en: 'Chest', point: [0, 1.27, -.20], bone: 'body', ko: '가슴을 프레이밍의 기준점으로 잡는다.', prompt: 'Frame around the chest.' },
+  { id: 'head', name: '머리와 어깨', en: 'Head and shoulders', point: [0, 1.64, -.12], bone: 'body', ko: '머리와 어깨를 프레임에 담는다.', prompt: 'Frame the head and shoulders.' },
+  { id: 'face', name: '얼굴', en: 'Face', point: [0, -.045, -.30], bone: 'head', ko: '얼굴 중심을 프레이밍의 기준점으로 잡는다.', prompt: 'Use the center of the face as the framing reference.' },
+  { id: 'eyes', name: '눈', en: 'Eyes', point: [.147, -.018, -.367], bone: 'head', ko: '눈을 가까이 담고 눈동자에 초점을 맞춘다.', prompt: 'Frame the eye tightly and keep it in sharp focus.' },
+  { id: 'glasses', name: '안경테', en: 'Glasses Frame', point: [.246, .052, -.357], bone: 'head', ko: '안경테 가까이에서 테의 곡선과 반사광을 담는다.', prompt: 'Frame the glasses rim close up to capture its curve and highlights.' },
+  { id: 'hand', name: '손', en: 'Hand', bone: 'hand', ko: '손을 화면 중앙에 두고 손의 움직임을 가까이 담는다.', prompt: 'Frame the hand near the center to capture its movement up close.' },
+  { id: 'wrist', name: '손목과 소매', en: 'Wrist and cuff', bone: 'wrist', ko: '손목과 소매 끝을 중심에 두고 가까이 초점을 맞춘다.', prompt: 'Frame around the wrist and cuff, with focus on the sleeve edge.' },
+  { id: 'foot', name: '발', en: 'Foot', bone: 'foot', ko: '발을 프레이밍의 기준점으로 잡는다.', prompt: 'Use the foot as the framing reference.' },
+  { id: 'shoulder', name: '어깨', en: 'Shoulder', point: [.29, 1.41, -.11], bone: 'body', ko: '어깨를 프레이밍의 기준점으로 잡는다.', prompt: 'Use the shoulder as the framing reference.' },
+  { id: 'wing', name: '날개', en: 'Wing', bone: 'wing', ko: '날개의 가장자리와 움직임이 보이도록 프레이밍한다.', prompt: 'Frame the wing so its outline and motion are clearly visible.' },
 ];
 const targetById = new Map(targets.map(target => [target.id, target]));
 
-const neutralFeet = [[-.34, .116, -.47], [.34, .116, -.47], [-.37, .116, .79], [.37, .116, .79]];
+const neutralFeet = [[-.188, .127, .012], [.188, .127, -.035]];
+const neutralHands = [[-.528, .827, -.029], [.528, .827, -.029]];
 
-function catPose(t, attributes = {}) {
-  const pulse = Math.sin(t * TAU * 1.6);
-  const blink = Math.max(0, 1 - Math.abs(t - .28) / .029, 1 - Math.abs(t - .81) / .032);
-  const pose = {
-    position: [0, 0, 0], heading: .12, lift: .012 * pulse, bodyPitch: 0, bodyRoll: 0,
-    headYaw: .045 * Math.sin(t * TAU), headPitch: 0, headRoll: 0,
-    tail: .18 * Math.sin(t * TAU), tailHeight: 0, eye: mix(1, .07, smooth(blink)),
-    breathing: 1 + .016 * pulse, feet: neutralFeet.map(foot => [...foot]),
+function figurePose(t, attributes = {}) {
+  const breath = Math.sin(t * TAU * 1.55);
+  return {
+    position: [0, 0, 0], heading: .075, lift: .013 * breath, shift: 0, bodyYaw: 0,
+    bodyPitch: 0, bodyRoll: 0, headYaw: .035 * Math.sin(t * TAU), headPitch: 0, headRoll: 0,
+    breathing: 1 + .018 * breath, feet: neutralFeet, footPitch: [0, 0], hands: neutralHands,
+    wing: .075 * Math.sin(t * TAU * 2),
+    ...attributes,
   };
-  return Object.assign(pose, attributes);
 }
 
 function gait(t, pace) {
-  const travel = smooth(t);
-  const vigor = smooth(t * 9) * smooth((1 - t) * 9);
-  const [cycles, stride, rise, range] = {
-    walk: [3.5, .28, .145, 3.85], trot: [4.9, .36, .23, 5.10], run: [6, .48, .36, 6.6],
-  }[pace];
-  const phase = travel * cycles * TAU;
-  const offsets = { walk: [0, .5, .72, .22], trot: [0, .5, .5, 0], run: [0, .15, .48, .66] }[pace];
+  const progress = smooth(t);
+  const vigor = smooth(t * 6.8) * smooth((1 - t) * 7.4);
+  const running = pace === 'run';
+  const stepCycles = running ? 4 : 3;
+  const stride = running ? .39 : .32;
+  const lift = running ? .32 : .18;
+  const span = running ? 5.4 : 3.75;
+  const phase = progress * stepCycles;
+  const stance = running ? .44 : .62;
+  const lifts = [];
+  const footPitch = [];
   const feet = neutralFeet.map(([x, y, z], index) => {
-    const legPhase = phase + offsets[index] * TAU;
-    return [x, y + rise * vigor * Math.max(0, Math.cos(legPhase)), z - stride * vigor * Math.sin(legPhase)];
+    const step = (phase + index * .5 + .15) % 1;
+    const swing = clamp((step - stance) / (1 - stance));
+    const raised = Math.sin(PI * swing) * vigor;
+    const placement = step < stance ? mix(-1, 1, step / stance) : mix(1, -1, smooth(swing));
+    footPitch.push(raised * .42 * Math.cos(swing * PI));
+    lifts.push(raised);
+    return [x, y + lift * raised, z + stride * placement * vigor];
   });
-  const heading = -1.04;
-  const advance = range * (travel - .5);
-  return catPose(t, {
-    position: [-Math.sin(heading) * advance, pace === 'run' ? vigor * .155 * Math.max(0, Math.sin(phase)) : 0, -Math.cos(heading) * advance],
-    heading, feet, lift: vigor * (.038 + rise * .30 * Math.sin(phase * (pace === 'run' ? 1 : 2))),
-    bodyPitch: (pace === 'run' ? .15 : .042) * vigor * Math.cos(phase),
-    bodyRoll: .062 * vigor * Math.sin(phase), headYaw: .22,
-    headPitch: .06 * vigor * Math.sin(phase + .5), tail: .35 * Math.sin(phase * .63), tailHeight: pace === 'run' ? -.38 : 0,
+  const hands = neutralHands.map(([x, y, z], index) => {
+    const swing = Math.sin((phase + index * .5 + .15) * TAU) * vigor;
+    const offset = feet[index][2] - neutralFeet[index][2];
+    return [x * (running ? .86 : .94), y + vigor * (running ? .320 : .065) + Math.abs(swing) * .095,
+      z + offset * (running ? -1.38 : -.9) - (running ? .14 * vigor : 0)];
+  });
+  const heading = -.91;
+  const advance = span * (progress - .5);
+  const stanceLimit = Math.min(...feet.map(([, y, z], i) => lifts[i] > .035 ? Infinity
+    : y + Math.sqrt(Math.max(0, .816 ** 2 - (z - .018) ** 2)) - .918));
+  return figurePose(t, {
+    position: [-Math.sin(heading) * advance, running ? Math.min(...lifts) * .25 : 0, -Math.cos(heading) * advance],
+    heading, feet, footPitch, hands, lift: Math.min(stanceLimit, vigor * (-.046 + .037 * Math.sin(phase * TAU * 2))),
+    bodyPitch: (running ? .17 : .045) * vigor, bodyRoll: .062 * vigor * Math.sin(phase * TAU),
+    bodyYaw: .12 * vigor * Math.sin(phase * TAU + .32), headYaw: .12,
+    headPitch: -.03 * vigor * Math.sin(phase * TAU),
   });
 }
 
@@ -1144,78 +1174,95 @@ function action(id, name, en, icon, duration, detail, ko, prompt, frame) {
 }
 
 const actions = [
-  action('idle', '제자리 호흡', 'Idle & Blink', 'lock', 4.4, '가볍게 호흡하고 자연스럽게 눈을 깜박입니다.',
-    '캐릭터가 제자리에 편하게 서서 호흡한다. 몸통이 작게 오르내리고 자연스러운 간격으로 눈을 깜박인다.',
-    'The character stands at ease, breathing gently with a small rise and fall of the torso and natural blinks.', t => catPose(t)),
-  action('walk', '걷기', 'Walk', 'track', 5.5, '네 발이 차례로 땅을 딛는 느린 걸음입니다.',
-    '캐릭터가 네 발을 순서대로 디디며 편안한 속도로 앞으로 걷는다. 몸통과 꼬리가 발걸음에 맞춰 가볍게 움직인다.',
-    'The character walks forward at an easy pace, placing its four feet in sequence. The torso and tail sway lightly with each stride.', t => gait(t, 'walk')),
-  action('trot', '경쾌한 속보', 'Trot', 'track', 4.8, '대각선 발 두 쌍이 번갈아 움직입니다.',
-    '캐릭터가 대각선으로 마주 보는 두 발을 함께 내딛으며 경쾌하게 속보한다. 몸이 일정한 박자로 가볍게 튄다.',
-    'The character trots briskly, alternating diagonal pairs of feet. The body bounces lightly in an even rhythm.', t => gait(t, 'trot')),
+  action('idle', '제자리 호흡', 'Standing Idle', 'lock', 4.4, '발을 디딘 채 어깨와 가슴이 조금 오르내립니다.',
+    '캐릭터가 두 발을 바닥에 둔 채 편하게 선다. 어깨와 가슴이 호흡에 맞춰 작게 오르내린다.',
+    'The character stands at ease with both feet planted. The shoulders and chest rise and fall slightly with each breath.', t => figurePose(t)),
+  action('walk', '걷기', 'Walk', 'track', 5.5, '두 다리가 번갈아 디디고 반대쪽 팔이 앞으로 움직입니다.',
+    '캐릭터가 두 발을 번갈아 디디며 편안한 속도로 걷는다. 팔은 반대쪽 다리에 맞춰 앞뒤로 자연스럽게 흔들린다.',
+    'The character walks forward at an easy pace with alternating footsteps. Its arms swing in opposition to its legs.', t => gait(t, 'walk')),
+  action('march', '제자리 무릎 들기', 'March in Place', 'lift', 4.8, '무릎을 번갈아 들고 반대쪽 팔을 굽힙니다.',
+    '캐릭터가 제자리에서 무릎을 한쪽씩 높게 든다. 무릎을 드는 쪽의 반대편 팔을 앞쪽으로 가볍게 들어 올린다.',
+    'The character marches in place, lifting one knee at a time. The opposite arm bends and swings forward with each lift.', t => {
+      const weight = smooth(t * 6) * smooth((1 - t) * 6);
+      const knees = [0, 1].map(index => weight * Math.max(0, Math.sin(t * TAU * 3 + index * PI)));
+      return figurePose(t, {
+        lift: .012 * Math.sin(t * TAU * 6), bodyRoll: .055 * (knees[1] - knees[0]),
+        feet: neutralFeet.map(([x, y, z], index) => [x, y + .31 * knees[index], z - .35 * knees[index]]),
+        hands: neutralHands.map(([x, y, z], index) => [x * .92, y + .31 * knees[1 - index], z - .34 * knees[1 - index]]),
+      });
+    }),
   action('run', '달리기', 'Run', 'whip', 4.5, '보폭이 길어지고 몸이 지면에서 잠깐 뜹니다.',
-    '캐릭터가 보폭을 늘려 달린다. 앞발과 뒷발이 몸 아래로 모였다가 앞으로 뻗고, 발이 잠깐 지면에서 떨어진다.',
-    'The character breaks into a run with longer strides. The front and rear legs gather under the body, extend, and briefly leave the ground.', t => gait(t, 'run')),
+    '캐릭터가 상체를 살짝 앞으로 기울이며 달린다. 팔꿈치를 굽혀 앞뒤로 흔들고 다리를 번갈아 내디디며 몸이 순간적으로 뜬다.',
+    'The character leans slightly forward and runs with longer strides. Its bent elbows pump as the legs alternate, with brief moments when both feet leave the ground.', t => gait(t, 'run')),
   action('jump', '점프 후 착지', 'Jump & Land', 'lift', 4.8, '몸을 낮췄다가 한 번 뛰어올라 착지합니다.',
     '캐릭터가 낮게 웅크린 다음 한 번 뛰어오른다. 공중에서 발을 몸 쪽으로 당기고 착지할 때 관절을 굽혀 충격을 흡수한 뒤 몸을 펴고 멈춘다.',
     'The character crouches, springs into a single jump, and tucks its feet in the air. It bends its joints on landing, straightens, and comes to rest.', t => {
       const flight = clamp((t - .31) / .38);
       const air = 4 * flight * (1 - flight);
-      const bend = .24 * Math.sin(PI * clamp((t - .08) / .24)) + .22 * Math.sin(PI * clamp((t - .69) / .19));
-      return catPose(t, { position: [.62 * smooth(flight), 1.24 * air, -.36 * smooth(flight)], lift: -.9 * bend, bodyPitch: -.2 * air, headPitch: .19 * air, tailHeight: .45 * air,
-        feet: neutralFeet.map(([x, y, z]) => [x, y + .36 * air, z + .30 * air * (z < 0 ? 1 : -1)]) });
+      const bend = .31 * Math.sin(PI * clamp((t - .08) / .24)) + .26 * Math.sin(PI * clamp((t - .69) / .19));
+      return figurePose(t, { position: [.46 * smooth(flight), .82 * air, -.36 * smooth(flight)], lift: -.91 * bend,
+        bodyPitch: .36 * bend - .095 * air, headPitch: .10 * air, wing: .24 * air * Math.sin(t * TAU * 5),
+        feet: neutralFeet.map(([x, y, z]) => [x * (1 + air * .15), y + .19 * air, z - .16 * air]),
+        footPitch: [.24 * air, .24 * air],
+        hands: neutralHands.map(([x, y, z]) => [x * (1 + .28 * air), y + .68 * air, z + .52 * bend - .21 * air]) });
     }),
   action('turn', '제자리 한 바퀴', 'Turn in Place', 'roll', 5.4, '짧게 발을 옮기며 한 바퀴 돕니다.',
-    '캐릭터가 짧게 발을 옮기며 제자리에서 천천히 한 바퀴 돈다. 몸통이 회전을 이끌고 꼬리가 뒤따라 움직인다.',
-    'The character takes small steps and turns once in place. The torso leads the turn and the tail follows with a slight delay.', t => {
+    '캐릭터가 두 발을 짧게 옮기며 제자리에서 한 바퀴 돈다. 팔을 몸 옆으로 벌려 균형을 잡다가 정면으로 돌아온다.',
+    'The character takes small steps to turn once in place. Its arms open slightly for balance before it returns to face forward.', t => {
       const p = ease(t);
-      return catPose(t, { heading: .12 + TAU * p, tail: .43 * Math.sin(p * TAU),
-        feet: neutralFeet.map(([x, y, z], i) => [x, y + .13 * Math.sin(p * PI) * Math.max(0, Math.sin(p * TAU * 4 + i * 1.6)), z]) });
+      const opening = Math.sin(p * PI);
+      return figurePose(t, { heading: .075 + TAU * p,
+        feet: neutralFeet.map(([x, y, z], i) => [x, y + .15 * opening * Math.max(0, Math.sin(p * TAU * 3 + i * PI)), z]),
+        hands: neutralHands.map(([x, y, z]) => [x * (1 + opening * .34), y + .18 * opening, z]) });
     }),
-  action('look', '좌우 둘러보기', 'Look Around', 'pan', 5.4, '머리와 시선이 왼쪽, 오른쪽 순서로 움직입니다.',
-    '캐릭터가 발을 디딘 채 고개를 왼쪽으로 돌려 잠깐 살핀다. 이어 오른쪽을 보고 시선을 정면으로 돌린다.',
+  action('look', '고개 좌우 돌리기', 'Look Around', 'pan', 5.4, '몸을 고정하고 고개를 왼쪽과 오른쪽으로 돌립니다.',
+    '캐릭터가 발을 디딘 채 고개를 왼쪽으로 돌려 잠깐 멈춘다. 이어 오른쪽으로 돌린 뒤 정면으로 돌아온다.',
     'The character keeps its feet planted, turns its head left and holds briefly, then looks right and returns its gaze forward.', t =>
-      catPose(t, { headYaw: .66 * smooth(t / .26) - 1.28 * smooth((t - .33) / .34) + .62 * smooth((t - .77) / .23), headRoll: .1 * Math.sin(t * TAU) })),
-  action('tail', '꼬리 흔들기', 'Tail Sway', 'wave', 5.2, '몸은 안정적으로 두고 꼬리만 부드럽게 흔듭니다.',
-    '캐릭터가 몸을 안정적으로 유지하면서 꼬리를 좌우로 부드럽게 흔든다. 꼬리 끝이 몸 쪽보다 조금 늦게 따라온다.',
-    'The character holds its body steady and gently sways its tail from side to side. The tip follows the motion with a slight delay.', t =>
-      catPose(t, { tail: .8 * Math.sin(t * TAU * 1.8), tailHeight: .11 * Math.sin(t * TAU * 2.4), headRoll: .055 * Math.sin(t * TAU) })),
-  action('sit', '앉기', 'Sit Down', 'tilt', 5.8, '뒷다리를 접어 앉고 앞발로 자세를 지탱합니다.',
-    '캐릭터가 앞발을 바닥에 둔 채 뒷다리를 접어 천천히 앉는다. 엉덩이를 낮추고 상체를 바로 세운 뒤 자세를 유지한다.',
-    'The character plants its front feet and slowly folds its rear legs. It lowers its hips, raises its chest, and holds the seated pose.', t => {
-      const p = smooth((t - .10) / .52);
-      const feet = neutralFeet.map(([x, y, z], i) => [x + (i % 2 ? .10 : -.10) * p, y, z - (i > 1 ? .24 : -.11) * p]);
-      return catPose(t, { feet, lift: -.25 * p, bodyPitch: -.36 * p, headPitch: .28 * p, tailHeight: -.51 * p });
+      figurePose(t, { headYaw: .82 * smooth(t / .26) - 1.64 * smooth((t - .33) / .34) + .82 * smooth((t - .77) / .23), headRoll: .07 * Math.sin(t * TAU) })),
+  action('sway', '좌우로 체중 옮기기', 'Weight Shift', 'wave', 5.2, '발을 고정한 채 골반과 어깨가 좌우로 움직입니다.',
+    '캐릭터가 두 발을 디딘 상태에서 체중을 왼쪽에서 오른쪽으로 천천히 옮긴다. 골반과 어깨가 반대 방향으로 조금 기울었다가 가운데로 돌아온다.',
+    'The character keeps both feet planted and shifts its weight slowly from left to right. Its hips and shoulders counter-tilt before returning to center.', t => {
+      const shift = -.18 * Math.sin(t * TAU);
+      return figurePose(t, { shift, lift: -.07 * Math.abs(Math.sin(t * TAU)), bodyRoll: shift * .88, headRoll: -shift * .67 });
     }),
-  action('stretch', '앞발 뻗어 기지개', 'Forward Stretch', 'diagonal', 6.2, '앞발을 밀고 가슴을 낮췄다가 원래 자세로 돌아옵니다.',
-    '캐릭터가 앞발을 앞으로 밀어 가슴을 낮추고 엉덩이를 높여 기지개를 켠다. 잠시 유지한 후 천천히 원래 자세로 돌아온다.',
-    'The character slides its front paws forward, lowers its chest, and raises its hips in a stretch. It holds briefly and eases back to standing.', t => {
+  action('sit', '바닥에 앉기', 'Sit on the Floor', 'tilt', 5.8, '무릎을 굽혀 바닥에 앉고 양손을 무릎 위에 올립니다.',
+    '캐릭터가 두 무릎을 굽혀 엉덩이를 천천히 낮춘다. 바닥에 앉아 두 발을 앞으로 내밀고 손을 무릎 위에 둔다.',
+    'The character bends both knees and slowly lowers its hips to sit on the floor. It brings both feet forward and rests its hands on its knees.', t => {
+      const p = smooth((t - .10) / .63);
+      const feet = neutralFeet.map(([x, y, z]) => [x * (1 + .13 * p), y, z - .61 * p]);
+      const hands = neutralHands.map(([x, y, z]) => [x * (1 - .60 * p), y + .16 * p, z - .45 * p]);
+      return figurePose(t, { feet, hands, lift: -.61 * p, bodyPitch: .26 * Math.sin(p * PI), headPitch: .13 * Math.sin(p * PI) });
+    }),
+  action('stretch', '양팔 위로 뻗기', 'Overhead Stretch', 'diagonal', 6.2, '양팔을 머리 위로 뻗었다가 천천히 내립니다.',
+    '캐릭터가 두 팔을 옆으로 크게 올려 머리 위로 뻗는다. 몸을 길게 늘인 자세로 잠시 멈춘 뒤 양팔을 천천히 내린다.',
+    'The character raises both arms out to the sides and stretches them overhead. It holds the elongated pose briefly, then lowers both arms slowly.', t => {
       const p = smooth((t - .09) / .35) * (1 - smooth((t - .67) / .31));
-      return catPose(t, { lift: -.15 * p, bodyPitch: .44 * p, headPitch: -.22 * p, tailHeight: .42 * p,
-        feet: neutralFeet.map(([x, y, z], i) => [x, y, z - (i < 2 ? .64 * p : -.12 * p)]) });
+      return figurePose(t, { lift: .028 * p, headPitch: -.09 * p,
+        hands: neutralHands.map(([x, y, z]) => [x + Math.sign(x) * (.27 * Math.sin(PI * p) - .08 * p), y + 1.20 * p, z - .11 * p]) });
     }),
-  action('wave', '앞발 인사', 'Paw Wave', 'wave', 5.5, '한쪽 앞발을 들어 가볍게 흔들고 내려놓습니다.',
-    '캐릭터가 한쪽 앞발을 들어 올린다. 앞발을 좌우로 두어 번 가볍게 흔들어 인사한 뒤 바닥에 내려놓는다.',
-    'The character lifts one front paw, waves it gently from side to side a couple of times, then places it back on the ground.', t => {
-      const p = smooth((t - .12) / .2) * (1 - smooth((t - .78) / .20));
-      return catPose(t, { lift: -.033 * p, bodyRoll: -.14 * p, headRoll: .13 * p,
-        feet: neutralFeet.map(([x, y, z], i) => i === 1 ? [x + .16 * p * Math.sin(t * TAU * 4), y + .77 * p, z - .31 * p] : [x, y, z]) });
+  action('wave', '손 흔들어 인사', 'Hand Wave', 'wave', 5.5, '한 손을 어깨 위로 들어 좌우로 흔든 뒤 내립니다.',
+    '캐릭터가 한쪽 팔꿈치를 굽혀 손을 어깨 위로 올린다. 손을 좌우로 몇 번 흔들어 인사하고 팔을 천천히 내린다.',
+    'The character bends one elbow and lifts a hand above shoulder height. It waves side to side a few times, then lowers the arm slowly.', t => {
+      const p = smooth((t - .08) / .23) * (1 - smooth((t - .80) / .20));
+      const oscillation = Math.sin((t - .28) * TAU * 4.6) * p;
+      return figurePose(t, { shift: -.052 * p, bodyRoll: .075 * p, headRoll: -.095 * p,
+        hands: [neutralHands[0], [.528 + .20 * p + .154 * oscillation, .827 + .93 * p - .08 * oscillation, -.029 - .12 * p]] });
     }),
-  action('sniff', '고개 숙여 냄새 맡기', 'Sniff', 'focus', 5.8, '고개와 코를 낮춰 두 번 가까이 살핍니다.',
-    '캐릭터가 고개와 코를 낮춘 채 짧게 두 번 냄새를 맡는다. 몸통과 발을 안정적으로 유지하고 천천히 고개를 다시 든다.',
-    'The character lowers its head and nose, takes two short sniffs with its feet planted, then slowly lifts its head again.', t => {
+  action('bow', '허리 숙여 인사', 'Bow', 'tilt', 5.8, '발을 고정하고 상체를 천천히 숙였다가 일어납니다.',
+    '캐릭터가 발을 바닥에 둔 채 엉덩이를 중심으로 상체를 앞으로 숙인다. 잠시 자세를 유지하고 천천히 바로 선다.',
+    'The character keeps its feet planted and hinges forward at the hips in a bow. It holds briefly, then slowly straightens.', t => {
       const p = smooth((t - .08) / .26) * (1 - smooth((t - .71) / .26));
-      return catPose(t, { lift: -.11 * p, bodyPitch: .24 * p, headPitch: p * (.42 + .075 * Math.sin(t * TAU * 4.5)),
-        headYaw: p * .13 * Math.sin(t * TAU), tailHeight: .20 * p });
+      return figurePose(t, { lift: -.079 * p, bodyPitch: .64 * p, headPitch: .18 * p,
+        hands: neutralHands.map(([x, y, z]) => [x * (1 - .20 * p), y + .051 * p, z - .11 * p]) });
     }),
 ];
 const actionById = new Map(actions.map(item => [item.id, item]));
 
 const MATTE = 0;
-const PLANT = 1;
+const PROP = 1;
 const GROUND = 2;
-const SHINE = 3;
-const CLOUD = 4;
+const FLAT = 3;
+const PEARL = 4;
 const IDENTITY = [1, 0, 0, 0, 1, 0, 0, 0, 1];
 const origin = [0, 0, 0];
 const add3 = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
@@ -1227,13 +1274,6 @@ const normalized = a => mult3(a, 1 / (Math.hypot(...a) || 1));
 const mix3 = (a, b, t) => [mix(a[0], b[0], t), mix(a[1], b[1], t), mix(a[2], b[2], t)];
 const rgb = hex => [0, 2, 4].map(index => parseInt(hex.slice(index, index + 2), 16) / 255);
 const tint = (color, scale) => color.map(channel => clamp(channel * scale));
-
-function seededRandom(seed) {
-  return () => {
-    seed = (Math.imul(1664525, seed) + 1013904223) >>> 0;
-    return seed / 4294967296;
-  };
-}
 
 function apply3(basis, [x, y, z]) {
   return [basis[0] * x + basis[3] * y + basis[6] * z, basis[1] * x + basis[4] * y + basis[7] * z, basis[2] * x + basis[5] * y + basis[8] * z];
@@ -1273,27 +1313,36 @@ function yAlong(direction, length) {
   return [...x, ...mult3(y, length), ...cross3(x, y)];
 }
 
+function normalsFor(basis) {
+  const [x, y, z] = [basis.slice(0, 3), basis.slice(3, 6), basis.slice(6, 9)];
+  const det = dot3(x, cross3(y, z));
+  if (Math.abs(det) < .0001) return IDENTITY;
+  return [cross3(y, z), cross3(z, x), cross3(x, y)].flatMap(column => mult3(column, 1 / det));
+}
+
 class Mesh {
   vertices = [];
 
   tri(a, b, c, color, material = MATTE, alpha = 1, normals) {
     const face = normals || Array(3).fill(normalized(cross3(sub3(b, a), sub3(c, a))));
-    [a, b, c].forEach((point, index) => this.vertices.push(...point, ...face[index], ...color, alpha, material));
+    const colors = Array.isArray(color[0]) ? color : [color, color, color];
+    [a, b, c].forEach((point, index) => this.vertices.push(...point, ...face[index], ...colors[index], typeof alpha === 'number' ? alpha : alpha[index], material));
   }
 
   data() { return new Float32Array(this.vertices); }
 }
 
 function ellipsoid(mesh, center, size, color, options = {}) {
-  const { basis = IDENTITY, material = MATTE, steps = 12, rings = 8 } = options;
+  const { basis = IDENTITY, material = MATTE, steps = 16, rings = 11, round = 1 } = options;
+  const exponent = (value, power) => Math.sign(value) * Math.abs(value) ** power;
   const surface = Array.from({ length: rings + 1 }, (_, row) => {
     const angle = -PI / 2 + PI * row / rings;
     return Array.from({ length: steps }, (_, column) => {
       const theta = column * TAU / steps;
       const unit = [Math.cos(angle) * Math.cos(theta), Math.sin(angle), Math.cos(angle) * Math.sin(theta)];
       return {
-        point: add3(center, apply3(basis, unit.map((value, index) => value * size[index]))),
-        normal: normalized(apply3(basis, unit.map((value, index) => value / size[index]))),
+        point: add3(center, apply3(basis, unit.map((value, index) => exponent(value, round) * size[index]))),
+        normal: normalized(apply3(basis, unit.map((value, index) => exponent(value, 2 - round) / size[index]))),
       };
     });
   });
@@ -1329,334 +1378,461 @@ function tube(mesh, points, radii, color, sides = 6, material = MATTE) {
   }
 }
 
-const groundHeight = (x, z) => {
-  const spread = smooth((Math.hypot(x * 1.15, z * .55) - 6) / 14);
-  return -.028 + spread * (.66 + .85 * Math.sin(x * .16 + z * .19) + .39 * Math.cos(z * .29 - x * .12));
-};
-const pathCenter = z => .9 * Math.sin(z * .21) + Math.max(0, z - 6) * .15;
-
-function buildTerrain() {
+function buildFloor() {
   const mesh = new Mesh();
-  const grass = rgb('a5d279');
-  const honey = rgb('e6e8a7');
-  const random = seededRandom(24);
-  const step = 1.4;
-  for (let x = -63; x < 63; x += step) {
-    for (let z = -63; z < 63; z += step) {
-      const patch = .24 + .20 * Math.sin(x * .44 + z * .64) + .10 * random();
-      const color = mix3(grass, honey, patch);
-      const a = [x, groundHeight(x, z), z];
-      const b = [x, groundHeight(x, z + step), z + step];
-      const c = [x + step, groundHeight(x + step, z + step), z + step];
-      const d = [x + step, groundHeight(x + step, z), z];
-      mesh.tri(a, b, c, color, GROUND);
-      mesh.tri(a, c, d, color, GROUND);
+  const color = rgb('c5dfd5');
+  const a = [-100, -.003, -100], b = [-100, -.003, 100], c = [100, -.003, 100], d = [100, -.003, -100];
+  mesh.tri(a, b, c, color, GROUND);
+  mesh.tri(a, c, d, color, GROUND);
+  return mesh;
+}
+
+const stageMarkers = [
+  { point: [-3.35, 0, 4.80], width: 1.42, depth: .85 },
+  { point: [3.90, 0, 6.65], width: 1.53, depth: .72 },
+  { point: [.90, 0, 8.82], width: 1.75, depth: 1.03 },
+  { point: [-.50, 0, -3.1], width: .60, depth: .60 },
+  { point: [4.1, 0, -4.65], width: .90, depth: .58 },
+];
+
+function ringOnFloor(mesh, x, z, r, width, color, segments = 96) {
+  const point = (i, distance) => [x + Math.cos(i * TAU / segments) * distance, .004, z + Math.sin(i * TAU / segments) * distance];
+  for (let i = 0; i < segments; i++) {
+    const a = point(i, r - width), b = point(i + 1, r - width), c = point(i + 1, r + width), d = point(i, r + width);
+    mesh.tri(a, b, c, color, FLAT);
+    mesh.tri(a, c, d, color, FLAT);
+  }
+}
+
+function diskShadow(mesh) {
+  const color = rgb('527569');
+  const bands = 13, sides = 42;
+  const ring = (row, index) => [Math.cos(index * TAU / sides) * row / bands, .008, Math.sin(index * TAU / sides) * row / bands];
+  const fade = row => .34 * (1 - smooth(row / bands)) ** 1.7;
+  for (let row = 0; row < bands; row++) {
+    for (let i = 0; i < sides; i++) {
+      const a = ring(row, i), b = ring(row, i + 1), c = ring(row + 1, i + 1), d = ring(row + 1, i);
+      if (row > 0) mesh.tri(a, b, c, color, FLAT, [fade(row), fade(row), fade(row + 1)]);
+      mesh.tri(a, c, d, color, FLAT, [fade(row), fade(row + 1), fade(row + 1)]);
     }
+  }
+}
+
+function buildStudio() {
+  const general = new Mesh();
+  const shadows = [];
+  const lavender = rgb('cdc2dc'), rose = rgb('e5c5c2'), mint = rgb('afcfc3'), ivory = rgb('ece4d6');
+  const put = (center, size, color, round = .66, angle = 0) => {
+    ellipsoid(general, center, size, color, { round, basis: rotationY(angle), steps: 32, rings: 18, material: PROP });
+  };
+  const shadow = (x, z, width, depth) => shadows.push({ origin: [x, 0, z], basis: scaleBasis([width, 1, depth]) });
+  const [left, right, rear, close, low] = stageMarkers.map(item => item.point);
+  put(add3(left, [0, .279, 0]), [.72, .286, .405], lavender, .55, -.12);
+  put(add3(left, [-.14, .68, .035]), [.47, .22, .342], lavender, .66, .16);
+  put(add3(left, [.115, 1.00, .035]), [.248, .252, .248], rgb('e8c6ae'), 1);
+  shadow(left[0] + .14, left[2] + .17, 1.14, .70);
+
+  const archRadius = .575;
+  const arch = [[-archRadius, .02, 0], [-archRadius, .49, 0]];
+  for (let n = 1; n <= 36; n++) {
+    const theta = PI - n * PI / 36;
+    arch.push([archRadius * Math.cos(theta), .49 + archRadius * Math.sin(theta), 0]);
+  }
+  arch.push([archRadius, .02, 0]);
+  const archPoints = arch.map(point => add3(right, apply3(rotationY(-.18), point)));
+  tube(general, archPoints, archPoints.map(() => .163), mint, 18, PROP);
+  for (const end of [archPoints[0], archPoints.at(-1)]) shadow(end[0], end[2], .29, .31);
+
+  put(add3(rear, [0, .39, 0]), [.84, .405, .49], ivory, .54, .12);
+  put(add3(rear, [-.25, .94, .13]), [.287, .194, .274], lavender, .78, .04);
+  put(add3(rear, [.50, .93, .04]), [.210, .205, .210], rose, 1);
+  shadow(rear[0] + .15, rear[2] + .13, 1.14, .80);
+
+  put(add3(close, [0, .78, 0]), [.292, .797, .305], rose, .88);
+  put(add3(low, [0, .206, 0]), [.475, .212, .308], lavender, .62, -.29);
+  shadow(close[0] + .12, close[2] + .16, .45, .49);
+  shadow(low[0] + .09, low[2] + .095, .62, .47);
+
+  const objects = [
+    [-8.8, 4.8, .55, .62, .65, mint], [-4.8, 8.7, .40, .61, .74, rose],
+    [7.3, 6.1, .65, .70, .55, lavender], [7.0, -3.3, .53, .62, .79, ivory],
+    [-8.0, -6.8, .65, .53, .73, mint], [3.95, 12.8, .64, .68, .57, rose],
+    [10.4, 10.7, .40, .71, .80, ivory], [-5.95, 13.75, .82, .57, .72, lavender],
+    [-3.55, -8.45, .38, .53, .43, ivory], [4.45, -9.7, .64, .45, .66, mint],
+    [12.3, -5.6, .58, .61, .58, rose], [0, -13.0, .48, .75, .45, lavender],
+  ];
+  for (const [x, z, y, w, depth, color] of objects) {
+    put([x, y * .94, z], [w, y, depth], color, .74, (x + z) * .11);
+    shadow(x + .12, z + .15, w * 1.42, depth * 1.42);
+  }
+  ringOnFloor(general, 0, 0, 1.20, .013, rgb('e6f1e9'));
+  ringOnFloor(general, 0, 0, 1.31, .008, rgb('bdd8cd'));
+  return { general, shadows };
+}
+
+const skin = rgb('ffe1c9'), hairColor = rgb('65414e'), hairLight = rgb('815b67');
+const rose = rgb('efabbc'), silkPink = rgb('f6bdc8'), blue = rgb('79a2ce');
+const blueBright = rgb('a5c6e4'), ivory = rgb('fff1db'), gold = rgb('f4dda8');
+const chestnut = rgb('62404a'), lash = rgb('4c323d'), gloss = rgb('fff7ed');
+
+function sampleCurve(points, segments, closed = false) {
+  const length = points.length;
+  const at = index => points[closed ? (index + length) % length : clamp(index, 0, length - 1)];
+  return Array.from({ length: segments + 1 }, (_, step) => {
+    const progress = step / segments * (closed ? length : length - 1);
+    const index = Math.min(length - (closed ? 1 : 2), Math.floor(progress));
+    const t = progress - index;
+    const a = at(index - 1), b = at(index), c = at(index + 1), d = at(index + 2);
+    const t2 = t * t, t3 = t2 * t;
+    return b.map((value, axis) => (2 * t3 - 3 * t2 + 1) * value + (t3 - 2 * t2 + t) * (c[axis] - a[axis]) / 2 +
+      (-2 * t3 + 3 * t2) * c[axis] + (t3 - t2) * (d[axis] - b[axis]) / 2);
+  });
+}
+
+function stroke(mesh, points, width, color, samples = 22, closed = false) {
+  const path = sampleCurve(points, samples, closed);
+  const radii = path.map((_, i) => width * (closed ? 1 : .35 + .65 * Math.max(0, Math.sin(PI * i / samples)) ** .36));
+  tube(mesh, path, radii, color, 10);
+}
+
+function hairCap(mesh) {
+  const segments = 72, rings = 27;
+  const geometry = Array.from({ length: rings + 1 }, (_, row) => Array.from({ length: segments }, (_, i) => {
+    const angle = (i / segments - .5) * TAU;
+    const forward = Math.cos(angle);
+    const fringe = smooth((forward - .27) / .70);
+    const sweep = Math.sin(angle * 1.45 - .24);
+    const edge = mix(-.65, .47 + .10 * sweep, fringe);
+    const latitude = mix(PI / 2 - .001, Math.asin(edge), row / rings);
+    const easingAtRim = 1 - .095 * smooth((row - rings * .93) / (rings * .07));
+    const normal = [Math.sin(angle) * Math.cos(latitude), Math.sin(latitude), -Math.cos(angle) * Math.cos(latitude)];
+    const swell = 1 + .028 * Math.sin(angle * 2 + .68) * Math.sin(latitude + .39);
+    const point = [normal[0] * .401 * swell * easingAtRim, .027 + normal[1] * .402 * swell,
+      .018 + normal[2] * .360 * swell * easingAtRim];
+    return { point, normal };
+  }));
+  const triangle = (a, b, c) => mesh.tri(a.point, b.point, c.point, hairColor, MATTE, 1, [a.normal, b.normal, c.normal]);
+  for (let row = 1; row <= rings; row++) {
+    for (let i = 0; i < segments; i++) {
+      const next = (i + 1) % segments;
+      const a = geometry[row - 1][i], b = geometry[row][i], c = geometry[row][next], d = geometry[row - 1][next];
+      triangle(a, b, d);
+      triangle(d, b, c);
+    }
+  }
+}
+
+function braid(mesh, side) {
+  const points = [[.30, -.016, .104], [.475, .145, .115], [.622, .337, .117], [.637, .525, .112],
+    [.499, .690, .087], [.302, .725, .042], [.153, .653, .011], [.066, .513, -.012]];
+  const path = sampleCurve(points.map(([x, y, z]) => [side * x, y + (side === 1 ? .036 : 0) * smooth(y * 2), z]), 112);
+  for (const [strand, color] of [hairColor, mix3(hairColor, hairLight, .43), hairLight].entries()) {
+    const twisted = path.map((point, index) => {
+      const t = index / (path.length - 1);
+      const tangent = normalized(sub3(path[Math.min(index + 1, path.length - 1)], path[Math.max(0, index - 1)]));
+      const binormal = normalized(cross3(tangent, [0, 0, 1]));
+      const normal = cross3(tangent, binormal);
+      const angle = side * t * TAU * 5.45 + strand * TAU / 3;
+      const radius = .0315 * (.72 + .28 * Math.sin(t * PI));
+      return add3(point, add3(mult3(binormal, radius * Math.cos(angle)), mult3(normal, radius * Math.sin(angle))));
+    });
+    tube(mesh, twisted, path.map((_, i) => .040 + .007 * Math.sin(PI * i / (path.length - 1))), color, 11);
+  }
+}
+
+function flowerPin(mesh) {
+  const pin = [-.023, .468, -.222];
+  const aqua = rgb('9ed9e0'), green = rgb('a8ceac'), butter = rgb('ffdf7e');
+  for (const direction of [-1.13, -.56, .19, .82, 1.25]) {
+    const point = add3(pin, [Math.sin(direction) * .126, Math.cos(direction) * .108, .016]);
+    ellipsoid(mesh, point, [.038, .088, .024], green, { basis: rotationZ(-direction), steps: 18, rings: 12 });
+  }
+  for (let i = 0; i < 5; i++) {
+    const angle = .30 + i * TAU / 5;
+    const point = add3(pin, [Math.sin(angle) * .079, Math.cos(angle) * .073, -.018]);
+    ellipsoid(mesh, point, [.054, .064, .033], aqua, { basis: rotationZ(-angle), round: .86, steps: 21, rings: 14 });
+  }
+  for (const direction of [-.99, .14, 1.19]) {
+    const point = add3(pin, [Math.sin(direction) * .060, Math.cos(direction) * .046, -.057]);
+    ellipsoid(mesh, point, [.041, .056, .024], butter, { basis: rotationZ(-direction), round: .88, steps: 20, rings: 13 });
+  }
+  for (const [y, radius] of [[0, .025], [-.044, .018], [-.078, .012]]) {
+    ellipsoid(mesh, add3(pin, [0, y, -.082]), [radius, radius, radius * .65], rgb('9c81c8'),
+      { material: PEARL, steps: 19, rings: 12 });
+  }
+}
+
+function portrait(mesh) {
+  const ball = (center, size, color, round = 1) => ellipsoid(mesh, center, size, color, { round, steps: 38, rings: 25 });
+  for (const side of [-1, 1]) {
+    const x = side * .151;
+    ball([side * .254, -.138, -.264], [.067, .050, .017], rgb('f4bdad'));
+    ball([x, -.022, -.319], [.109, .105, .032], gloss);
+    ball([x - .005, -.023, -.349], [.079, .085, .023], rgb('905333'));
+    ball([x - .005, -.006, -.365], [.061, .067, .018], rgb('452c33'));
+    ball([x - .023, .024, -.377], [.023, .024, .010], gloss);
+    ball([x + .029, -.055, -.368], [.010, .013, .005], rgb('f5d1a4'));
+    stroke(mesh, [[side * .055, .024, -.342], [side * .103, .072, -.350], [side * .179, .083, -.346],
+      [side * .236, .051, -.335], [side * .256, .019, -.319]], .011, lash);
+    for (let i = 0; i < 3; i++) {
+      const point = [side * (.218 + .011 * i), .066 - i * .011, -.338 + i * .006];
+      stroke(mesh, [point, add3(point, [side * .025, .014, .003]), add3(point, [side * .036, .028 - i * .003, .009])], .007, lash, 10);
+    }
+    stroke(mesh, [[side * .076, .135, -.329], [side * .136, .159, -.331],
+      [side * .192, .152, -.314], [side * .241, .123, -.280]], .0115, chestnut, 24);
+
+    const lens = Array.from({ length: 73 }, (_, i) => {
+      const theta = i * TAU / 72;
+      const xOffset = .144 * Math.cos(theta);
+      return [x + xOffset, -.042 + .143 * Math.sin(theta), -.380 + side * xOffset * .16];
+    });
+    tube(mesh, lens, lens.map(() => .010), chestnut, 10);
+    stroke(mesh, [[side * .294, -.026, -.353], [side * .340, -.015, -.232],
+      [side * .389, -.024, -.094], [side * .387, -.056, .002]], .009, chestnut);
+  }
+  stroke(mesh, [[-.025, -.039, -.400], [-.012, -.029, -.409], [.013, -.029, -.409], [.025, -.039, -.400]], .0095, chestnut, 15);
+  ball([0, -.114, -.349], [.028, .020, .019], rgb('f2c3a8'));
+  stroke(mesh, [[-.056, -.205, -.308], [-.034, -.218, -.311], [0, -.222, -.315],
+    [.033, -.215, -.313], [.055, -.199, -.311]], .008, rgb('a65060'), 24);
+}
+
+function collar(mesh) {
+  const steps = 25, power = 2 / .69;
+  const surface = ([x, y], lift) => {
+    const remaining = Math.max(.01, 1 - (Math.abs(x) / .331) ** power - (Math.abs(y - 1.244) / .297) ** power);
+    return [x, y, -.207 * remaining ** (1 / power) - lift];
+  };
+  const ribbon = (corners, width, color, lift) => {
+    const path = sampleCurve(corners, steps);
+    const sides = path.map(([x, y], i) => {
+      const a = path[Math.max(i - 1, 0)], b = path[Math.min(i + 1, steps)];
+      const length = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
+      const h = (b[1] - a[1]) / length * width, v = (b[0] - a[0]) / length * width;
+      return [surface([x + h, y - v], lift), surface([x - h, y + v], lift)];
+    });
+    for (let i = 1; i < sides.length; i++) {
+      const [a, b] = sides[i - 1], [c, d] = sides[i];
+      mesh.tri(a, c, b, color, MATTE, 1, [[0, .21, -.98], [0, .21, -.98], [0, .21, -.98]]);
+      mesh.tri(b, c, d, color, MATTE, 1, [[0, .21, -.98], [0, .21, -.98], [0, .21, -.98]]);
+    }
+  };
+  const left = [[-.135, 1.504], [-.115, 1.445], [-.066, 1.375], [.045, 1.264]];
+  const right = [[.141, 1.504], [.087, 1.411], [-.010, 1.291], [-.107, 1.185], [-.142, 1.062]];
+  ribbon(left, .037, ivory, .011);
+  ribbon(right, .040, ivory, .019);
+  ribbon(left.map(([x, y]) => [x - .015, y - .008]), .024, blue, .020);
+  ribbon(right.map(([x, y]) => [x + .014, y - .013]), .027, blue, .030);
+}
+
+function skirtLayer(mesh, top, hem, topWidth, hemWidth, color, highlight) {
+  const columns = 78, rows = 17;
+  const profile = Array.from({ length: rows + 1 }, (_, row) => {
+    const t = row / rows, bell = t ** 1.30;
+    return Array.from({ length: columns }, (_, i) => {
+      const angle = i * TAU / columns;
+      const wave = .033 * Math.cos(angle * 8) + .018 * Math.cos(angle * 5);
+      const radius = mix(topWidth, hemWidth, bell) + wave * bell;
+      const edge = .024 * Math.sin(angle * 5 + .2) * t ** 4;
+      return [Math.cos(angle) * radius, mix(top, hem, t) + edge, .77 * Math.sin(angle) * radius];
+    });
+  });
+  const normals = profile.map((ring, row) => ring.map((_, i) => {
+    const vertical = sub3(profile[Math.min(row + 1, rows)][i], profile[Math.max(row - 1, 0)][i]);
+    const around = sub3(ring[(i + 1) % columns], ring[(i + columns - 1) % columns]);
+    return normalized(cross3(around, vertical));
+  }));
+  for (let row = 1; row <= rows; row++) {
+    for (let side = 0; side < columns; side++) {
+      const next = (side + 1) % columns;
+      const [a, b, c, d] = [profile[row - 1][side], profile[row][side], profile[row][next], profile[row - 1][next]];
+      const [na, nb, nc, nd] = [normals[row - 1][side], normals[row][side], normals[row][next], normals[row - 1][next]];
+      const fill = mix3(color, highlight, .44 * (row / rows) ** 2);
+      mesh.tri(a, d, b, fill, MATTE, 1, [na, nd, nb]);
+      mesh.tri(b, d, c, fill, MATTE, 1, [nb, nd, nc]);
+    }
+  }
+  const bottom = [...profile.at(-1), profile.at(-1)[0]];
+  tube(mesh, bottom, bottom.map(() => .009), highlight, 8);
+}
+
+function buildWings() {
+  const mesh = new Mesh(), mint = rgb('c1e3e4'), tintedRose = rgb('f5cddd'), lilac = rgb('d2caed');
+  const depth = (x, y) => .022 + .21 * x * x + .053 * x * Math.sin(y * 3.2);
+  const point = ([x, y]) => [x, y, depth(x, y)];
+  const surface = (edge, center) => {
+    const outline = sampleCurve(edge, 96, true);
+    const bands = Array.from({ length: 11 }, (_, row) => outline.map(sample => {
+      const t = row / 10;
+      const [x, y] = sample.map((coordinate, axis) => mix(center[axis], coordinate, t));
+      const z = depth(x, y);
+      const angle = .5 + .5 * Math.sin(x * 5.2 + y * 5.9);
+      const color = mix3(mix3(mint, lilac, smooth(angle)), tintedRose, smooth((t - .12) / .91) * .59);
+      return { p: [x, y, z], n: normalized([depth(x - .03, y) - depth(x + .03, y), depth(x, y - .03) - depth(x, y + .03), .06]), color };
+    }));
+    const triangle = (a, b, c) => mesh.tri(a.p, b.p, c.p, [a.color, b.color, c.color], PEARL, 1, [a.n, b.n, c.n]);
+    for (let row = 1; row < bands.length; row++) {
+      for (let i = 1; i < outline.length; i++) {
+        const [a, b, c, d] = [bands[row - 1][i - 1], bands[row][i - 1], bands[row][i], bands[row - 1][i]];
+        triangle(a, b, c);
+        if (row > 1) triangle(a, c, d);
+      }
+    }
+    const border = outline.map(point);
+    tube(mesh, border, border.map(() => .010), gold, 9, PEARL);
+  };
+
+  surface([[.011, .014], [.222, .147], [.468, .091], [.623, -.029], [.673, -.202], [.554, -.315],
+    [.391, -.408], [.299, -.567], [.216, -.602], [.231, -.468], [.118, -.276]], [.309, -.175]);
+  surface([[.004, .005], [.195, .335], [.440, .495], [.717, .622], [.865, .617], [.902, .401],
+    [.773, .222], [.650, .113], [.733, .030], [.668, -.109], [.384, -.191], [.142, -.116]], [.448, .208]);
+
+  for (const line of [
+    [[.025, .006], [.282, .224], [.555, .448], [.777, .523]],
+    [[.026, -.008], [.315, .037], [.542, .247], [.712, .374]],
+    [[.008, -.017], [.236, -.126], [.479, -.101], [.640, -.038]],
+    [[.014, -.039], [.207, -.228], [.424, -.257], [.567, -.188]],
+    [[.018, -.038], [.139, -.280], [.267, -.432], [.325, -.471]],
+  ]) stroke(mesh, line.map(([x, y]) => add3(point([x, y]), [0, 0, -.006])), .007, ivory, 25);
+
+  for (const [x, y, size] of [[.747, .438, .025], [.623, .414, .018], [.725, .267, .013], [.547, .334, .028],
+    [.536, .146, .016], [.362, .129, .015], [.549, .012, .022], [.413, -.116, .014], [.414, -.263, .024], [.296, -.345, .013]]) {
+    ellipsoid(mesh, [x, y, depth(x, y) - .008], [size, size * 1.12, .010],
+      gloss, { material: PEARL, steps: 13, rings: 8 });
   }
   return mesh;
 }
 
-const petalPalette = ['f791bb', 'a9a5f9', '80c9f0', 'fadb80', 'fff3eb', 'ffad98', 'e2b4f2'].map(rgb);
-const greens = ['72aa62', '79b66c', 'a5ca62', '539758', '8bb962'].map(rgb);
+function buildFigure() {
+  const torso = new Mesh(), head = new Mesh(), skirt = new Mesh();
+  const upperArm = new Mesh(), forearm = new Mesh(), hand = new Mesh();
+  const thigh = new Mesh(), shin = new Mesh(), shoe = new Mesh();
+  const sculpt = (mesh, center, size, color, round = .89, basis = IDENTITY) =>
+    ellipsoid(mesh, center, size, color, { round, basis, steps: 34, rings: 20 });
+  sculpt(torso, [0, 1.244, 0], [.331, .297, .207], rose, .69);
+  sculpt(torso, [0, 1.044, -.002], [.304, .104, .206], silkPink, .74);
+  sculpt(torso, [0, 1.549, -.004], [.132, .090, .126], skin);
+  collar(torso);
+  skirtLayer(skirt, 1.047, .361, .246, .486, silkPink, rgb('ffd2d6'));
+  skirtLayer(skirt, 1.091, .489, .242, .437, rose, rgb('efa6ba'));
+  sculpt(skirt, [0, 1.013, .003], [.278, .06, .219], rgb('d992aa'), .60);
 
-function blossom(mesh, x, z, height, size, turn, palette, steps = 7) {
-  const ground = groundHeight(x, z);
-  const tilt = .23 + .09 * Math.sin(turn * 7);
-  const bend = [Math.sin(turn) * height * .21, 0, Math.cos(turn) * height * .19];
-  const center = [x + bend[0], ground + height, z + bend[2]];
-  tube(mesh, [[x, ground, z], [x + bend[0] * .28, ground + height * .44, z + bend[2] * .29], center],
-    [size * .085, size * .079, size * .052], greens[1], 5, PLANT);
+  ellipsoid(head, [0, -.015, -.013], [.370, .367, .342], skin, { round: .94, steps: 70, rings: 40 });
   for (const side of [-1, 1]) {
-    const level = side === 1 ? .64 : .35;
-    const leaf = [x + bend[0] * level + side * size * .35, ground + height * level, z + bend[2] * level];
-    const basis = multiplyBasis(rotationY(turn * .7), rotationZ(side * .65));
-    ellipsoid(mesh, leaf, [size * .56, size * .20, size * .095], greens[side + 1], { basis, material: PLANT, steps: 5, rings: 4 });
+    sculpt(head, [side * .347, -.045, .002], [.076, .097, .063], skin, .92, rotationZ(side * .19));
+    sculpt(head, [side * .381, -.042, -.045], [.033, .059, .014], rgb('f0bcaa'), 1, rotationZ(side * .19));
+    braid(head, side);
   }
-  const facing = normalized([.5 * Math.sin(turn), .48 + tilt, -.64 * Math.cos(turn * .29)]);
-  const rotation = frameFromZ(facing);
-  const petals = 5 + (palette % 3);
-  for (let i = 0; i < petals; i++) {
-    const angle = turn + i * TAU / petals;
-    const axis = apply3(rotation, [Math.cos(angle), Math.sin(angle), .16]);
-    const tangential = apply3(rotation, [-Math.sin(angle), Math.cos(angle), 0]);
-    const normal = normalized(cross3(axis, tangential));
-    const petal = add3(center, mult3(axis, size * .59));
-    const color = tint(petalPalette[palette], .97 + .05 * Math.cos(i * 2.5));
-    ellipsoid(mesh, petal, [size * .61, size * .29, size * .16], color, {
-      basis: [...normalized(axis), ...tangential, ...normal], material: PLANT, steps, rings: steps > 8 ? 6 : 4,
-    });
+  hairCap(head);
+  stroke(head, [[-.015, .396, -.144], [-.020, .338, -.234], [-.024, .247, -.309], [-.020, .167, -.328]], .008, rgb('a67879'), 29);
+  for (const sign of [-1, 1]) {
+    stroke(head, [[-.02, .161, -.330], [sign * .027, .122, -.346], [sign * .044, .075, -.353],
+      [sign * .038, .052, -.346]], .006, hairColor, 16);
   }
-  ellipsoid(mesh, add3(center, mult3(facing, size * .15)), [size * .34, size * .34, size * .21], rgb('f8b74f'),
-    { basis: rotation, material: PLANT, steps, rings: 5 });
+  portrait(head);
+  flowerPin(head);
+
+  sculpt(upperArm, [0, .48, 0], [.143, .714, .149], rose, .88);
+  sculpt(forearm, [0, .48, 0], [.138, .640, .140], silkPink, .74);
+  sculpt(forearm, [0, .939, -.005], [.119, .169, .122], blue, .73);
+  sculpt(hand, [0, .067, -.006], [.077, .107, .053], skin, .82);
+  sculpt(hand, [-.058, .031, -.024], [.046, .056, .041], skin, 1, rotationZ(-.32));
+
+  sculpt(thigh, [0, .58, .008], [.124, .65, .133], rgb('ecc6cd'), .78);
+  sculpt(shin, [0, .48, 0], [.100, .66, .102], ivory, .86);
+  sculpt(shoe, [0, -.088, -.075], [.124, .032, .184], rgb('c389a4'), .68);
+  sculpt(shoe, [0, -.019, -.071], [.122, .104, .181], rgb('e8adc1'), .72);
+  sculpt(shoe, [0, .052, -.125], [.105, .019, .041], blueBright, .67);
+  return { torso, head, skirt, upperArm, forearm, hand, thigh, shin, shoe, wing: buildWings() };
 }
 
-function buildMeadow() {
-  const general = new Mesh();
-  const shadow = new Mesh();
-  const random = seededRandom(11624);
-  const groundHills = ['b2d18b', 'b4d99b', 'a2cdab', 'b9dca2', 'c5d5a7', '93c492'].map(rgb);
-  for (let i = 0; i < 25; i++) {
-    const angle = i * TAU / 25;
-    const distance = mix(19, 54, random());
-    const spot = [Math.sin(angle) * distance, -1.7, Math.cos(angle) * distance];
-    ellipsoid(general, spot, [mix(4.2, 11, random()), mix(2.5, 5.8, random()), mix(5.8, 12.5, random())], groundHills[i % groundHills.length], { steps: 20, rings: 10, material: PLANT });
-  }
-  const cloudColors = ['fff1ec', 'fff7ef', 'f2e3f0', 'fbe9ed'].map(rgb);
-  for (const [x, y, z, scale] of [[-12, 6.25, 35, 1], [12, 8.05, 44, 1.13]]) {
-    const puffs = [[-4.1, -.57, .9, 2.65], [-2.3, .3, -.6, 2.95], [0, 1.05, -.7, 3.50],
-      [1.9, .2, -.4, 2.90], [3.8, -.3, .3, 2.15], [-.4, -.37, -1.65, 2.44]];
-    for (const [px, py, pz, breadth] of puffs) {
-      ellipsoid(general, [x + px * scale, y + py * scale, z + pz],
-        [breadth * scale, breadth * .55 * scale, breadth * .68], cloudColors[0], { steps: 22, rings: 12, material: CLOUD });
-    }
-  }
-  for (let group = 0; group < 14; group++) {
-    const angle = group * TAU / 14 + .064;
-    const dist = mix(31, 62, random());
-    const height = mix(8, 25.5, random());
-    const center = [Math.sin(angle) * dist, height, Math.cos(angle) * dist];
-    const side = [Math.cos(angle), 0, -Math.sin(angle)];
-    for (let puff = 0; puff < 6; puff++) {
-      const breadth = mix(2.7, 5.6, random());
-      const offset = (puff - 2.5) * 1.82;
-      const point = add3(add3(center, mult3(side, offset)), [0, mix(-1.1, 2.8, random()) * (1 - .12 * Math.abs(puff - 2.5)), mix(-2.3, 2.3, random())]);
-      ellipsoid(general, point, [breadth, breadth * mix(.49, .69, random()), breadth * .82],
-        cloudColors[(puff + group) % cloudColors.length], { steps: 18, rings: 10, material: CLOUD });
-    }
-  }
-  const planted = [
-    [-2.5, -3.8, 1.29, .35, 0], [2.5, -3.15, .94, .29, 2], [2.75, -1.8, 1.37, .40, 0],
-    [-2.08, -2.15, .85, .29, 2], [-2.39, -.95, 1.11, .31, 1], [1.83, -2.1, .62, .23, 3],
-    [-3.3, -2.97, 1.55, .43, 5], [3.32, -3.0, 1.17, .31, 6], [2.33, -1.5, .86, .25, 4],
-    [-2.0, .6, .95, .24, 3], [1.99, 1.9, 1.12, .32, 1], [-2.46, 1.2, .97, .27, 0],
-    [3.2, 4.2, 1.66, .37, 5], [-3.55, 3.44, 1.53, .37, 3], [2.45, 3.1, 1.43, .35, 4],
-  ];
-  for (const [x, z, height, size, color] of planted) blossom(general, x, z, height, size, (random() - .5) * 2, color, 10);
-  for (let i = 0; i < 214; i++) {
-    const x = mix(-18, 18, random());
-    const z = mix(-12.8, 28, random());
-    if (Math.abs(x - pathCenter(z)) < 1.65 && z < 13) continue;
-    const height = .18 + random() ** 1.45 * (z < 2 ? .94 : 1.42);
-    blossom(general, x, z, height, mix(.10, .32, random()) * (z > 3 ? 1.15 : 1), (random() - .5) * 4.7, i % petalPalette.length);
-  }
-  for (let i = 0; i < 1230; i++) {
-    const x = mix(-16, 16, random()), z = mix(-11.3, 28, random());
-    if (Math.abs(x - pathCenter(z)) < 1.27 && random() < .89) continue;
-    const y = groundHeight(x, z);
-    const scale = mix(.055, .41, random() ** 1.7);
-    const color = greens[i % greens.length];
-    const angle = random() * TAU;
-    const skew = [Math.cos(angle) * scale * .71, 0, Math.sin(angle) * scale * .71];
-    const root = [x, y, z];
-    const mid = add3(root, [skew[0] * .42, scale * .83, skew[2] * .42]);
-    general.tri(add3(root, [-.03, 0, .023]), mid, add3(root, [.026, 0, -.016]), color, PLANT);
-    general.tri(mid, add3(root, [skew[0], scale * 1.26, skew[2]]), add3(root, [.022, 0, -.019]), tint(color, 1.05), PLANT);
-  }
-  for (let i = 0; i < 30; i++) {
-    const x = mix(-9.5, 9.5, random()), z = mix(-9, 13, random());
-    if (Math.abs(x - pathCenter(z)) < .64) continue;
-    const radius = mix(.06, .24, random());
-    ellipsoid(general, [x, groundHeight(x, z) - .015, z], [radius, radius * .43, radius * .74],
-      rgb(i % 2 ? 'e3c9ad' : 'd6c5cb'), { steps: 7, rings: 4 });
-  }
-  diskShadow(shadow, .26, .14, 1.04, 1.34, .29);
-  return { general, shadow };
-}
-
-function diskShadow(mesh, x, z, width, depth, opacity) {
-  const color = rgb('426943');
-  const y = .014, sides = 32, bands = 4;
-  for (let j = 0; j < bands; j++) {
-    const makeRing = (band, i) => [x + width * band / bands * Math.cos(i * TAU / sides), y, z + depth * band / bands * Math.sin(i * TAU / sides)];
-    for (let i = 0; i < sides; i++) {
-      const a = makeRing(j, i), b = makeRing(j, i + 1), c = makeRing(j + 1, i + 1), d = makeRing(j + 1, i);
-      const feather = opacity * (1 - (j + .5) / bands) ** 1.38;
-      if (j > 0) mesh.tri(a, b, c, color, SHINE, feather);
-      mesh.tri(a, c, d, color, SHINE, feather);
-    }
-  }
-}
-
-const fur = rgb('f3b576');
-const peach = rgb('e89b65');
-const cream = rgb('ffecd2');
-const lilac = rgb('ae98e7');
-const deepLilac = rgb('8975c2');
-const pink = rgb('ec9da6');
-const ink = rgb('53415b');
-
-function ear(mesh, side) {
-  const profile = [[.27, .32, .16, .20], [.39, .40, .17, .18], [.51, .44, .132, .129], [.62, .485, .075, .082], [.676, .496, .028, .04], [.69, .49, .008, .012]];
-  const steps = 23;
-  const points = profile.map(([y, x, rx, rz]) => Array.from({ length: steps }, (_, i) => {
-    const angle = i * TAU / steps;
-    return [side * x + rx * Math.cos(angle), y, -.005 + rz * Math.sin(angle) + (y - .32) * .16];
-  }));
-  const normals = points.map((ring, row) => ring.map((_, i) => {
-    const up = sub3(points[Math.min(row + 1, points.length - 1)][i], points[Math.max(0, row - 1)][i]);
-    const tangent = sub3(ring[(i + 1) % steps], ring[(i + steps - 1) % steps]);
-    return normalized(cross3(up, tangent));
-  }));
-  for (let row = 1; row < points.length; row++) {
-    for (let i = 0; i < steps; i++) {
-      const next = (i + 1) % steps;
-      const face = [points[row - 1][i], points[row][i], points[row][next], points[row - 1][next]];
-      const faceNormals = [normals[row - 1][i], normals[row][i], normals[row][next], normals[row - 1][next]];
-      mesh.tri(face[0], face[1], face[2], fur, MATTE, 1, faceNormals.slice(0, 3));
-      mesh.tri(face[0], face[2], face[3], fur, MATTE, 1, [faceNormals[0], faceNormals[2], faceNormals[3]]);
-    }
-  }
-  ellipsoid(mesh, [side * .438, .471, -.132], [.098, .151, .066], pink,
-    { basis: rotationZ(side * -.32), steps: 15, rings: 8 });
-  ellipsoid(mesh, [side * .456, .538, -.118], [.054, .098, .045], pink,
-    { basis: rotationZ(side * -.28), steps: 12, rings: 7 });
-}
-
-function starCharm(mesh) {
-  const yellow = rgb('fae5a0');
-  const shadow = rgb('dfad65');
-  const center = [0, -.051, -.055];
-  const tips = Array.from({ length: 10 }, (_, i) => {
-    const angle = PI / 2 + i * TAU / 10;
-    const radius = i % 2 ? .061 : .133;
-    return [radius * Math.cos(angle), center[1] + radius * Math.sin(angle), -.025];
-  });
-  for (let i = 0; i < tips.length; i++) {
-    const b = tips[(i + 1) % tips.length], a = tips[i];
-    const back = p => [p[0], p[1], .012];
-    mesh.tri(center, b, a, yellow, SHINE);
-    mesh.tri(a, b, back(a), shadow);
-    mesh.tri(b, back(b), back(a), shadow);
-  }
-  ellipsoid(mesh, [0, .084, -.005], [.028, .047, .019], yellow, { steps: 9, rings: 5 });
-}
-
-function buildCat() {
-  const body = new Mesh(), head = new Mesh(), eye = new Mesh(), eyelid = new Mesh(), charm = new Mesh();
-  const leg = new Mesh(), paw = new Mesh();
-  ellipsoid(body, [0, 1.0, .35], [.57, .54, .89], fur, { steps: 32, rings: 18 });
-  ellipsoid(body, [0, .95, -.27], [.455, .471, .38], cream, { steps: 26, rings: 14 });
-  ellipsoid(body, [0, 1.27, -.25], [.476, .17, .47], lilac, { basis: rotationX(-.34), steps: 26, rings: 14 });
-  ellipsoid(body, [-.377, 1.20, -.54], [.179, .085, .135], deepLilac, { basis: rotationZ(-.35) });
-  ellipsoid(body, [-.434, 1.10, -.59], [.083, .218, .067], lilac, { basis: rotationZ(-.43) });
-  ellipsoid(body, [-.542, 1.17, -.48], [.137, .08, .082], lilac, { basis: rotationZ(.12) });
-  starCharm(charm);
-
-  ellipsoid(head, [0, 0, 0], [.605, .49, .51], fur, { steps: 36, rings: 20 });
-  for (const side of [-1, 1]) {
-    ear(head, side);
-    ellipsoid(head, [side * .154, -.157, -.392], [.284, .188, .195], cream, { steps: 20, rings: 13 });
-    ellipsoid(head, [side * .385, -.111, -.392], [.110, .064, .039], pink, { basis: rotationY(side * -.49), steps: 13, rings: 8 });
-    for (let whisker = 0; whisker < 3; whisker++) {
-      const lift = .048 * (1 - whisker);
-      tube(head, [[side * .386, -.14 + lift * .4, -.499], [side * .52, -.14 + lift, -.477], [side * .68, -.136 + lift * 1.47, -.417]],
-        [.013, .011, .003], rgb('f7e9df'), 5, SHINE);
-    }
-    tube(head, [[0, -.177, -.596], [side * .025, -.205, -.591], [side * .075, -.216, -.578], [side * .116, -.185, -.558]],
-      [.013, .012, .012, .007], ink, 5);
-  }
-  ellipsoid(head, [0, -.137, -.591], [.083, .048, .035], rgb('bd6f83'), { material: SHINE, steps: 16, rings: 9 });
-  for (const side of [-1, 1]) {
-    ellipsoid(head, [side * .035, .326, -.375], [.018, .064, .015], rgb('eba473'), { basis: rotationZ(side * .19), steps: 9, rings: 7 });
-  }
-  ellipsoid(eye, [0, 0, 0], [.105, .136, .050], ink, { material: SHINE, steps: 32, rings: 18 });
-  ellipsoid(eye, [0, -.014, -.038], [.073, .099, .019], rgb('69547f'), { material: SHINE, steps: 29, rings: 17 });
-  ellipsoid(eye, [-.026, .046, -.055], [.031, .034, .015], rgb('fffaf1'), { material: SHINE, steps: 21, rings: 13 });
-  ellipsoid(eye, [.039, -.049, -.052], [.012, .015, .008], rgb('f0dffd'), { material: SHINE, steps: 8, rings: 6 });
-  tube(eyelid, [[-.097, .006, -.009], [-.052, -.022, -.033], [0, -.031, -.044], [.054, -.023, -.031], [.09, .003, -.008]], [.009, .016, .017, .015, .009], ink, 6);
-  ellipsoid(leg, [0, .49, 0], [.159, .63, .169], peach, { steps: 16, rings: 12 });
-  ellipsoid(paw, [0, 0, -.041], [.183, .126, .208], cream, { steps: 18, rings: 11 });
-  for (const x of [-.060, .060]) {
-    tube(paw, [[x, .080, -.184], [x, .049, -.225], [x, -.002, -.244]], [.007, .009, .004], rgb('dcae93'), 5);
-  }
-  return { body, head, eye, eyelid, charm, leg, paw };
-}
-
-function tailPoints(pose) {
-  return [[.03, 1.10, 1.04], [.19, 1.22, 1.31], [.40, 1.38, 1.54], [.63, 1.60, 1.62], [.70, 1.84, 1.57], [.58, 2.07, 1.43]].map(([x, y, z], i) => {
-    const weight = smooth(i / 5);
-    return [x + weight * pose.tail, y + weight * pose.tailHeight, z + .32 * weight * Math.abs(pose.tail)];
-  });
-}
-
-function buildTail(pose) {
-  const anchors = tailPoints(pose);
-  const count = 22;
-  const curve = Array.from({ length: count + 1 }, (_, i) => {
-    const progress = i * (anchors.length - 1) / count;
-    const index = Math.min(anchors.length - 2, Math.floor(progress));
-    const t = progress - index;
-    const a = anchors[Math.max(0, index - 1)], b = anchors[index], c = anchors[index + 1],
-      d = anchors[Math.min(anchors.length - 1, index + 2)];
-    const tangentB = mult3(sub3(c, a), .5);
-    const tangentC = mult3(sub3(d, b), .5);
-    const t2 = t * t, t3 = t2 * t;
-    return b.map((value, axis) => (2 * t3 - 3 * t2 + 1) * value + (t3 - 2 * t2 + t) * tangentB[axis] +
-      (-2 * t3 + 3 * t2) * c[axis] + (t3 - t2) * tangentC[axis]);
-  });
-  const radii = curve.map((_, i) => {
-    const t = i / count;
-    const cap = Math.sqrt(1 - clamp((t - .90) / .10) ** 2);
-    return Math.max(.002, (.157 - .063 * t) * cap);
-  });
-  const mesh = new Mesh();
-  tube(mesh, curve, radii, t => mix3(fur, cream, smooth((t - .72) / .16)), 13);
-  return mesh.data();
-}
-
-function catSkeleton(pose) {
-  const root = { origin: pose.position, basis: rotationY(pose.heading) };
-  const bodyTilt = multiplyBasis(rotationZ(pose.bodyRoll), rotationX(-pose.bodyPitch));
-  const center = [0, .98, .26];
-  const body = {
-    origin: transformPoint(root, add3(sub3(center, apply3(bodyTilt, center)), [0, pose.lift, 0])),
-    basis: multiplyBasis(root.basis, bodyTilt),
+function bendJoint(start, goal, first, second, bend) {
+  const line = sub3(goal, start);
+  const axis = normalized(line);
+  const distance = clamp(Math.hypot(...line), Math.abs(first - second) + .003, first + second - .002);
+  const projected = (first * first + distance * distance - second * second) / (2 * distance);
+  const offset = Math.sqrt(Math.max(0, first * first - projected * projected));
+  const direction = normalized(sub3(bend, mult3(axis, dot3(bend, axis))));
+  return {
+    start,
+    joint: add3(start, add3(mult3(axis, projected), mult3(direction, offset))),
+    end: add3(start, mult3(axis, distance)),
   };
-  const headBasis = multiplyBasis(rotationY(pose.headYaw), multiplyBasis(rotationZ(pose.headRoll), rotationX(-pose.headPitch)));
-  const head = { origin: transformPoint(body, [0, 1.58, -.53]), basis: multiplyBasis(body.basis, headBasis) };
-  return { root, body, head };
 }
 
-function catLandmark(pose, target, skeleton = catSkeleton(pose)) {
-  if (target.bone === 'paw') return transformPoint(skeleton.root, add3(pose.feet[1], [0, .055, -.10]));
-  if (target.bone === 'tail') return transformPoint(skeleton.body, tailPoints(pose).at(-1));
-  return transformPoint(skeleton[target.bone || 'root'], target.point);
+function onSegment(start, end) {
+  const axis = sub3(end, start);
+  return { origin: start, basis: yAlong(axis, Math.hypot(...axis)) };
 }
 
-function catObjects(pose) {
-  const { root, body, head } = catSkeleton(pose);
-  const bodySize = scaleBasis([pose.breathing, pose.breathing, 1]);
+function figureSkeleton(pose) {
+  const root = { origin: pose.position, basis: rotationY(pose.heading) };
+  const pivot = [0, .954, 0];
+  const bend = multiplyBasis(rotationY(pose.bodyYaw), multiplyBasis(rotationZ(pose.bodyRoll), rotationX(-pose.bodyPitch)));
+  const body = {
+    origin: transformPoint(root, add3(sub3(pivot, apply3(bend, pivot)), [pose.shift, pose.lift, 0])),
+    basis: multiplyBasis(root.basis, bend),
+  };
+  const headTilt = multiplyBasis(rotationY(pose.headYaw), multiplyBasis(rotationZ(pose.headRoll), rotationX(-pose.headPitch)));
+  const head = { origin: transformPoint(body, [0, 1.918, -.02]), basis: multiplyBasis(body.basis, headTilt) };
+  const hipBone = { origin: transformPoint(root, [pose.shift, pose.lift, 0]), basis: root.basis };
+  const arms = [-1, 1].map((side, i) => bendJoint(
+    transformPoint(body, [side * .291, 1.423, .003]), transformPoint(body, pose.hands[i]),
+    .371, .354, apply3(body.basis, [side * .79, -.90, .55]),
+  ));
+  const legs = [-1, 1].map((side, i) => bendJoint(
+    transformPoint(hipBone, [side * .157, .918, .018]), transformPoint(root, pose.feet[i]),
+    .431, .399, apply3(root.basis, [side * .13, .04, -1]),
+  ));
+  const wings = [-1, 1].map(side => {
+    const hinge = multiplyBasis(rotationY(side * (.16 + pose.wing)), scaleBasis([side, 1, 1]));
+    return { origin: transformPoint(body, [side * .176, 1.302, .210]), basis: multiplyBasis(body.basis, hinge) };
+  });
+  return { root, body, head, hipBone, arms, legs, wings };
+}
+
+function figureLandmark(pose, target, rig = figureSkeleton(pose)) {
+  if (target.bone === 'wrist') return rig.arms[1].end;
+  if (target.bone === 'hand') {
+    const { joint, end } = rig.arms[1];
+    return add3(end, mult3(normalized(sub3(end, joint)), .087));
+  }
+  if (target.bone === 'foot') return add3(rig.legs[1].end, apply3(rig.root.basis, [0, -.018, -.12]));
+  if (target.bone === 'wing') return transformPoint(rig.wings[1], [.73, .28, .12]);
+  return transformPoint(rig[target.bone || 'root'], target.point);
+}
+
+function figureObjects(pose, rig) {
+  const skirtScale = clamp(1 + pose.lift * .83, .48, 1);
+  const skirtBend = multiplyBasis(rotationY(.28 * pose.bodyYaw), scaleBasis([1, skirtScale, 1]));
   const parts = [
-    { name: 'body', ...body, basis: multiplyBasis(body.basis, bodySize) },
-    { name: 'head', ...head },
-    { name: 'charm', origin: transformPoint(body, [0, 1.18, -.702]), basis: multiplyBasis(body.basis, rotationZ(pose.tail * .16 + pose.bodyRoll)) },
+    { name: 'torso', ...rig.body, basis: multiplyBasis(rig.body.basis, scaleBasis([pose.breathing, 1, pose.breathing])) },
+    { name: 'head', ...rig.head },
+    { name: 'skirt', origin: transformPoint(rig.hipBone, [0, .99 * (1 - skirtScale), 0]), basis: multiplyBasis(rig.hipBone.basis, skirtBend) },
   ];
-  for (const side of [-1, 1]) {
-    const eyeBasis = multiplyBasis(head.basis, rotationY(-side * .31));
-    const blink = pose.eye < .19;
-    parts.push({
-      name: blink ? 'eyelid' : 'eye', origin: transformPoint(head, [side * .231, .01, -.477]),
-      basis: multiplyBasis(eyeBasis, scaleBasis([1, blink ? 1 : pose.eye, 1])),
-    });
+  for (const wing of rig.wings) parts.push({ name: 'wing', ...wing });
+  for (const [i, { start, joint, end }] of rig.arms.entries()) {
+    const palm = onSegment(joint, end);
+    const handBasis = yAlong(sub3(end, joint), 1);
+    parts.push({ name: 'upperArm', ...onSegment(start, joint) }, { name: 'forearm', ...palm });
+    parts.push({ name: 'hand', origin: end, basis: i ? handBasis : multiplyBasis(handBasis, scaleBasis([-1, 1, 1])) });
   }
-  for (let i = 0; i < pose.feet.length; i++) {
-    const foot = transformPoint(root, pose.feet[i]);
-    const hip = transformPoint(body, [i % 2 ? .34 : -.34, i < 2 ? .84 : .914, i < 2 ? -.43 : .72]);
-    const vector = sub3(hip, foot);
-    parts.push({ name: 'leg', origin: foot, basis: yAlong(vector, Math.max(.12, Math.hypot(...vector))) });
-    parts.push({ name: 'paw', origin: foot, basis: root.basis });
+  for (const [i, { start, joint, end }] of rig.legs.entries()) {
+    parts.push({ name: 'thigh', ...onSegment(joint, start) }, { name: 'shin', ...onSegment(end, joint) });
+    parts.push({ name: 'shoe', origin: end, basis: multiplyBasis(rig.root.basis, rotationX(pose.footPitch[i])) });
   }
-  parts.push({ name: 'tail', ...body });
   return parts;
 }
 
 function buildSet() {
-  const { general, shadow } = buildMeadow();
-  const meshes = { ground: buildTerrain(), general, shadow, ...buildCat() };
-  return Object.fromEntries(Object.entries(meshes).map(([key, mesh]) => [key, mesh.data()]));
+  const { general, shadows } = buildStudio();
+  const shadow = new Mesh();
+  diskShadow(shadow);
+  const meshes = { ground: buildFloor(), general, shadow, ...buildFigure() };
+  return { shadows, meshes: Object.fromEntries(Object.entries(meshes).map(([key, mesh]) => [key, mesh.data()])) };
 }
 
-const defaultSetup = { shot: 'full', target: 'auto', move: 'micro-in', action: 'tail' };
+
+const defaultSetup = { shot: 'full', target: 'auto', move: 'micro-in', action: 'wave' };
 const fixedAxes = new Set(['lock', 'truck-left', 'truck-right', 'pedestal-up', 'pedestal-down']);
 const linkedRigs = new Set(['follow', 'lead', 'side-track', 'pov', 'snorri']);
 const centeredMoves = new Set(['arc', 'orbit', 'spiral', 'jib', 'crane']);
@@ -1670,12 +1846,12 @@ function composeScene(selection) {
   const start = technique.frame(0);
   const midpoint = technique.frame(.5);
   const firstPose = actor.frame(0);
-  const firstAim = catLandmark(firstPose, target);
+  const firstAim = figureLandmark(firstPose, target);
   const side = rotationY(rad(-17));
   const d = shot.distance;
   const scale = clamp(d / 7, .27, 1.62);
   const detail = ['close', 'extreme', 'macro'].includes(shot.id);
-  const level = shot.height + (detail ? clamp(firstAim[1] - 1.48, -1.15, .65) * .87 : 0);
+  const level = detail ? clamp(firstAim[1] + .09, .26, 2.30) : shot.height;
   const horizontal = [firstPose.position[0], 0, firstPose.position[2]];
   const baseEye = offsetEye([0, level, -d], horizontal);
   const aimInitial = look(baseEye, firstAim, shot.lens);
@@ -1703,7 +1879,7 @@ function composeScene(selection) {
     const heading = rotationY(pose.heading);
     const y = level + pose.position[1] * .84;
     if (technique.id === 'pov') {
-      const eye = add3(pose.position, apply3(heading, [0, Math.max(.56, y - pose.position[1]) + pose.lift, -1.24]));
+      const eye = add3(pose.position, apply3(heading, [0, 1.85 + pose.lift, -.37]));
       return orient(eye, Math.atan2(-heading[6], -heading[8]), -.065, shot.lens, { roll: raw.roll * .41 });
     }
     const relative = {
@@ -1719,7 +1895,8 @@ function composeScene(selection) {
   function frame(t) {
     const raw = technique.frame(t);
     const pose = actor.frame(t);
-    const posePoint = catLandmark(pose, target);
+    const rig = figureSkeleton(pose);
+    const posePoint = figureLandmark(pose, target, rig);
     const follow = linkedRigs.has(technique.id) || centeredMoves.has(technique.id);
     const aim = follow ? posePoint : firstAim;
     let state;
@@ -1757,6 +1934,7 @@ function composeScene(selection) {
     }
     state.subject = pose.position;
     state.actor = pose;
+    state.rig = rig;
     state.hideActor = technique.id === 'pov';
     state.blur = raw.blur;
     state.crop = raw.crop;
@@ -1773,12 +1951,13 @@ function composeScene(selection) {
 
 function frameCoverage(state, aspect) {
   if (state.hideActor) return null;
-  const rig = catSkeleton(state.actor);
+  const rig = state.rig;
   const points = [
-    ...[-.59, .59].map(x => transformPoint(rig.head, [x, 0, -.03])),
-    ...[-.46, .46].map(x => transformPoint(rig.head, [x, .68, -.025])),
-    ...state.actor.feet.map(foot => transformPoint(rig.root, add3(foot, [0, -.12, -.10]))),
-    catLandmark(state.actor, targetById.get('tail'), rig),
+    ...[-.41, .41].map(x => transformPoint(rig.head, [x, 0, -.02])),
+    ...[-.32, .32].map(x => transformPoint(rig.head, [x, .814, .06])),
+    ...rig.wings.map(wing => transformPoint(wing, [.88, .48, .18])),
+    ...rig.legs.map(({ end }) => add3(end, apply3(rig.root.basis, [0, -.122, -.18]))),
+    ...rig.arms.map(({ joint, end }) => add3(end, mult3(normalized(sub3(end, joint)), .155))),
   ];
   const { right, up, forward } = cameraBasis(state);
   const focal = state.lens * state.crop / 18;
@@ -1817,6 +1996,14 @@ const skyVertex = [
   'void main() { vScreen = aQuad; gl_Position = vec4(aQuad, 0.0, 1.0); }',
 ].join('\n');
 
+const studioLight = [
+  'vec3 studioAir(vec3 ray) {',
+  '  vec3 mint = mix(vec3(.772,.871,.834),vec3(.597,.759,.717),smoothstep(-.04,.66,ray.y));',
+  '  float glow = pow(max(0.0,dot(ray,normalize(vec3(-.66,.16,.87)))),3.2);',
+  '  return mix(mint,vec3(.949,.952,.887),.40*glow);',
+  '}',
+];
+
 const skyFragment = [
   'precision mediump float;',
   'uniform vec3 uRight, uUp, uForward;',
@@ -1825,24 +2012,10 @@ const skyFragment = [
   'float hash(vec2 point) {',
   '  return fract(sin(mod(dot(point, vec2(127.1, 311.7)), 6.28318)) * 172.117);',
   '}',
-  'float noise(vec2 point) {',
-  '  vec2 p = floor(point), f = fract(point);',
-  '  vec2 w = f*f*(3.0-2.0*f);',
-  '  return mix(mix(hash(p), hash(p+vec2(1.,0.)), w.x), mix(hash(p+vec2(0.,1.)), hash(p+1.), w.x), w.y);',
-  '}',
+  ...studioLight,
   'void main() {',
   '  vec3 d = normalize(uForward + vScreen.x/uFocal.x*uRight + vScreen.y/uFocal.y*uUp);',
-  '  float h = max(0.0, d.y);',
-  '  vec3 color = mix(vec3(.90,.95,.93), vec3(.36,.665,.925), smoothstep(-.052,.38,h));',
-  '  vec3 sun = normalize(vec3(-.65,.41,.76));',
-  '  float glow = max(0.0, dot(d,sun));',
-  '  color = mix(color, vec3(1.,.936,.876), .45 * pow(glow, 13.0));',
-  '  color = mix(color, vec3(1.0,.983,.92), smoothstep(.998,.9998,glow));',
-  '  vec2 p = vec2(atan(d.x,d.z)*6.0, h*21.0);',
-  '  float cloud = .61*noise(p) + .27*noise(p*2.09) + .12*noise(p*4.2);',
-  '  float band = smoothstep(.04,.17,h) * (1.0-smoothstep(.26,.67,h));',
-  '  color = mix(color, vec3(1.0,.95,.965), .50*band*smoothstep(.49,.71,cloud));',
-  '  color += (hash(gl_FragCoord.xy)-.5)*.006;',
+  '  vec3 color = studioAir(d) + (hash(gl_FragCoord.xy)-.5)*.005;',
   '  gl_FragColor = vec4(color, 1.0);',
   '}',
 ].join('\n');
@@ -1854,13 +2027,13 @@ const setVertex = [
   'uniform mediump vec3 uEye;',
   'uniform vec3 uRight, uUp, uForward, uObject;',
   'uniform vec2 uFocal;',
-  'uniform mat3 uModel;',
+  'uniform mat3 uModel, uNormal;',
   'varying mediump vec3 vWorld, vNormal;',
   'varying mediump vec4 vColor;',
   'varying mediump float vMaterial, vDepth;',
   'void main() {',
   '  vWorld = uModel*aPoint + uObject;',
-  '  vNormal = uModel*aNormal;',
+  '  vNormal = uNormal*aNormal;',
   '  vColor = aColor;',
   '  vMaterial = aMaterial;',
   '  vec3 p = vWorld - uEye;',
@@ -1873,48 +2046,40 @@ const setVertex = [
 const setFragment = [
   'precision mediump float;',
   'uniform mediump vec3 uEye;',
-  'uniform float uStoreDepth;',
+  'uniform float uStoreDepth, uOpacity;',
   'varying vec3 vWorld, vNormal;',
   'varying vec4 vColor;',
   'varying float vMaterial, vDepth;',
   'float hash(vec2 p) { return fract(sin(mod(dot(p,vec2(47.13,179.21)),6.28318))*197.3); }',
-  'float noise(vec2 point) {',
-  '  vec2 p=floor(point), f=fract(point), w=f*f*(3.0-2.0*f);',
-  '  return mix(mix(hash(p),hash(p+vec2(1.0,0.0)),w.x),mix(hash(p+vec2(0.0,1.0)),hash(p+1.0),w.x),w.y);',
-  '}',
+  ...studioLight,
   'void main() {',
-  '  vec3 sun = normalize(vec3(-.59,.75,-.42));',
+  '  vec3 sun = normalize(vec3(-.61,.67,-.50));',
   '  vec3 n = normalize(vNormal);',
-  '  float direct = max(0.0, dot(n,sun));',
-  '  float sky = .42+.58*max(0.0,n.y);',
-  '  vec3 lighting = vec3(.72,.69,.78) + sky*vec3(.18,.185,.18) + direct*vec3(.27,.22,.16);',
+  '  float direct = .6*max(0.0,dot(n,sun))+.4*smoothstep(-.28,.85,dot(n,sun));',
+  '  float sky = .5+.5*n.y;',
+  '  vec3 lighting = vec3(.743,.760,.779) + sky*vec3(.142,.143,.137) + direct*vec3(.230,.197,.167);',
   '  vec3 color = vColor.rgb * lighting;',
-  '  float grain = hash(gl_FragCoord.xy);',
+  '  vec3 ray = normalize(vWorld-uEye);',
+  '  float distance = length(vWorld-uEye);',
+  '  vec3 haze = studioAir(ray);',
+  '  float fog = smoothstep(7.0,38.0,distance);',
   '  if (vMaterial > 1.5 && vMaterial < 2.5) {',
-  '    float trail = .9*sin(vWorld.z*.21)+max(0.0,vWorld.z-6.0)*.15;',
-  '    float edge = 1.0-smoothstep(.79,1.90,abs(vWorld.x-trail)+.27*noise(vWorld.xz*3.4));',
-  '    color = mix(color,vec3(.902,.833,.668),edge*.93);',
-  '    color *= .94+.065*noise(vWorld.xz*6.9)+.070*noise(vWorld.xz*.88)+.034*(grain-.5);',
+  '    float pool = 1.0-smoothstep(0.0,7.0,length(vWorld.xz+vec2(1.4,1.1)));',
+  '    color = mix(vColor.rgb*.965,vec3(.878,.916,.862),pool*.56);',
   '  } else if (vMaterial < 2.5) {',
-  '    vec3 halfDir = normalize(sun+normalize(uEye-vWorld));',
-  '    float bright = pow(max(0.0,dot(n,halfDir)), 20.0);',
-  '    color += vec3(.125,.106,.091)*bright;',
-  '    color *= .86+.14*smoothstep(-.1,.4,vWorld.y);',
-  '    if (vMaterial < .5) color *= .985+.028*noise(vWorld.xz*37.1+vWorld.y*24.3);',
+  '    float softSpec = pow(max(0.0,dot(n,normalize(sun-ray))),12.0);',
+  '    color += vec3(.046,.042,.037)*softSpec;',
+  '    color *= .865+.135*smoothstep(-.045,.48,vWorld.y);',
   '  }',
-  '  if (vMaterial > 2.5 && vMaterial < 3.5) {',
-  '    float glossy = pow(max(0.0,dot(n,normalize(sun+normalize(uEye-vWorld)))),15.0);',
-  '    color = vColor.a < .995 ? vColor.rgb : vColor.rgb*(.91+.09*direct)+vec3(.064,.055,.068)*glossy;',
-  '  }',
+  '  if (vMaterial > 2.5) color = vColor.rgb;',
   '  if (vMaterial > 3.5) {',
-  '    vec3 pearl = vColor.rgb*vec3(.83,.77,.89);',
-  '    color = mix(pearl, vec3(1.0,.961,.924), smoothstep(-.76,.67,n.y+.35*direct));',
+  '    float facing = abs(dot(n,ray));',
+  '    float shift = .5+.5*sin(vWorld.x*2.2+vWorld.y*4.3+facing*4.8);',
+  '    vec3 pearl = mix(vec3(.932,.909,.991),vec3(1.,.967,.885),shift);',
+  '    color = mix(color,pearl,.17+.27*(1.0-facing));',
   '  }',
-  '  float d = length(vWorld - uEye);',
-  '  vec3 haze = vMaterial > 3.5 ? vec3(.935,.911,.95) : vec3(.84,.915,.896);',
-  '  float fog = smoothstep(5.0,90.0,d)*.74;',
-  '  color = mix(color, haze, fog);',
-  '  float alpha = mix(vColor.a, min(.996,vDepth/55.0), uStoreDepth);',
+  '  color = mix(color,haze,fog)+(hash(gl_FragCoord.xy)-.5)*.005;',
+  '  float alpha = mix(vColor.a*uOpacity,min(.996,vDepth/55.0),uStoreDepth);',
   '  gl_FragColor = vec4(color, alpha);',
   '}',
 ].join('\n');
@@ -1994,16 +2159,15 @@ function createProgram(gl, vertexSource, fragmentSource, attributes, uniforms) {
 function glRenderer(gl, set) {
   const geometry = createProgram(gl, setVertex, setFragment,
     ['aPoint', 'aNormal', 'aColor', 'aMaterial'],
-    ['uEye', 'uRight', 'uUp', 'uForward', 'uFocal', 'uObject', 'uModel', 'uStoreDepth']);
+    ['uEye', 'uRight', 'uUp', 'uForward', 'uFocal', 'uObject', 'uModel', 'uNormal', 'uStoreDepth', 'uOpacity']);
   const sky = createProgram(gl, skyVertex, skyFragment, ['aQuad'], ['uRight', 'uUp', 'uForward', 'uFocal']);
   const post = createProgram(gl, skyVertex, postFragment, ['aQuad'], ['uImage', 'uSize', 'uFocus', 'uBlur', 'uAperture']);
-  const buffers = Object.fromEntries(Object.entries(set).map(([key, data]) => {
+  const buffers = Object.fromEntries(Object.entries(set.meshes).map(([key, data]) => {
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
     return [key, { buffer, length: data.length / 11 }];
   }));
-  buffers.tail = { buffer: gl.createBuffer(), length: 0 };
   const quad = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, quad);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
@@ -2041,9 +2205,11 @@ function glRenderer(gl, set) {
     gl.disableVertexAttribArray(index);
   }
 
-  function drawMesh(mesh, object = origin, basis = IDENTITY) {
+  function drawMesh(mesh, object = origin, basis = IDENTITY, opacity = 1) {
     gl.uniform3fv(geometry.uniforms.uObject, object);
     gl.uniformMatrix3fv(geometry.uniforms.uModel, false, basis);
+    gl.uniformMatrix3fv(geometry.uniforms.uNormal, false, basis === IDENTITY ? IDENTITY : normalsFor(basis));
+    gl.uniform1f(geometry.uniforms.uOpacity, opacity);
     gl.bindBuffer(gl.ARRAY_BUFFER, mesh.buffer);
     const pointers = [['aPoint', 3, 0], ['aNormal', 3, 12], ['aColor', 4, 24], ['aMaterial', 1, 40]];
     pointers.forEach(([name, size, offset]) => {
@@ -2088,18 +2254,14 @@ function glRenderer(gl, set) {
     gl.depthMask(false);
     if (usePost) gl.colorMask(true, true, true, false);
     gl.uniform1f(geometry.uniforms.uStoreDepth, 0);
-    const shadow = shadowTransform(state.actor);
-    drawMesh(buffers.shadow, shadow.origin, shadow.basis);
+    for (const shadow of set.shadows) drawMesh(buffers.shadow, shadow.origin, shadow.basis, .70);
+    for (const shadow of figureShadows(state)) drawMesh(buffers.shadow, shadow.origin, shadow.basis, shadow.opacity);
     gl.colorMask(true, true, true, true);
     gl.depthMask(true);
     gl.disable(gl.BLEND);
     gl.uniform1f(geometry.uniforms.uStoreDepth, Number(usePost));
     if (!state.hideActor) {
-      const tailData = buildTail(state.actor);
-      gl.bindBuffer(gl.ARRAY_BUFFER, buffers.tail.buffer);
-      gl.bufferData(gl.ARRAY_BUFFER, tailData, gl.DYNAMIC_DRAW);
-      buffers.tail.length = tailData.length / 11;
-      for (const part of catObjects(state.actor)) drawMesh(buffers[part.name], part.origin, part.basis);
+      for (const part of figureObjects(state.actor, state.rig)) drawMesh(buffers[part.name], part.origin, part.basis);
     }
     if (usePost) {
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
@@ -2118,35 +2280,38 @@ function glRenderer(gl, set) {
   };
 }
 
-function shadowTransform(actor) {
-  const [x, y, z] = actor.position;
-  const spread = 1 + y * .27;
-  return { origin: [x + y * .31, groundHeight(x, z) + .001, z + y * .18], basis: multiplyBasis(rotationY(actor.heading), scaleBasis([spread, 1, spread])) };
+function figureShadows(state) {
+  const [x, y, z] = state.actor.position;
+  const spread = 1 + y * .29;
+  const shadows = [{ origin: [x + .23 + y * .39, .001, z + .17 + y * .22], basis: scaleBasis([.90 * spread, 1, .60 * spread]), opacity: 1 - .61 * clamp(y) }];
+  for (const { end } of state.rig.legs) {
+    const opacity = 1 - smooth((end[1] - .115) / .24);
+    if (opacity > .02) shadows.push({ origin: [end[0], .001, end[2] - .055], basis: scaleBasis([.25, 1, .29]), opacity });
+  }
+  return shadows;
 }
 
 function canvasRenderer(context, set) {
-  function facesFrom(name, vertices) {
+  function facesFrom(vertices) {
     const faces = [];
     for (let i = 0; i < vertices.length; i += 33) {
       const data = vertices.subarray(i, i + 33);
-      const [x, y, z] = data;
-      const color = Array.from(data.subarray(6, 9));
-      const trail = name === 'ground' ? 1 - smooth((Math.abs(x - pathCenter(z)) - .79) / 1.11) : 0;
       faces.push({
-        points: [[x, y, z], [data[11], data[12], data[13]], [data[22], data[23], data[24]]],
+        points: [[data[0], data[1], data[2]], [data[11], data[12], data[13]], [data[22], data[23], data[24]]],
         normal: normalized([data[3] + data[14] + data[25], data[4] + data[15] + data[26], data[5] + data[16] + data[27]]),
-        color: mix3(color, [.902, .833, .668], trail * .93),
-        alpha: data[9], material: data[10],
+        color: Array.from(data.subarray(6, 9)),
+        alpha: (data[9] + data[20] + data[31]) / 3, material: data[10],
       });
     }
     return faces;
   }
-  const triangles = Object.fromEntries(Object.entries(set).map(([name, vertices]) => [name, facesFrom(name, vertices)]));
+  const triangles = Object.fromEntries(Object.entries(set.meshes).map(([name, vertices]) => [name, facesFrom(vertices)]));
   const far = document.createElement('canvas');
   const near = document.createElement('canvas');
   const farCtx = far.getContext('2d');
   const nearCtx = near.getContext('2d');
-  const sun = normalized([-.59, .75, -.42]);
+  const sun = normalized([-.61, .67, -.50]);
+  const mist = [.794, .879, .840];
   const rgba = (color, alpha) => 'rgba(' + color.map(channel => Math.round(clamp(channel) * 255)).join(',') + ',' + alpha + ')';
 
   function clipped(points, limit) {
@@ -2173,10 +2338,10 @@ function canvasRenderer(context, set) {
     const focal = state.lens / 18 * state.crop * width / 2;
     const skyY = height / 2 + Math.tan(clamp(state.pitch, -1.2, 1.2)) * focal;
     const grad = farCtx.createLinearGradient(0, skyY - height, 0, skyY + height * .2);
-    grad.addColorStop(0, '#6aa6e1');
-    grad.addColorStop(.36, '#a4d2fa');
-    grad.addColorStop(.86, '#eef8e8');
-    grad.addColorStop(1, '#e1ebd3');
+    grad.addColorStop(0, '#a9ccc1');
+    grad.addColorStop(.52, '#c4e0d6');
+    grad.addColorStop(.88, '#cbe0d6');
+    grad.addColorStop(1, '#cbdfd6');
     farCtx.fillStyle = grad;
     farCtx.fillRect(0, 0, width, height);
     nearCtx.clearRect(0, 0, width, height);
@@ -2184,12 +2349,10 @@ function canvasRenderer(context, set) {
     const visibleMeshes = [
       { name: 'ground', origin, basis: IDENTITY },
       { name: 'general', origin, basis: IDENTITY },
-      { name: 'shadow', ...shadowTransform(state.actor) },
+      ...set.shadows.map(shadow => ({ name: 'shadow', ...shadow, opacity: .70 })),
+      ...figureShadows(state).map(shadow => ({ name: 'shadow', ...shadow })),
     ];
-    if (!state.hideActor) {
-      triangles.tail = facesFrom('tail', buildTail(state.actor));
-      visibleMeshes.push(...catObjects(state.actor));
-    }
+    if (!state.hideActor) visibleMeshes.push(...figureObjects(state.actor, state.rig));
     const project = point => {
       const relative = [point[0] - state.position[0], point[1] - state.position[1], point[2] - state.position[2]];
       return [dot3(relative, basis.right), dot3(relative, basis.up), dot3(relative, basis.forward)];
@@ -2197,10 +2360,11 @@ function canvasRenderer(context, set) {
     for (const mesh of visibleMeshes) {
       const { name } = mesh;
       const attached = name !== 'ground' && name !== 'general';
+      const normalBasis = attached ? normalsFor(mesh.basis) : IDENTITY;
       for (const face of triangles[name]) {
         const world = attached ? face.points.map(point => transformPoint(mesh, point)) : face.points;
-        const facing = attached ? normalized(apply3(mesh.basis, face.normal)) : face.normal;
-        if (face.material !== PLANT && face.alpha === 1 && dot3(facing, sub3(state.position, world[0])) < -.07) continue;
+        const facing = attached ? normalized(apply3(normalBasis, face.normal)) : face.normal;
+        if (face.material < FLAT && dot3(facing, sub3(state.position, world[0])) < -.07) continue;
         const points = world.map(project);
         if (points.every(point => point[2] < .075)) continue;
         const depth = (points[0][2] + points[1][2] + points[2][2]) / 3;
@@ -2208,10 +2372,10 @@ function canvasRenderer(context, set) {
         const screen = visible.map(([x, y, z]) => [width / 2 + x * focal / z, height / 2 - y * focal / z]);
         if (screen.every(([x]) => x < 0) || screen.every(([x]) => x > width) ||
             screen.every(([, y]) => y < 0) || screen.every(([, y]) => y > height)) continue;
-        const light = .78 + .14 * Math.max(0, facing[1]) + .21 * Math.max(0, dot3(facing, sun));
-        const shade = face.material === SHINE ? face.color : tint(face.color, light);
-        const color = mix3(shade, [.84, .915, .896], .72 * smooth((depth - 5) / 85));
-        painter.push({ screen, depth, color: rgba(color, face.alpha), near: attached });
+        const light = .759 + .137 * (.5 + .5 * facing[1]) + .233 * Math.max(0, dot3(facing, sun));
+        const shade = face.material >= FLAT ? face.color : tint(face.color, light);
+        const color = mix3(shade, mist, smooth((depth - 7) / 31));
+        painter.push({ screen, depth: name === 'ground' ? Infinity : depth, color: rgba(color, face.alpha * (mesh.opacity ?? 1)), near: attached });
       }
     }
     painter.sort((a, b) => b.depth - a.depth);
@@ -2303,7 +2467,7 @@ function createScene(canvas) {
 }
 
 const mapColors = {
-  background: '#f6f2fd', grid: '#e3d9ef', outline: '#cbbfdf', muted: '#6e5f83',
+  background: '#f4f8f5', grid: '#e0eae5', outline: '#c4d8ce', muted: '#5d726a',
   accent: '#7954bf', orange: '#c55f80', path: '#9e81c3', actorPath: '#cf87a0',
 };
 
@@ -2334,7 +2498,7 @@ function createMap(canvas) {
   let project;
   let axisScale;
   const mapPlane = (point, view) => view === 'top' ? [point[0], point[2]] : [point[2], point[1]];
-  const marker = state => add3(state.subject, [0, .96, 0]);
+  const marker = state => transformPoint(state.rig.body, [0, 1.23, 0]);
 
   function polyline(ctx, points, color, width, dash = []) {
     if (points.length === 0) return;
@@ -2415,11 +2579,18 @@ function createMap(canvas) {
         bg.fillText(y + 'm', 8, position + 3);
       }
     } else {
-      const trail = Array.from({ length: 45 }, (_, i) => {
-        const z = i * 1.25 - 27.5;
-        return project([pathCenter(z), 0, z]);
-      });
-      polyline(bg, trail, '#eee6d9a6', 2.7 * scale);
+      const radius = 1.25 * scale;
+      dot(bg, project(origin), radius, '#eef5f0', '#c3d7cb');
+      bg.fillStyle = '#dfebe3';
+      bg.strokeStyle = '#bacfc4';
+      bg.lineWidth = .7;
+      for (const block of stageMarkers) {
+        const [x, y] = project(block.point);
+        bg.beginPath();
+        bg.roundRect(x - block.width * scale / 2, y - block.depth * scale / 2, block.width * scale, block.depth * scale, 2);
+        bg.fill();
+        bg.stroke();
+      }
       polyline(bg, [[ox, 0], [ox, height]], mapColors.outline, .8);
       polyline(bg, [[0, oy], [width, oy]], mapColors.outline, .8);
     }
@@ -2570,7 +2741,7 @@ const iconPaths = {
   check: '<path d="m5 12 4.5 4.5L19 7"/>',
   prompt: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m7 9 3 3-3 3m6 0h4"/>',
   sliders: '<path d="M4 7h16M4 12h16M4 17h16"/><circle cx="9" cy="7" r="1.6" fill="#fff"/><circle cx="15" cy="12" r="1.6" fill="#fff"/><circle cx="11" cy="17" r="1.6" fill="#fff"/>',
-  character: '<path d="M5 11 6 5l4 3h4l4-3 1 6c1 1 1 2 1 3 0 3-3.5 5-8 5s-8-2-8-5c0-1 .4-2 1-3Z"/><path d="M9 13h.2m5.6 0h.2m-4 2.5 1 1 1-1"/>',
+  character: '<circle cx="12" cy="6" r="2.7"/><path d="M8.2 20v-4H6.6v-1.2c0-2.7 2.2-4.3 5.4-4.3s5.4 1.6 5.4 4.3V16h-1.6v4M12 15.6V20"/>',
   search: '<circle cx="10.7" cy="10.7" r="5.7"/><path d="m15 15 4 4"/>',
   close: '<path d="m6 6 12 12M18 6 6 18"/>',
   lock: '<rect x="6" y="10" width="12" height="10" rx="2"/><path d="M8.5 10V7a3.5 3.5 0 0 1 7 0v3m-3.5 4v2"/>',
