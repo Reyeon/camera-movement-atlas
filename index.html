@@ -110,6 +110,17 @@ svg { display: block; width: 19px; height: 19px; }
 .shot-panel { display: flex; flex-direction: column; }
 .scene-tag { display: inline-flex; align-items: center; gap: 6px; color: #545169; font-size: 11px; font-weight: 730; white-space: nowrap; }
 .scene-tag i { width: 6px; height: 6px; border-radius: 50%; background: #45946c; box-shadow: 0 0 0 3px #e5f6e9; }
+.look-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 7px 12px; border-bottom: 1px solid var(--line-soft); }
+.look-controls > span { margin-right: 3px; color: var(--muted); font-size: 11px; font-weight: 760; white-space: nowrap; }
+.look-controls button { display: inline-flex; align-items: center; gap: 5px; min-height: 29px; padding: 3px 7px; border: 1px solid var(--line); border-radius: 7px; background: #fcfbff; color: #554b65; font-size: 11px; font-weight: 740; white-space: nowrap; }
+.look-controls button[data-look="pastel"] { --look-ink: #6a4b84; --look-line: #d6bee9; --look-fill: #f5ebfc; }
+.look-controls button[data-look="flat"] { --look-ink: #376758; --look-line: #b7dbcc; --look-fill: #e9f6ef; }
+.look-controls button[data-look="golden"] { --look-ink: #82522f; --look-line: #e7c6a0; --look-fill: #fff0dd; }
+.look-controls button[aria-pressed="true"] { border-color: var(--look-line); background: var(--look-fill); color: var(--look-ink); }
+.look-controls button:hover { border-color: var(--look-ink); color: var(--look-ink); }
+.look-check { display: grid; place-items: center; width: 12px; height: 12px; border: 1px solid currentColor; border-radius: 3px; }
+.look-check svg { width: 10px; height: 10px; visibility: hidden; }
+.look-controls button[aria-pressed="true"] .look-check svg { visibility: visible; }
 .viewport { position: relative; flex: 1 0 auto; aspect-ratio: 1.91; isolation: isolate; background: linear-gradient(160deg, #b5d4c8, #d4e7dc 82%); overflow: hidden; }
 #scene, #map { display: block; width: 100%; height: 100%; position: absolute; inset: 0; }
 .viewport::after { content: ""; z-index: 0; position: absolute; inset: 0; box-shadow: inset 0 -28px 44px -27px #2d3a3a66; pointer-events: none; }
@@ -316,6 +327,8 @@ kbd { display: inline-block; min-width: 22px; padding: 3px 5px; text-align: cent
   .card-copy { width: 30px; height: 34px; }
 }
 @media (max-width: 405px) {
+  .look-controls > span { flex-basis: 100%; }
+  .look-controls { padding-inline: 9px; }
   .topbar nav a[href="#prompt"] { display: none; }
   .prompt-header h2 { font-size: 12px; gap: 3px; }
   .prompt-header .panel-actions { gap: 4px; }
@@ -380,6 +393,18 @@ kbd { display: inline-block; min-width: 22px; padding: 3px 5px; text-align: cent
               </button>
             </div>
           </header>
+          <div class="look-controls" role="group" aria-labelledby="look-label">
+            <span id="look-label">색감 · 조명</span>
+            <button type="button" data-look="pastel" aria-pressed="true" title="부드러운 파스텔 팔레트">
+              <span class="look-check" data-icon="check" aria-hidden="true"></span>Pastel Colors
+            </button>
+            <button type="button" data-look="flat" aria-pressed="true" title="질감을 줄이고 매끈한 색면으로 표현">
+              <span class="look-check" data-icon="check" aria-hidden="true"></span>Flat Color
+            </button>
+            <button type="button" data-look="golden" aria-pressed="true" title="낮은 황금빛 햇살과 길어진 그림자">
+              <span class="look-check" data-icon="check" aria-hidden="true"></span>Golden Hour
+            </button>
+          </div>
           <div class="viewport" id="viewport">
             <canvas id="scene" role="img" aria-label="산책로와 연못, 나무가 있는 미니어처 공원에서 움직이는 흰색 스틱맨의 3D 화면"></canvas>
             <div class="guide" id="guide" aria-hidden="true" hidden><span></span><span></span><span></span><span></span></div>
@@ -1601,6 +1626,9 @@ function figureLimbs(rig, compact = false) {
 }
 
 
+const defaultSceneLook = Object.freeze({ pastel: true, flat: true, golden: true });
+const daylightSun = [-.64, .72, -.44];
+const goldenHourSun = [-.81, .30, -.52];
 const islandSize = [13.5, 13.8];
 const pond = { x: 3.22, z: 1.41, width: 1.93, depth: 1.37, level: -.135 };
 const parkPaths = [
@@ -1675,6 +1703,24 @@ function parkShade(x, z) {
   return (1 - .31 * strongest) * (1 - .23 * contact);
 }
 
+const eveningShadowAxis = normalized([-goldenHourSun[0], 0, -goldenHourSun[2]]);
+const eveningShadowSlope = Math.hypot(goldenHourSun[0], goldenHourSun[2]) / goldenHourSun[1];
+
+function eveningTreeShade(x, z) {
+  const [axisX, , axisZ] = eveningShadowAxis;
+  let shade = 0;
+  for (const tree of parkTrees) {
+    const dx = x - tree.x, dz = z - tree.z;
+    const along = dx * axisX + dz * axisZ;
+    const across = dz * axisX - dx * axisZ;
+    const reach = tree.height * .73 * eveningShadowSlope;
+    const crown = ((along - reach) / (tree.width * 2.90)) ** 2 + (across / (tree.width * 1.08)) ** 2;
+    const trunk = (1 - smooth(Math.abs(across) / .25)) * smooth(along / .51) * (1 - smooth((along - reach * .66) / (reach * .26)));
+    shade = Math.max(shade, 1 - smooth((crown - .22) / .94), trunk * .66);
+  }
+  return shade;
+}
+
 function islandPoint(r, theta) {
   const edge = 1 + .018 * Math.sin(theta * 3 + .18) + .012 * Math.cos(theta * 5 - .76);
   const x = r * islandSize[0] * edge * Math.cos(theta), z = r * islandSize[1] * edge * Math.sin(theta);
@@ -1696,9 +1742,11 @@ function buildLandscape(terrain, general, compact) {
     const noise = .5 + .24 * Math.sin(x * .63 + z * .26) + .21 * Math.cos(z * .64 - x * .33);
     const shore = (1 - smooth((pondRadius(x, z) - .87) / .22)) * .82;
     const color = tint(mix3(mix3(field, sunGrass, noise), sand, shore), parkShade(x, z) * (.94 + .07 * smooth((y + .12) / .49)));
-    return { p, color, n: lawnNormal(x, z) };
+    return { p, color, n: lawnNormal(x, z), shade: eveningTreeShade(x, z) };
   }));
-  const tri = (a, b, c) => terrain.tri(a.p, b.p, c.p, [a.color, b.color, c.color], GROUND, 1, [a.n, b.n, c.n]);
+  // The alpha channel of opaque grass and sand carries a baked shadow mask.
+  const tri = (a, b, c) => terrain.tri(a.p, b.p, c.p, [a.color, b.color, c.color], GROUND,
+    [a.shade, b.shade, c.shade], [a.n, b.n, c.n]);
   for (let j = 1; j <= rings; j++) {
     for (let i = 0; i < steps; i++) {
       const k = (i + 1) % steps;
@@ -1740,10 +1788,12 @@ function pathMesh(mesh, route, compact) {
       return {
         point: [px, parkHeight(px, pz) + .014 + .025 * round, pz], n: lawnNormal(px, pz),
         color: tint(mix3(edge, base, .43 + .57 * round), parkShade(px, pz)),
+        shade: eveningTreeShade(px, pz),
       };
     });
   });
-  const tri = (a, b, c) => mesh.tri(a.point, b.point, c.point, [a.color, b.color, c.color], PATH, 1, [a.n, b.n, c.n]);
+  const tri = (a, b, c) => mesh.tri(a.point, b.point, c.point, [a.color, b.color, c.color], PATH,
+    [a.shade, b.shade, c.shade], [a.n, b.n, c.n]);
   for (let i = 1; i < bands.length; i++) {
     for (let j = 0; j < across; j++) {
       const [a, b, c, d] = [bands[i - 1][j], bands[i][j], bands[i][j + 1], bands[i - 1][j + 1]];
@@ -2169,11 +2219,37 @@ const skyVertex = [
   'void main() { vScreen = aQuad; gl_Position = vec4(aQuad, 0.0, 1.0); }',
 ].join('\n');
 
+const parkSky = {
+  day: [[.700, .786, .692], [.433, .617, .545]],
+  pastel: [[.866, .886, .923], [.695, .786, .906]],
+  golden: [[.966, .725, .541], [.535, .562, .741]],
+  goldenPastel: [[.984, .795, .686], [.700, .718, .846]],
+};
+const pastelTones = {
+  grass: [.674, .821, .705], leaf: [.540, .775, .645], path: [.978, .801, .735],
+  water: [.536, .769, .859], neutral: [.905, .837, .875],
+};
+const eveningShade = [.78, .765, .902];
+const eveningShadow = [.322, .274, .395];
+const flatAmbient = [[.818, .842, .843], [.810, .786, .883]];
+const flatDirect = [[.218, .193, .133], [.292, .217, .128]];
+const shaderVector = channels => 'vec3(' + channels.map(channel => channel.toFixed(3)).join(',') + ')';
+
 const parkLight = [
+  'uniform float uPastel, uFlatColor, uGoldenHour;',
+  `vec3 parkSun() { return normalize(mix(${shaderVector(daylightSun)},${shaderVector(goldenHourSun)},uGoldenHour)); }`,
   'vec3 parkAir(vec3 ray) {',
-  '  vec3 sage = mix(vec3(.700,.786,.692),vec3(.433,.617,.545),smoothstep(-.16,.68,ray.y));',
+  '  float altitude = smoothstep(-.16,.68,ray.y);',
+  `  vec3 day = mix(${shaderVector(parkSky.day[0])},${shaderVector(parkSky.day[1])},altitude);`,
+  `  vec3 softDay = mix(${shaderVector(parkSky.pastel[0])},${shaderVector(parkSky.pastel[1])},altitude);`,
   '  float glow = pow(max(0.0,dot(ray,normalize(vec3(-.69,.10,.74)))),2.9);',
-  '  return mix(sage,vec3(.903,.908,.744),.37*glow);',
+  '  day = mix(mix(day,vec3(.903,.908,.744),.37*glow),softDay,uPastel);',
+  '  float duskAltitude = smoothstep(-.075,.57,ray.y);',
+  `  vec3 dusk = mix(${shaderVector(parkSky.golden[0])},${shaderVector(parkSky.golden[1])},duskAltitude);`,
+  `  vec3 softDusk = mix(${shaderVector(parkSky.goldenPastel[0])},${shaderVector(parkSky.goldenPastel[1])},duskAltitude);`,
+  '  float sunlight = pow(max(0.0,dot(ray,parkSun())),11.0);',
+  '  dusk = mix(mix(dusk,softDusk,uPastel),vec3(1.0,.866,.650),.60*sunlight);',
+  '  return mix(day,dusk,uGoldenHour);',
   '}',
 ];
 
@@ -2188,7 +2264,10 @@ const skyFragment = [
   ...parkLight,
   'void main() {',
   '  vec3 d = normalize(uForward + vScreen.x/uFocal.x*uRight + vScreen.y/uFocal.y*uUp);',
-  '  vec3 color = parkAir(d) + (hash(gl_FragCoord.xy)-.5)*.005;',
+  '  vec3 color = parkAir(d);',
+  '  float sunDisc = (1.0-smoothstep(.013,.021,distance(d,parkSun())))*uGoldenHour;',
+  '  color = mix(color,vec3(1.0,.956,.801),sunDisc);',
+  '  if (uFlatColor < .5) color += (hash(gl_FragCoord.xy)-.5)*.005;',
   '  gl_FragColor = vec4(color, 1.0);',
   '}',
 ].join('\n');
@@ -2237,17 +2316,29 @@ const setFragment = [
   '                 mix(noiseKey(cell+vec3(0,1,1)),noiseKey(cell+vec3(1,1,1)),a.x),a.y),a.z);',
   '}',
   ...parkLight,
-  'void main() {',
-  '  vec3 sun = normalize(vec3(-.64,.72,-.44));',
-  '  vec3 n = normalize(vNormal);',
-  '  float direct = .6*max(0.0,dot(n,sun))+.4*smoothstep(-.28,.85,dot(n,sun));',
+  'vec3 pastelSurface(vec3 base) {',
+  `  if (vMaterial > 6.5) return mix(base,${shaderVector(pastelTones.path)},.59);`,
+  `  if (vMaterial > 4.5 && vMaterial < 5.5) return mix(base,${shaderVector(pastelTones.water)},.66);`,
+  `  if (vMaterial > 1.5 && vMaterial < 2.5) return mix(base,${shaderVector(pastelTones.grass)},.55);`,
+  '  if (vMaterial > 5.5) return base;',
+  '  float foliage = smoothstep(.018,.135,base.g-base.r);',
+  `  vec3 soft = mix(base,${shaderVector(pastelTones.neutral)},.31);`,
+  `  return mix(soft,mix(base,${shaderVector(pastelTones.leaf)},.61),foliage);`,
+  '}',
+  'vec3 flatSurface(vec3 base, float angle) {',
+  '  if (vMaterial > 4.5 && vMaterial < 5.5) return mix(base,vec3(.91,.80,.77),.16*uGoldenHour);',
+  '  float bands = .14+.49*smoothstep(.035,.095,angle)+.31*smoothstep(.55,.62,angle);',
+  `  vec3 ambient = mix(${shaderVector(flatAmbient[0])},${shaderVector(flatAmbient[1])},uGoldenHour);`,
+  `  vec3 bounce = mix(${shaderVector(flatDirect[0])},${shaderVector(flatDirect[1])},uGoldenHour);`,
+  '  return base * (ambient+bands*bounce);',
+  '}',
+  'vec3 texturedSurface(vec3 base, vec3 n, vec3 sun, vec3 ray, float angle) {',
+  '  float direct = .6*max(0.0,angle)+.4*smoothstep(-.28,.85,angle);',
   '  float sky = .5+.5*n.y;',
-  '  vec3 lighting = vec3(.558,.631,.573) + sky*vec3(.168,.168,.154) + direct*vec3(.392,.327,.246);',
-  '  vec3 color = vColor.rgb * lighting;',
-  '  vec3 ray = normalize(vWorld-uEye);',
-  '  float distance = length(vWorld-uEye);',
-  '  vec3 haze = parkAir(ray);',
-  '  float fog = smoothstep(12.8,54.0,distance);',
+  '  vec3 ambient = mix(vec3(.558,.631,.573),vec3(.653,.622,.720),uGoldenHour);',
+  '  vec3 highlight = mix(vec3(.392,.327,.246),vec3(.490,.340,.195),uGoldenHour);',
+  '  vec3 lighting = ambient + sky*vec3(.168,.168,.154) + direct*highlight;',
+  '  vec3 color = base * lighting;',
   '  if (vMaterial > 1.5 && vMaterial < 2.5) {',
   '    float clover = textureNoise(vWorld*vec3(8.0,2.5,8.0));',
   '    float grain = textureNoise(vWorld*vec3(52.0,8.0,52.0));',
@@ -2257,7 +2348,6 @@ const setFragment = [
   '    color += vec3(.044,.039,.032)*softSpec;',
   '    color *= .856+.144*smoothstep(-.05,.62,vWorld.y);',
   '  }',
-  '  if (vMaterial > 2.5 && vMaterial < 3.5) color = vColor.rgb;',
   '  if (vMaterial > 3.5 && vMaterial < 4.5) {',
   '    float piles = textureNoise(vWorld*14.0);',
   '    float flecks = textureNoise(vWorld*52.0);',
@@ -2270,23 +2360,42 @@ const setFragment = [
   '    vec3 waterNormal= normalize(vec3(wave.x*.023,1.0,wave.y*.027));',
   '    float edge = pow(1.0-max(0.0,dot(waterNormal,-ray)),3.0);',
   '    float foam = smoothstep(.78,1.0,sin(vWorld.z*23.0+sin(vWorld.x*7.4)*.76));',
-  '    color = mix(vColor.rgb*.962, vec3(.76,.857,.783), .07+.55*edge);',
+  '    vec3 reflection = mix(mix(vec3(.76,.857,.783),vec3(.74,.866,.929),uPastel),vec3(.985,.804,.692),uGoldenHour);',
+  '    color = mix(base*.962, reflection, .07+.55*edge);',
   '    color += vec3(.09,.12,.101)*foam*(.22+.50*edge);',
   '  }',
   '  if (vMaterial > 5.5 && vMaterial < 6.5) {',
   '    float softCoat = pow(max(0.0,dot(n,normalize(sun-ray))),19.0);',
   '    float rim = pow(1.0-abs(dot(n,ray)),2.5);',
-  '    vec3 porcelainLight = mix(vec3(.965,.987,1.047),vec3(1.033,1.018,.998),direct);',
+  '    vec3 porcelainLight = mix(vec3(.965,.987,1.047),mix(vec3(1.033,1.018,.998),vec3(1.122,1.024,.928),uGoldenHour),direct);',
   '    vec3 sculpture = vec3(.647,.679,.710)+sky*vec3(.115,.112,.108)+direct*vec3(.278,.253,.222);',
-  '    color = vColor.rgb * sculpture * porcelainLight;',
+  '    color = base * sculpture * porcelainLight;',
   '    color += vec3(.084,.073,.065)*softCoat + vec3(.038,.053,.063)*rim;',
   '  }',
   '  if (vMaterial > 6.5) {',
   '    float texture = textureNoise(vWorld*57.0);',
-  '    color = vColor.rgb * (.87+.11*direct+.084*texture);',
+  '    color = base * (.87+.11*direct+.084*texture) * mix(vec3(1.0),vec3(1.072,.99,.940),uGoldenHour);',
   '  }',
-  '  color = mix(color,haze,fog)+(hash(gl_FragCoord.xy)-.5)*.005;',
-  '  float alpha = mix(vColor.a*uOpacity,min(.996,vDepth/55.0),uStoreDepth);',
+  '  return color;',
+  '}',
+  'void main() {',
+  '  vec3 sun = parkSun();',
+  '  vec3 n = normalize(vNormal);',
+  '  float angle = dot(n,sun);',
+  '  vec3 ray = normalize(vWorld-uEye);',
+  '  vec3 base = uPastel > .5 ? pastelSurface(vColor.rgb) : vColor.rgb;',
+  '  bool shadow = vMaterial > 2.5 && vMaterial < 3.5;',
+  '  bool ground = (vMaterial > 1.5 && vMaterial < 2.5) || vMaterial > 6.5;',
+  '  vec3 color;',
+  `  if (shadow) color = mix(vColor.rgb,${shaderVector(eveningShadow)},uGoldenHour);`,
+  '  else if (uFlatColor > .5) color = flatSurface(base,angle);',
+  '  else color = texturedSurface(base,n,sun,ray,angle);',
+  `  if (ground) color *= mix(vec3(1.0),${shaderVector(eveningShade)},uGoldenHour*vColor.a);`,
+  '  float fog = smoothstep(12.8,54.0,length(vWorld-uEye));',
+  '  color = mix(color,parkAir(ray),fog);',
+  '  if (uFlatColor < .5) color += (hash(gl_FragCoord.xy)-.5)*.005;',
+  '  float opacity = ground ? 1.0 : vColor.a;',
+  '  float alpha = mix(opacity*uOpacity,min(.996,vDepth/55.0),uStoreDepth);',
   '  gl_FragColor = vec4(color, alpha);',
   '}',
 ].join('\n');
@@ -2364,10 +2473,11 @@ function createProgram(gl, vertexSource, fragmentSource, attributes, uniforms) {
 }
 
 function glRenderer(gl, set) {
+  const lookUniforms = ['uPastel', 'uFlatColor', 'uGoldenHour'];
   const geometry = createProgram(gl, setVertex, setFragment,
     ['aPoint', 'aNormal', 'aColor', 'aMaterial'],
-    ['uEye', 'uRight', 'uUp', 'uForward', 'uFocal', 'uObject', 'uModel', 'uNormal', 'uStoreDepth', 'uOpacity']);
-  const sky = createProgram(gl, skyVertex, skyFragment, ['aQuad'], ['uRight', 'uUp', 'uForward', 'uFocal']);
+    ['uEye', 'uRight', 'uUp', 'uForward', 'uFocal', 'uObject', 'uModel', 'uNormal', 'uStoreDepth', 'uOpacity', ...lookUniforms]);
+  const sky = createProgram(gl, skyVertex, skyFragment, ['aQuad'], ['uRight', 'uUp', 'uForward', 'uFocal', ...lookUniforms]);
   const post = createProgram(gl, skyVertex, postFragment, ['aQuad'], ['uImage', 'uSize', 'uFocus', 'uBlur', 'uAperture']);
   const buffers = Object.fromEntries(Object.entries(set.meshes).map(([key, data]) => {
     const buffer = gl.createBuffer();
@@ -2436,7 +2546,14 @@ function glRenderer(gl, set) {
     gl.uniform2f(program.uniforms.uFocal, focal, focal * width / height);
   }
 
+  function setLook(program, look) {
+    gl.uniform1f(program.uniforms.uPastel, Number(look.pastel));
+    gl.uniform1f(program.uniforms.uFlatColor, Number(look.flat));
+    gl.uniform1f(program.uniforms.uGoldenHour, Number(look.golden));
+  }
+
   return (state, width, height) => {
+    const look = state.sceneLook ?? defaultSceneLook;
     const usePost = state.aperture > .03 || Math.abs(state.blur) > .02;
     if (usePost) selectTarget(width, height);
     else gl.bindFramebuffer(gl.FRAMEBUFFER, null);
@@ -2447,12 +2564,14 @@ function glRenderer(gl, set) {
     const focal = state.lens / 18 * state.crop;
     gl.useProgram(sky.program);
     setBasis(sky, basis, focal, width, height);
+    setLook(sky, look);
     drawQuad(sky);
 
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
     gl.useProgram(geometry.program);
     setBasis(geometry, basis, focal, width, height);
+    setLook(geometry, look);
     gl.uniform3fv(geometry.uniforms.uEye, state.position);
     gl.uniform1f(geometry.uniforms.uStoreDepth, Number(usePost));
     drawMesh(buffers.ground);
@@ -2463,7 +2582,7 @@ function glRenderer(gl, set) {
     gl.depthMask(false);
     if (usePost) gl.colorMask(true, true, true, false);
     gl.uniform1f(geometry.uniforms.uStoreDepth, 0);
-    for (const shadow of figureShadows(state)) drawMesh(buffers.shadow, shadow.origin, shadow.basis, shadow.opacity);
+    for (const shadow of figureShadows(state, look.golden)) drawMesh(buffers.shadow, shadow.origin, shadow.basis, shadow.opacity);
     gl.colorMask(true, true, true, true);
     gl.depthMask(true);
     gl.disable(gl.BLEND);
@@ -2494,15 +2613,18 @@ function glRenderer(gl, set) {
   };
 }
 
-function figureShadows(state) {
+function figureShadows(state, golden) {
   const [x, y, z] = state.actor.position;
   const elevation = y - figureGround;
   const lift = elevation / figureScale;
   const spread = figureScale * (1 + lift * .29);
   const place = (px, pz) => [px, parkHeight(px, pz) + .046, pz];
+  const cast = mult3(eveningShadowAxis, (elevation + 1.12 * figureScale) * eveningShadowSlope);
+  const angle = Math.atan2(eveningShadowAxis[0], eveningShadowAxis[2]);
   const shadows = [{
-    origin: place(x + .32 * figureScale + elevation * .39, z + .22 * figureScale + elevation * .22),
-    basis: scaleBasis([.84 * spread, 1, .58 * spread]), opacity: 1.18 - .70 * clamp(lift),
+    origin: golden ? place(x + cast[0], z + cast[2]) : place(x + .32 * figureScale + elevation * .39, z + .22 * figureScale + elevation * .22),
+    basis: golden ? multiplyBasis(rotationY(angle), scaleBasis([.66 * spread, 1, 3.74 * spread])) : scaleBasis([.84 * spread, 1, .58 * spread]),
+    opacity: (golden ? .98 : 1.18) - .70 * clamp(lift),
   }];
   for (const { end } of state.rig.legs) {
     const opacity = 1 - smooth((end[1] + lift - .115) / .24);
@@ -2512,6 +2634,15 @@ function figureShadows(state) {
     }
   }
   return shadows;
+}
+
+function pastelSurfaceColor(base, material) {
+  if (material === PATH) return mix3(base, pastelTones.path, .59);
+  if (material === WATER) return mix3(base, pastelTones.water, .66);
+  if (material === GROUND) return mix3(base, pastelTones.grass, .55);
+  if (material === VINYL) return base;
+  const green = smooth((base[1] - base[0] - .018) / .117);
+  return mix3(mix3(base, pastelTones.neutral, .31), mix3(base, pastelTones.leaf, .61), green);
 }
 
 function canvasRenderer(context, set) {
@@ -2533,8 +2664,6 @@ function canvasRenderer(context, set) {
   const near = document.createElement('canvas');
   const farCtx = far.getContext('2d');
   const nearCtx = near.getContext('2d');
-  const sun = normalized([-.64, .72, -.44]);
-  const mist = [.700, .786, .692];
   const rgba = (color, alpha) => 'rgba(' + color.map(channel => Math.round(clamp(channel) * 255)).join(',') + ',' + alpha + ')';
 
   function clipped(points, limit) {
@@ -2553,6 +2682,14 @@ function canvasRenderer(context, set) {
   }
 
   return (state, width, height) => {
+    const look = state.sceneLook ?? defaultSceneLook;
+    const sun = normalized(look.golden ? goldenHourSun : daylightSun);
+    const day = look.pastel ? parkSky.pastel : parkSky.day;
+    const dusk = look.pastel ? parkSky.goldenPastel : parkSky.golden;
+    const [mist, zenith] = look.golden ? dusk : day;
+    const shadowTint = look.golden ? eveningShadow : null;
+    const ambient = flatAmbient[Number(look.golden)];
+    const directLight = flatDirect[Number(look.golden)];
     if (far.width !== width || far.height !== height) {
       far.width = near.width = width;
       far.height = near.height = height;
@@ -2561,10 +2698,9 @@ function canvasRenderer(context, set) {
     const focal = state.lens / 18 * state.crop * width / 2;
     const skyY = height / 2 + Math.tan(clamp(state.pitch, -1.2, 1.2)) * focal;
     const grad = farCtx.createLinearGradient(0, skyY - height, 0, skyY + height * .2);
-    grad.addColorStop(0, '#7b9c89');
-    grad.addColorStop(.52, '#acc0a6');
-    grad.addColorStop(.88, '#bcccb2');
-    grad.addColorStop(1, '#bdcdb2');
+    grad.addColorStop(0, rgba(zenith, 1));
+    grad.addColorStop(.68, rgba(mix3(zenith, mist, .81), 1));
+    grad.addColorStop(1, rgba(mist, 1));
     farCtx.fillStyle = grad;
     farCtx.fillRect(0, 0, width, height);
     nearCtx.clearRect(0, 0, width, height);
@@ -2573,7 +2709,7 @@ function canvasRenderer(context, set) {
       { name: 'ground', origin, basis: IDENTITY },
       { name: 'terrain', origin, basis: IDENTITY },
       { name: 'general', origin, basis: IDENTITY },
-      ...figureShadows(state).map(shadow => ({ name: 'shadow', ...shadow })),
+      ...figureShadows(state, look.golden).map(shadow => ({ name: 'shadow', ...shadow })),
     ];
     if (!state.hideActor) {
       triangles.limbs = facesFrom(figureLimbs(state.rig, true));
@@ -2599,11 +2735,27 @@ function canvasRenderer(context, set) {
         const screen = visible.map(([x, y, z]) => [width / 2 + x * focal / z, height / 2 - y * focal / z]);
         if (screen.every(([x]) => x < 0) || screen.every(([x]) => x > width) ||
             screen.every(([, y]) => y < 0) || screen.every(([, y]) => y > height)) continue;
-        const light = .759 + .137 * (.5 + .5 * facing[1]) + .233 * Math.max(0, dot3(facing, sun));
-        const shade = lit ? tint(face.color, face.material === VINYL ? mix(light, 1, .4) : light) : face.color;
+        const base = look.pastel ? pastelSurfaceColor(face.color, face.material) : face.color;
+        const angle = dot3(facing, sun);
+        const ground = face.material === GROUND || face.material === PATH;
+        let shade;
+        if (face.material === FLAT) {
+          shade = shadowTint ?? face.color;
+        } else if (face.material === WATER) {
+          shade = look.golden ? mix3(base, [.91, .80, .77], .16) : base;
+        } else if (look.flat) {
+          const bands = .14 + .49 * smooth((angle - .035) / .060) + .31 * smooth((angle - .55) / .070);
+          shade = base.map((value, i) => value * (ambient[i] + bands * directLight[i]));
+        } else {
+          const sunlight = Math.max(0, angle);
+          const light = .759 + .137 * (.5 + .5 * facing[1]) + .233 * sunlight;
+          shade = tint(base, face.material === VINYL ? mix(light, 1, .4) : light);
+          if (look.golden) shade = [shade[0] * (1 + .14 * sunlight), shade[1] * .962, shade[2] * (1.01 - .10 * sunlight)];
+        }
+        if (look.golden && ground) shade = shade.map((value, i) => value * mix(1, eveningShade[i], face.alpha));
         const color = mix3(shade, mist, smooth((depth - 12.8) / 41.2));
         const layerDepth = name === 'ground' ? Infinity : name === 'terrain' ? Number.MAX_VALUE : depth;
-        painter.push({ screen, depth: layerDepth, color: rgba(color, face.alpha * (mesh.opacity ?? 1)), near: attached });
+        painter.push({ screen, depth: layerDepth, color: rgba(color, ground ? 1 : face.alpha * (mesh.opacity ?? 1)), near: attached });
       }
     }
     painter.sort((a, b) => b.depth - a.depth);
@@ -3031,6 +3183,7 @@ const viewButtons = all('[data-view]');
 const languageButtons = all('[data-lang]');
 const libraryButtons = all('[data-library]');
 const panelCopyButtons = all('[data-copy]');
+const lookButtons = all('[data-look]');
 const fieldControls = {
   shot: byId('shot-select'), target: byId('target-select'), move: byId('move-select'), action: byId('action-select'),
 };
@@ -3044,6 +3197,7 @@ const libraryEntries = { shot: shots, move: moves, action: actions };
 const filterButtons = new Map();
 const copyTimers = new WeakMap();
 const selection = { ...defaultSetup };
+let sceneLook = defaultSceneLook;
 let composer;
 let path;
 let prompts;
@@ -3150,6 +3304,7 @@ function changePromptLanguage(language) {
 
 function render() {
   const state = composer.frame(position);
+  state.sceneLook = sceneLook;
   const aspect = viewport.clientWidth / Math.max(1, viewport.clientHeight);
   scene.draw(state);
   drawMap(state, path, position, view, aspect);
@@ -3386,6 +3541,12 @@ gridToggle.addEventListener('click', () => {
   gridToggle.setAttribute('aria-pressed', String(!guide.hidden));
 });
 viewButtons.forEach(button => button.addEventListener('click', () => setView(button.dataset.view)));
+lookButtons.forEach(button => button.addEventListener('click', () => {
+  const key = button.dataset.look;
+  sceneLook = { ...sceneLook, [key]: !sceneLook[key] };
+  button.setAttribute('aria-pressed', String(sceneLook[key]));
+  render();
+}));
 related.addEventListener('click', () => choose('move', related.dataset.move, true));
 search.addEventListener('input', renderLibrary);
 byId('clear-filters').addEventListener('click', () => {
